@@ -150,24 +150,29 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 	./vendor/bin/sail up -d
 	```
 
-5. Instale/atualize dependências dentro do container:
+5. Entre no container do app para rodar comandos:
 	```bash
-	./vendor/bin/sail composer install
+	docker exec -it clinica-unicesumar-app-1 bash
 	```
 
-6. Gere a chave da aplicação:
+6. Instale/atualize dependências dentro do container:
 	```bash
-	./vendor/bin/sail artisan key:generate
+	composer install
 	```
 
-7. Execute as migrations:
+7. Gere a chave da aplicação:
 	```bash
-	./vendor/bin/sail artisan migrate
+	php artisan key:generate
 	```
 
-8. Execute as seeds:
+8. Execute as migrations:
 	```bash
-	./vendor/bin/sail artisan db:seed
+	php artisan migrate
+	```
+
+9. Execute as seeds:
+	```bash
+	php artisan db:seed
 	```
 
 ---

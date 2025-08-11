@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -21,6 +21,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
+        'role'
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -44,5 +50,20 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function patient()
+    {
+        return $this->hasOne(Patient::class);
     }
 }

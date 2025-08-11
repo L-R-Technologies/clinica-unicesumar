@@ -152,7 +152,7 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 
 5. Entre no container do app para rodar comandos:
 	```bash
-	docker exec -it clinica-unicesumar-app-1 bash
+	docker exec -u sail -it clinica-unicesumar-app-1 bash
 	```
 
 6. Instale/atualize dependências dentro do container:

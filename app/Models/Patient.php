@@ -17,9 +17,9 @@ class Patient extends Model
         'phone',
     ];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function user()

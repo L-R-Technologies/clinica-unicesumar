@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('registration_number', 10);
-            $table->string('crbm', 10);
+            $table->string('registration_number', 10)->unique();
+            $table->string('crbm', 10)->unique();
             $table->timestamps();
         });
     }

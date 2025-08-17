@@ -62,7 +62,6 @@ class CreateNewUser implements CreatesNewUsers
             'phone' => ['nullable', 'string', 'max:20'],
         ]);
 
-
         $validator->sometimes([
             'registration_number',
             'crbm'

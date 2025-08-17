@@ -39,6 +39,8 @@
                    name="password_confirmation">
         </div>
 
+        @yield('role_fields')
+
         <button type="submit" class="btn btn-primary">
             Register
         </button>

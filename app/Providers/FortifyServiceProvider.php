@@ -46,5 +46,16 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::viewPrefix('auth.');
+            Fortify::registerView(function (Request $request) {
+                $role = $request->query('role');
+                if ($role === 'teacher') {
+                    return view('auth.register-teacher', ['role' => 'teacher']);
+                } elseif ($role === 'student') {
+                    return view('auth.register-student', ['role' => 'student']);
+                } elseif ($role === 'patient') {
+                    return view('auth.register-patient', ['role' => 'patient']);
+                }
+                return view('auth.register');
+            });
     }
 }

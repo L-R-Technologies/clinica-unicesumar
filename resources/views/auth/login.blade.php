@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Login</h2>
+    <a href="{{ route('welcome') }}">Voltar</a>
     <form action="{{ route('login.store') }}" method="POST" name="login">
         @csrf
 

@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Register</h2>
+    <a href="{{ route('welcome') }}">Voltar</a>
     <form method="POST" action="{{ route('register.store') }}">
         @csrf
 
@@ -38,6 +39,8 @@
             <input id="password_confirmation" type="password" class="form-control"
                    name="password_confirmation">
         </div>
+
+        @yield('role_fields')
 
         <button type="submit" class="btn btn-primary">
             Register

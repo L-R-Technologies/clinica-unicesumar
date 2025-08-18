@@ -5,7 +5,6 @@ namespace App\Actions\Fortify;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
 
@@ -56,17 +55,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         }
 
         $validator = Validator::make($input, $rules);
-
-        try {
-            $validator->validateWithBag('updateProfileInformation');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Erro de validação ao atualizar perfil do usuário', [
-                'errors' => $e->errors(),
-                'input' => $input,
-                'user_id' => $user->id
-            ]);
-            throw $e;
-        }
+        $validator->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {
             $this->updateVerifiedUser($user, $input);

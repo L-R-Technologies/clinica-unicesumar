@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Recuperar Senha</h2>
+    <a href="{{ route('login') }}">Voltar</a>
     @if (session('status'))
         <div class="alert alert-success" role="alert">
             {{ session('status') }}

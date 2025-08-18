@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Editar Perfil</h2>
-
+    <a href="{{ route('home') }}">Voltar</a>
     @if (session('status'))
             @if (session('status') === 'profile-information-updated')
                 <div class="alert alert-success" role="alert">
@@ -36,10 +36,7 @@
             @endif
         </div>
 
-        {{--
-            Para adicionar campos personalizados modifique o arquivo UpdateUserProfileInformation.php
-            e adicione aqui os inputs correspondentes.
-        --}}
+        @yield('role_fields')
 
         <button type="submit" class="btn btn-primary">Atualizar</button>
     </form>

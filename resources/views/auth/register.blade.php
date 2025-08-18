@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Register</h2>
+    <a href="{{ route('welcome') }}">Voltar</a>
     <form method="POST" action="{{ route('register.store') }}">
         @csrf
 

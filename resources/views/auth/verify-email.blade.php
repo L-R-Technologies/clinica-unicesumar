@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="row">
+        <a href="{{ route('login') }}">Voltar</a>
         <p>Clique no link que recebeu em seu email.</p>
         <small>Caso não tenha recebido o email, clique no link abaixo.</small>
 

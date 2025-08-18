@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <h2>Alterar Senha</h2>
-
+    <a href="{{ route('home') }}">Voltar</a>
     @if (session('status'))
             @if (session('status') === 'password-updated')
                 <div class="alert alert-success" role="alert">
@@ -15,10 +15,6 @@
                 </div>
             @endif
     @endif
-
-    @php
-        dump($errors);
-    @endphp
 
     <form method="POST" action="{{ route('user-password.update') }}">
         @csrf

@@ -3,12 +3,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <a href="{{ route('home') }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Voltar
-                        </a>
-                    </div>
-                    <h2 class="mb-0">Gerenciamento de Usuários</h2>
+                    <h2 class="mb-0">Usuários</h2>
                     <div>
                         <a href="{{ route('user-management.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Novo Usuário
@@ -34,12 +29,12 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <label for="search" class="form-label">Buscar por nome ou email</label>
                                 <input type="text" class="form-control" id="search" wire:model.live.debounce.300ms="search"
                                        placeholder="Digite o nome ou email...">
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="role" class="form-label">Filtrar por tipo</label>
                                 <select class="form-select" id="role" wire:model.live="roleFilter">
                                     <option value="">Todos os tipos</option>
@@ -47,8 +42,16 @@
                                     <option value="student">Estudantes</option>
                                 </select>
                             </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="button" class="btn btn-outline-secondary" wire:click="clearFilters">
+                            <div class="col-md-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" wire:model.live="statusFilter">
+                                    <option value="">Todos</option>
+                                    <option value="active">Ativo</option>
+                                    <option value="inactive">Inativo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-secondary w-100" wire:click="clearFilters">
                                     <i class="fas fa-times"></i> Limpar
                                 </button>
                             </div>
@@ -67,25 +70,21 @@
 
                         <div wire:loading.remove>
                             @if($users->count() > 0)
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Nome</th>
-                                                <th>Email</th>
-                                                <th>Tipo</th>
-                                                <th>Status</th>
-                                                <th>Informações Específicas</th>
-                                                <th>Criado em</th>
-                                                <th width="250">Ações</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($users as $user)
-                                                <tr>
-                                                    <td>{{ $user->name }}</td>
-                                                    <td>{{ $user->email }}</td>
-                                                    <td>
+                                <div class="list-group list-group-flush">
+                                    @foreach($users as $user)
+                                        <div class="list-group-item py-3 px-2 border-0 shadow-sm mb-2 rounded bg-white">
+                                            <div class="d-flex flex-wrap flex-md-nowrap align-items-center gap-2 w-100">
+                                                <div class="flex-grow-1 d-flex flex-wrap align-items-center gap-3 min-width-0">
+                                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
+                                                        <span class="fw-semibold small text-secondary">Nome</span>
+                                                        <span class="mb-0 text-truncate" style="max-width: 180px;" title="{{ $user->name }}">{{ $user->name }}</span>
+                                                    </div>
+                                                    <div class="d-flex flex-column align-items-start" style="min-width: 160px;">
+                                                        <span class="fw-semibold small text-secondary">E-mail</span>
+                                                        <span class="text-muted small text-truncate d-block" style="max-width: 180px;" title="{{ $user->email }}">{{ $user->email }}</span>
+                                                    </div>
+                                                    <div class="d-flex flex-column align-items-start" style="min-width: 100px;">
+                                                        <span class="fw-semibold small text-secondary">Tipo</span>
                                                         @if($user->role === 'teacher')
                                                             <span class="badge bg-primary">Professor</span>
                                                         @elseif($user->role === 'student')
@@ -93,63 +92,42 @@
                                                         @else
                                                             <span class="badge bg-secondary">{{ ucfirst($user->role) }}</span>
                                                         @endif
-                                                    </td>
-                                                    <td>
+                                                    </div>
+                                                    <div class="d-flex flex-column align-items-start" style="min-width: 100px;">
+                                                        <span class="fw-semibold small text-secondary">Status</span>
                                                         @if($user->active)
-                                                            <span class="badge bg-success">
-                                                                <i class="fas fa-check-circle"></i> Ativo
-                                                            </span>
+                                                            <span class="badge bg-success"><i class="fas fa-check-circle"></i> Ativo</span>
                                                         @else
-                                                            <span class="badge bg-danger">
-                                                                <i class="fas fa-times-circle"></i> Inativo
-                                                            </span>
+                                                            <span class="badge bg-danger"><i class="fas fa-times-circle"></i> Inativo</span>
                                                         @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($user->teacher)
-                                                            <small>
-                                                                <strong>Registro:</strong> {{ $user->teacher->registration_number }}<br>
-                                                                @if($user->teacher->crbm)
-                                                                    <strong>CRBM:</strong> {{ $user->teacher->crbm }}
-                                                                @endif
-                                                            </small>
-                                                        @elseif($user->student)
-                                                            <small>
-                                                                <strong>RA:</strong> {{ $user->student->ra }}<br>
-                                                                <strong>Curso:</strong> {{ $user->student->course }}
-                                                            </small>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                                                    <td>
-                                                        <div class="btn-group" role="group">
-                                                            <button type="button"
-                                                                    class="btn btn-sm {{ $user->active ? 'btn-warning' : 'btn-success' }}"
-                                                                    title="{{ $user->active ? 'Desativar usuário' : 'Ativar usuário' }}"
-                                                                    wire:click="toggleUserStatus({{ $user->id }})"
-                                                                    wire:loading.attr="disabled">
-                                                                <i class="fas {{ $user->active ? 'fa-user-slash' : 'fa-user-check' }}"></i>
-                                                            </button>
-                                                            <a href="{{ route('user-management.show', $user->id) }}"
-                                                               class="btn btn-sm btn-outline-info" title="Visualizar">
-                                                                <i class="fas fa-eye"></i>
-                                                            </a>
-                                                            <a href="{{ route('user-management.edit', $user->id) }}"
-                                                               class="btn btn-sm btn-outline-warning" title="Editar">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-outline-danger"
-                                                                    title="Excluir"
-                                                                    onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                                                    </div>
+                                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
+                                                        <span class="fw-semibold small text-secondary">Criado em</span>
+                                                        <span class="text-muted small">{{ $user->created_at->format('d/m/Y H:i') }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex align-items-center ms-auto mt-2 mt-md-0">
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-outline-secondary"
+                                                                title="{{ $user->active ? 'Desativar usuário' : 'Ativar usuário' }}"
+                                                                wire:click="toggleUserStatus({{ $user->id }})"
+                                                                wire:loading.attr="disabled">
+                                                            <i class="fas {{ $user->active ? 'fa-user-slash' : 'fa-user-check' }}"></i>
+                                                        </button>
+                                                        <a href="{{ route('user-management.show', $user->id) }}"
+                                                           class="btn btn-sm btn-outline-primary" title="Visualizar">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        <a href="{{ route('user-management.edit', $user->id) }}"
+                                                           class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
                                 </div>
                             @else
                                 <div class="text-center py-4">
@@ -170,42 +148,3 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal de Confirmação de Exclusão -->
-    <div class="modal fade" id="deleteModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirmar Exclusão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Tem certeza que deseja excluir o usuário <strong id="userName"></strong>?</p>
-                    <p class="text-danger">Esta ação não pode ser desfeita.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-let userIdToDelete = null;
-
-function confirmDelete(userId, userName) {
-    userIdToDelete = userId;
-    document.getElementById('userName').textContent = userName;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
-
-document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-    if (userIdToDelete) {
-        @this.deleteUser(userIdToDelete);
-        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-        userIdToDelete = null;
-    }
-});
-</script>

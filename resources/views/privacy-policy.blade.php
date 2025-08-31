@@ -3,17 +3,13 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="mb-0">Política de Privacidade - LGPD</h2>
-                </div>
+        <div class="col-lg-8 col-md-10">
+            <div class="card mx-auto" style="max-width: 700px;">
                 <div class="card-body">
-                    <div class="mb-4">
-                        <p class="text-muted">
-                            <strong>Última atualização:</strong> {{ date('d/m/Y') }}
-                        </p>
-                    </div>
+                    <h2 class="mb-4 text-center">Política de Privacidade - LGPD</h2>
+                    <p class="text-muted text-center mb-4">
+                        <strong>Última atualização:</strong> {{ date('d/m/Y') }}
+                    </p>
 
                     <h3>1. Quem somos</h3>
                     <p>
@@ -112,8 +108,10 @@
                         do site: <a href="https://www.gov.br/anpd" target="_blank">www.gov.br/anpd</a>
                     </p>
 
-                    <div class="text-center mt-4">
-                        <button onclick="window.print()" class="btn btn-outline-secondary">Imprimir</button>
+                    <div class="text-center mt-5">
+                        <button onclick="window.print()" class="btn btn-primary px-4 py-2">
+                            <i class="fas fa-print me-2"></i> Imprimir
+                        </button>
                     </div>
                 </div>
             </div>
@@ -123,12 +121,15 @@
 
 <style>
 @media print {
-    .btn, .card-header, nav, footer {
+    .btn, nav, footer {
         display: none !important;
     }
     .card {
         border: none !important;
         box-shadow: none !important;
+    }
+    .card-body {
+        padding: 0 !important;
     }
 }
 </style>

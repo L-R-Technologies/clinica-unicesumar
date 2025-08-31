@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserManagementController;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
@@ -10,6 +11,11 @@ Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('p
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
+
+    Route::middleware(['role:teacher'])->group(function () {
+        Route::get('/user/management', [UserManagementController::class, 'index'])->name('user-management.index');
+    });
+
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
 

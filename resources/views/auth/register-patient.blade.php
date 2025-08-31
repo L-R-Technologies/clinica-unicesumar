@@ -103,5 +103,29 @@
             <span class="invalid-feedback">{{ $message }}</span>
         @enderror
     </div>
+
+    {{-- Consentimento LGPD --}}
+    <div class="mb-3">
+        <div class="form-check">
+            <input type="checkbox" name="lgpd_consent" id="lgpd_consent" class="form-check-input @error('lgpd_consent') is-invalid @enderror" value="1" {{ old('lgpd_consent') ? 'checked' : '' }}>
+            <label for="lgpd_consent" class="form-check-label">
+                <strong>Consentimento LGPD (Lei Geral de Proteção de Dados)</strong><br>
+                <small class="text-muted">
+                    Eu concordo com o tratamento dos meus dados pessoais conforme descrito na nossa
+                    <a href="{{ route('privacy-policy') }}" target="_blank">Política de Privacidade</a>.
+                    Entendo que meus dados serão utilizados exclusivamente para prestação de serviços de saúde
+                    e que posso revogar este consentimento a qualquer momento.
+                </small>
+            </label>
+            @error('lgpd_consent')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+        </div>
+        {{-- Aviso dinâmico para consentimento LGPD --}}
+        <div id="lgpd_warning" class="text-danger mt-2" style="display: none;">
+            <small>⚠️ Você deve aceitar os termos da LGPD para continuar o cadastro.</small>
+        </div>
+    </div>
+
     <input type="hidden" name="role" value="patient">
 @endsection

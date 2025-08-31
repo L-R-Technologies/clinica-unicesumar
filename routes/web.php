@@ -7,6 +7,10 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+Route::get('/privacy-policy', function () {
+    return view('privacy-policy');
+})->name('privacy-policy');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/home', function () {

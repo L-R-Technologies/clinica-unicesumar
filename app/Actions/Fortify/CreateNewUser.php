@@ -22,8 +22,8 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-
-        $validator = Validator::make($input, [
+        // Regras base para todos os usuários
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -34,67 +34,43 @@ class CreateNewUser implements CreatesNewUsers
             ],
             'role' => ['required', 'in:patient,student,teacher'],
             'password' => $this->passwordRules(),
+        ];
 
-            // Campos para teacher
-            'registration_number' => ['nullable', 'string', 'max:10'],
-            'crbm' => ['nullable', 'string', 'max:10'],
+        // Adicionar regras específicas baseadas no role
+        if ($input['role'] === 'teacher') {
+            $rules = array_merge($rules, [
+                'registration_number' => ['required', 'string', 'max:10'],
+                'crbm' => ['required', 'string', 'max:10'],
+            ]);
+        } elseif ($input['role'] === 'student') {
+            $rules = array_merge($rules, [
+                'ra' => ['required', 'string', 'max:9', Rule::unique(Student::class)],
+                'course' => ['required', 'string', 'max:100'],
+            ]);
+        } elseif ($input['role'] === 'patient') {
+            $rules = array_merge($rules, [
+                // Campos do paciente
+                'birth_date' => ['required', 'date'],
+                'ethnicity' => ['required', 'string', 'max:100'],
+                'sex' => ['required', 'in:male,female,other'],
+                'cpf' => ['required', 'string', 'max:11', Rule::unique(Patient::class)],
+                'rg' => ['required', 'string', 'max:20'],
+                'phone' => ['required', 'string', 'max:20'],
+                'lgpd_consent' => ['required', 'accepted'],
 
-            // Campos para student
-            'ra' => ['nullable', 'string', 'max:9', Rule::unique(Student::class)],
-            'course' => ['nullable', 'string', 'max:100'],
+                // Campos do endereço
+                'street' => ['required', 'string', 'max:255'],
+                'number' => ['required', 'string', 'max:20'],
+                'complement' => ['nullable', 'string', 'max:100'],
+                'neighborhood' => ['required', 'string', 'max:100'],
+                'city' => ['required', 'string', 'max:100'],
+                'state' => ['required', 'string', 'max:100'],
+                'country' => ['required', 'string', 'max:100'],
+                'zip_code' => ['required', 'string', 'max:20'],
+            ]);
+        }
 
-            // Campos para address
-            'street' => ['nullable', 'string', 'max:255'],
-            'number' => ['nullable', 'string', 'max:20'],
-            'complement' => ['nullable', 'string', 'max:100'],
-            'neighborhood' => ['nullable', 'string', 'max:100'],
-            'city' => ['nullable', 'string', 'max:100'],
-            'state' => ['nullable', 'string', 'max:100'],
-            'country' => ['nullable', 'string', 'max:100'],
-            'zip_code' => ['nullable', 'string', 'max:20'],
-
-            // Campos para patient
-            'birth_date' => ['nullable', 'date'],
-            'ethnicity' => ['nullable', 'string', 'max:100'],
-            'sex' => ['nullable', 'in:male,female,other'],
-            'cpf' => ['nullable', 'string', 'max:11', Rule::unique(Patient::class)],
-            'rg' => ['nullable', 'string', 'max:20'],
-            'phone' => ['nullable', 'string', 'max:20'],
-        ]);
-
-        $validator->sometimes([
-            'registration_number',
-            'crbm'
-        ], 'required|string', function ($input) {
-            return $input->role === 'teacher';
-        });
-
-        $validator->sometimes([
-            'ra',
-            'course'
-        ], 'required|string', function ($input) {
-            return $input->role === 'student';
-        });
-
-        $validator->sometimes([
-            'birth_date',
-            'ethnicity',
-            'sex',
-            'cpf',
-            'rg',
-            'phone',
-
-            'street',
-            'number',
-            'neighborhood',
-            'city',
-            'state',
-            'country',
-            'zip_code'
-        ], 'required', function ($input) {
-            return $input->role === 'patient';
-        });
-
+        $validator = Validator::make($input, $rules);
         $validator->validate();
 
         $user = User::create([
@@ -134,6 +110,7 @@ class CreateNewUser implements CreatesNewUsers
                 'cpf' => $input['cpf'],
                 'rg' => $input['rg'],
                 'phone' => $input['phone'],
+                'lgpd_consent_at' => now(),
             ]);
         }
 

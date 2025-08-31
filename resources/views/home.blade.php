@@ -4,9 +4,12 @@
 <div class="container">
     <h2>Home</h2>
 
+
     <a href="{{ route('user.edit', ['user' => auth()->user()->id]) }}">Editar Perfil</a>
     <br>
     <a href="{{ route('user.password-edit', ['user' => auth()->user()->id]) }}">Editar Senha</a>
+    <br>
+    <a href="{{ route('user-management.index') }}">Gerenciamento de usuários</a>
 
     @if(auth()->check())
         <p>Bem-vindo, {{ auth()->user()->name }}!</p>

@@ -37,6 +37,8 @@ class UserManagementService
 
     public function createTeacher(array $userData, array $teacherData)
     {
+        $this->validateTeacherData(array_merge($userData, $teacherData));
+
         DB::beginTransaction();
 
         try {
@@ -66,6 +68,8 @@ class UserManagementService
 
     public function createStudent(array $userData, array $studentData)
     {
+        $this->validateStudentData(array_merge($userData, $studentData));
+
         DB::beginTransaction();
 
         try {

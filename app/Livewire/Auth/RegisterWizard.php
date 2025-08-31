@@ -4,6 +4,7 @@ namespace App\Livewire\Auth;
 
 use Livewire\Component;
 use App\Actions\Fortify\CreateNewUser;
+use Exception;
 
 class RegisterWizard extends Component
 {
@@ -21,12 +22,12 @@ class RegisterWizard extends Component
         // Step 2
         'birth_date' => 'required|date|before:today',
         'sex' => 'required|in:male,female,other',
-        'cpf' => 'required|string|max:14|unique:patients,cpf', // Ajustado para aceitar formato com máscara
+        'cpf' => 'required|string|max:14|unique:patients,cpf',
         'rg' => 'required|string|max:20',
         'ethnicity' => 'required|string|max:100',
-        'phone' => 'required|string|max:15', // Ajustado para aceitar formato com máscara
+        'phone' => 'required|string|max:15',
         // Step 3
-        'zip_code' => 'required|string|max:9', // Ajustado para aceitar formato com máscara
+        'zip_code' => 'required|string|max:9',
         'street' => 'required|string|max:255',
         'number' => 'required|string|max:10',
         'neighborhood' => 'required|string|max:100',
@@ -55,10 +56,8 @@ class RegisterWizard extends Component
 
     public function updatedZipCode($value)
     {
-        // Remove caracteres não numéricos
         $cleanCep = preg_replace('/\D/', '', $value);
-        
-        // Verifica se o CEP tem 8 dígitos
+
         if (strlen($cleanCep) === 8) {
             $this->fetchAddressByCep($cleanCep);
         }
@@ -69,21 +68,19 @@ class RegisterWizard extends Component
         try {
             $response = file_get_contents("https://viacep.com.br/ws/{$cep}/json/");
             $data = json_decode($response, true);
-            
-            // Verifica se não houve erro na API
+
             if (!isset($data['erro'])) {
                 $this->street = $data['logradouro'] ?? '';
                 $this->neighborhood = $data['bairro'] ?? '';
                 $this->city = $data['localidade'] ?? '';
                 $this->state = $data['uf'] ?? '';
                 $this->country = 'Brasil';
-                
-                // Se houver complemento da API, pode usar
+
                 if (!empty($data['complemento'])) {
                     $this->complement = $data['complemento'];
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Em caso de erro, não faz nada - deixa o usuário preencher manualmente
         }
     }
@@ -112,7 +109,6 @@ class RegisterWizard extends Component
     {
         $this->validate();
 
-        // Usar o CreateNewUser do Fortify para criar o paciente
         $createNewUser = new CreateNewUser();
 
         $userData = [

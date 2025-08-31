@@ -42,7 +42,6 @@
                                 @else
                                     <i class="fas fa-user"></i> {{ ucfirst($user->role) }}
                                 @endif
-                                {{-- <small class="text-muted ms-2">(O tipo de usuário não pode ser alterado)</small> --}}
                             </div>
                         </div>
 

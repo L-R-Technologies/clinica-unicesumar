@@ -15,6 +15,7 @@ class TeachersSeeder extends Seeder
             'email' => 'professor@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'teacher',
+            'email_verified_at' => now()
         ]);
 
         Teacher::create([

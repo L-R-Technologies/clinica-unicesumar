@@ -16,6 +16,7 @@ class PatientsSeeder extends Seeder
             'email' => 'paciente@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'patient',
+            'email_verified_at' => now()
         ]);
 
         $address = Address::where('street', 'Rua Itajubá - Seeder')->first();

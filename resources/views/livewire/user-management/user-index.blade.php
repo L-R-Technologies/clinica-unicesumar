@@ -1,0 +1,211 @@
+<div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <a href="{{ route('home') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                    <h2 class="mb-0">Gerenciamento de Usuários</h2>
+                    <div>
+                        <a href="{{ route('user-management.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Novo Usuário
+                        </a>
+                    </div>
+                </div>
+
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                <!-- Filtros e Busca -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="search" class="form-label">Buscar por nome ou email</label>
+                                <input type="text" class="form-control" id="search" wire:model.live.debounce.300ms="search"
+                                       placeholder="Digite o nome ou email...">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="role" class="form-label">Filtrar por tipo</label>
+                                <select class="form-select" id="role" wire:model.live="roleFilter">
+                                    <option value="">Todos os tipos</option>
+                                    <option value="teacher">Professores</option>
+                                    <option value="student">Estudantes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-secondary" wire:click="clearFilters">
+                                    <i class="fas fa-times"></i> Limpar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Usuários -->
+                <div class="card">
+                    <div class="card-body">
+                        <div wire:loading class="text-center py-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
+
+                        <div wire:loading.remove>
+                            @if($users->count() > 0)
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Email</th>
+                                                <th>Tipo</th>
+                                                <th>Status</th>
+                                                <th>Informações Específicas</th>
+                                                <th>Criado em</th>
+                                                <th width="250">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($users as $user)
+                                                <tr>
+                                                    <td>{{ $user->name }}</td>
+                                                    <td>{{ $user->email }}</td>
+                                                    <td>
+                                                        @if($user->role === 'teacher')
+                                                            <span class="badge bg-primary">Professor</span>
+                                                        @elseif($user->role === 'student')
+                                                            <span class="badge bg-success">Estudante</span>
+                                                        @else
+                                                            <span class="badge bg-secondary">{{ ucfirst($user->role) }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($user->active)
+                                                            <span class="badge bg-success">
+                                                                <i class="fas fa-check-circle"></i> Ativo
+                                                            </span>
+                                                        @else
+                                                            <span class="badge bg-danger">
+                                                                <i class="fas fa-times-circle"></i> Inativo
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($user->teacher)
+                                                            <small>
+                                                                <strong>Registro:</strong> {{ $user->teacher->registration_number }}<br>
+                                                                @if($user->teacher->crbm)
+                                                                    <strong>CRBM:</strong> {{ $user->teacher->crbm }}
+                                                                @endif
+                                                            </small>
+                                                        @elseif($user->student)
+                                                            <small>
+                                                                <strong>RA:</strong> {{ $user->student->ra }}<br>
+                                                                <strong>Curso:</strong> {{ $user->student->course }}
+                                                            </small>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button"
+                                                                    class="btn btn-sm {{ $user->active ? 'btn-warning' : 'btn-success' }}"
+                                                                    title="{{ $user->active ? 'Desativar usuário' : 'Ativar usuário' }}"
+                                                                    wire:click="toggleUserStatus({{ $user->id }})"
+                                                                    wire:loading.attr="disabled">
+                                                                <i class="fas {{ $user->active ? 'fa-user-slash' : 'fa-user-check' }}"></i>
+                                                            </button>
+                                                            <a href="{{ route('user-management.show', $user->id) }}"
+                                                               class="btn btn-sm btn-outline-info" title="Visualizar">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+                                                            <a href="{{ route('user-management.edit', $user->id) }}"
+                                                               class="btn btn-sm btn-outline-warning" title="Editar">
+                                                                <i class="fas fa-edit"></i>
+                                                            </a>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-danger"
+                                                                    title="Excluir"
+                                                                    onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Nenhum usuário encontrado</h5>
+                                    <p class="text-muted">
+                                        @if($search || $roleFilter)
+                                            Tente ajustar os filtros de busca.
+                                        @else
+                                            Comece criando o primeiro usuário.
+                                        @endif
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir o usuário <strong id="userName"></strong>?</p>
+                    <p class="text-danger">Esta ação não pode ser desfeita.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let userIdToDelete = null;
+
+function confirmDelete(userId, userName) {
+    userIdToDelete = userId;
+    document.getElementById('userName').textContent = userName;
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    if (userIdToDelete) {
+        @this.deleteUser(userIdToDelete);
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        userIdToDelete = null;
+    }
+});
+</script>

@@ -48,6 +48,7 @@ class UserManagementService
                 'password' => Hash::make($userData['password']),
                 'role' => 'teacher',
                 'email_verified_at' => now(),
+                'active' => true,
             ]);
 
             Teacher::create([
@@ -79,6 +80,7 @@ class UserManagementService
                 'password' => Hash::make($userData['password']),
                 'role' => 'student',
                 'email_verified_at' => now(),
+                'active' => true,
             ]);
 
             Student::create([
@@ -175,6 +177,23 @@ class UserManagementService
             })
             ->orderBy('name')
             ->get();
+    }
+
+    public function toggleUserStatus(User $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user->update(['active' => !$user->active]);
+
+            DB::commit();
+
+            return $user->fresh();
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     public function generateTemporaryPassword(): string

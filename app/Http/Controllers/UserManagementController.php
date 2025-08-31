@@ -180,4 +180,27 @@ class UserManagementController extends Controller
         $password = $this->userManagementService->generateTemporaryPassword();
         return response()->json(['password' => $password]);
     }
+
+    public function toggleStatus($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            $updatedUser = $this->userManagementService->toggleUserStatus($user);
+
+            $message = $updatedUser->active ? 'Usuário ativado com sucesso!' : 'Usuário desativado com sucesso!';
+
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'active' => $updatedUser->active
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao alterar status do usuário: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

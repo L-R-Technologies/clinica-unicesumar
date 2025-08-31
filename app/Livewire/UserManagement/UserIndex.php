@@ -42,6 +42,22 @@ class UserIndex extends Component
         }
     }
 
+    public function toggleUserStatus($userId)
+    {
+        try {
+            $user = User::findOrFail($userId);
+
+            $userManagementService = app(UserManagementService::class);
+            $updatedUser = $userManagementService->toggleUserStatus($user);
+
+            $message = $updatedUser->active ? 'Usuário ativado com sucesso!' : 'Usuário desativado com sucesso!';
+            session()->flash('success', $message);
+
+        } catch (Exception $e) {
+            session()->flash('error', 'Erro ao alterar status do usuário: ' . $e->getMessage());
+        }
+    }
+
     public function getUsers()
     {
         $userManagementService = app(UserManagementService::class);

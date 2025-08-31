@@ -74,9 +74,10 @@
                                                 <th>Nome</th>
                                                 <th>Email</th>
                                                 <th>Tipo</th>
+                                                <th>Status</th>
                                                 <th>Informações Específicas</th>
                                                 <th>Criado em</th>
-                                                <th width="200">Ações</th>
+                                                <th width="250">Ações</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -91,6 +92,17 @@
                                                             <span class="badge bg-success">Estudante</span>
                                                         @else
                                                             <span class="badge bg-secondary">{{ ucfirst($user->role) }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($user->active)
+                                                            <span class="badge bg-success">
+                                                                <i class="fas fa-check-circle"></i> Ativo
+                                                            </span>
+                                                        @else
+                                                            <span class="badge bg-danger">
+                                                                <i class="fas fa-times-circle"></i> Inativo
+                                                            </span>
                                                         @endif
                                                     </td>
                                                     <td>
@@ -111,6 +123,13 @@
                                                     <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
                                                     <td>
                                                         <div class="btn-group" role="group">
+                                                            <button type="button"
+                                                                    class="btn btn-sm {{ $user->active ? 'btn-warning' : 'btn-success' }}"
+                                                                    title="{{ $user->active ? 'Desativar usuário' : 'Ativar usuário' }}"
+                                                                    wire:click="toggleUserStatus({{ $user->id }})"
+                                                                    wire:loading.attr="disabled">
+                                                                <i class="fas {{ $user->active ? 'fa-user-slash' : 'fa-user-check' }}"></i>
+                                                            </button>
                                                             <a href="{{ route('user-management.show', $user->id) }}"
                                                                class="btn btn-sm btn-outline-info" title="Visualizar">
                                                                 <i class="fas fa-eye"></i>

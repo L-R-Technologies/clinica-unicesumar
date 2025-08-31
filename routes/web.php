@@ -9,7 +9,7 @@ Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
     Route::middleware(['role:teacher'])->group(function () {
@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/user/management/{id}/edit', [UserManagementController::class, 'edit'])->name('user-management.edit');
         Route::put('/user/management/{id}', [UserManagementController::class, 'update'])->name('user-management.update');
         Route::delete('/user/management/{id}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
+        Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
     });
 
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');

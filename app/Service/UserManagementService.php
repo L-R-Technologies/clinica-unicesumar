@@ -1,0 +1,206 @@
+<?php
+
+namespace App\Service;
+
+use App\Models\User;
+use App\Models\Teacher;
+use App\Models\Student;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Exception;
+
+class UserManagementService
+{
+    public function getAllUsers()
+    {
+        return User::with(['teacher', 'student'])
+            ->whereIn('role', ['teacher', 'student'])
+            ->where('id', '!=', Auth::id())
+            ->orderBy('name')
+            ->get();
+    }
+
+    public function getUsersByRole(string $role)
+    {
+        $query = User::where('role', $role)
+            ->where('id', '!=', Auth::id());
+
+        if ($role === 'teacher') {
+            $query->with('teacher');
+        } elseif ($role === 'student') {
+            $query->with('student');
+        }
+
+        return $query->orderBy('name')->get();
+    }
+
+    public function createTeacher(array $userData, array $teacherData)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'password' => Hash::make($userData['password']),
+                'role' => 'teacher',
+                'email_verified_at' => now(),
+            ]);
+
+            Teacher::create([
+                'user_id' => $user->id,
+                'registration_number' => $teacherData['registration_number'],
+                'crbm' => $teacherData['crbm'] ?? null,
+            ]);
+
+            DB::commit();
+
+            return $user->load('teacher');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function createStudent(array $userData, array $studentData)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = User::create([
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+                'password' => Hash::make($userData['password']),
+                'role' => 'student',
+                'email_verified_at' => now(),
+            ]);
+
+            Student::create([
+                'user_id' => $user->id,
+                'ra' => $studentData['ra'],
+                'course' => $studentData['course'],
+            ]);
+
+            DB::commit();
+
+            return $user->load('student');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function updateUser(User $user, array $userData, array $specificData = [])
+    {
+        DB::beginTransaction();
+
+        try {
+            $updateData = [
+                'name' => $userData['name'],
+                'email' => $userData['email'],
+            ];
+
+            if (!empty($userData['password'])) {
+                $updateData['password'] = Hash::make($userData['password']);
+            }
+
+            $user->update($updateData);
+
+            if ($user->role === 'teacher' && !empty($specificData)) {
+                if ($user->teacher) {
+                    $user->teacher->update([
+                        'registration_number' => $specificData['registration_number'],
+                        'crbm' => $specificData['crbm'] ?? $user->teacher->crbm,
+                    ]);
+                }
+            } elseif ($user->role === 'student' && !empty($specificData)) {
+                if ($user->student) {
+                    $user->student->update([
+                        'ra' => $specificData['ra'],
+                        'course' => $specificData['course'] ?? $user->student->course,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return $user->fresh()->load(['teacher', 'student']);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function deleteUser(User $user)
+    {
+        DB::beginTransaction();
+
+        try {
+            if ($user->teacher) {
+                $user->teacher->delete();
+            }
+
+            if ($user->student) {
+                $user->student->delete();
+            }
+
+            $user->delete();
+
+            DB::commit();
+
+            return true;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function searchUsers(string $search)
+    {
+        return User::with(['teacher', 'student'])
+            ->whereIn('role', ['teacher', 'student'])
+            ->where('id', '!=', Auth::id())
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%{$search}%")
+                      ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->orderBy('name')
+            ->get();
+    }
+
+    public function generateTemporaryPassword(): string
+    {
+        return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 12);
+    }
+
+    public function validateTeacherData(array $data, $userId = null): array
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users' . ($userId ? ",email,{$userId}" : ''),
+            'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
+            'registration_number' => 'required|string|max:10|unique:teachers,registration_number' . ($userId ? ",{$userId},user_id" : ''),
+            'crbm' => 'nullable|string|max:10',
+        ];
+
+        return validator($data, $rules)->validate();
+    }
+
+    public function validateStudentData(array $data, $userId = null): array
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users' . ($userId ? ",email,{$userId}" : ''),
+            'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
+            'ra' => 'required|string|max:9|unique:students,ra' . ($userId ? ",{$userId},user_id" : ''),
+            'course' => 'required|string|max:255',
+        ];
+
+        return validator($data, $rules)->validate();
+    }
+}

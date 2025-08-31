@@ -15,6 +15,7 @@ class StudentsSeeder extends Seeder
             'email' => 'aluno1@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'student',
+            'email_verified_at' => now()
         ]);
 
         $student2 = User::create([
@@ -22,6 +23,7 @@ class StudentsSeeder extends Seeder
             'email' => 'aluno2@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'student',
+            'email_verified_at' => now()
         ]);
 
         Student::create([

@@ -55,6 +55,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
     public function teacher()
     {
         return $this->hasOne(Teacher::class);

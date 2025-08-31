@@ -1,191 +1,88 @@
 @extends('layouts.base')
 
 @section('content')
+
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <a href="{{ route('user-management.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Voltar
-                    </a>
-                </div>
-                <h2 class="mb-0">Detalhes do Usuário</h2>
-                <div>
-                    <a href="{{ route('user-management.edit', $user->id) }}" class="btn btn-warning">
-                        <i class="fas fa-edit"></i> Editar
-                    </a>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-user"></i> Informações Pessoais
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <strong>Nome:</strong>
-                                </div>
-                                <div class="col-sm-9">
-                                    {{ $user->name }}
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <strong>Email:</strong>
-                                </div>
-                                <div class="col-sm-9">
-                                    {{ $user->email }}
-                                    @if($user->email_verified_at)
-                                        <span class="badge bg-success ms-2">Verificado</span>
-                                    @else
-                                        <span class="badge bg-warning ms-2">Não Verificado</span>
-                                    @endif
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-sm-3">
-                                    <strong>Tipo:</strong>
-                                </div>
-                                <div class="col-sm-9">
-                                    @if($user->role === 'teacher')
-                                        <span class="badge bg-primary">
-                                            <i class="fas fa-chalkboard-teacher"></i> Professor
-                                        </span>
-                                    @elseif($user->role === 'student')
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-user-graduate"></i> Estudante
-                                        </span>
-                                    @else
-                                        <span class="badge bg-secondary">
-                                            <i class="fas fa-user"></i> {{ ucfirst($user->role) }}
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
+    <div class="row mb-4 align-items-center">
+        <div class="col-auto d-flex align-items-center" style="height: 100%;">
+            <a href="{{ route('user-management.index') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+        <div class="col text-center">
+            <h2 class="mb-0">Detalhes do Usuário</h2>
+        </div>
+        <div class="col-auto"></div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card mx-auto" style="max-width: 500px;">
+                <div class="card-body">
+                    <h5 class="mb-4"><i class="fas fa-user"></i> Informações do Usuário</h5>
+                    <div class="mb-3">
+                        <strong>Nome:</strong><br>
+                        <span>{{ $user->name }}</span>
                     </div>
-
+                    <div class="mb-3">
+                        <strong>Email:</strong><br>
+                        <span>{{ $user->email }}</span>
+                        @if($user->email_verified_at)
+                            <span class="badge bg-success ms-2">Verificado</span>
+                        @else
+                            <span class="badge bg-warning ms-2">Não Verificado</span>
+                        @endif
+                    </div>
+                    <div class="mb-3">
+                        <strong>Tipo:</strong><br>
+                        @if($user->role === 'teacher')
+                            <span class="badge bg-primary">
+                                <i class="fas fa-chalkboard-teacher"></i> Professor
+                            </span>
+                        @elseif($user->role === 'student')
+                            <span class="badge bg-success">
+                                <i class="fas fa-user-graduate"></i> Estudante
+                            </span>
+                        @else
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-user"></i> {{ ucfirst($user->role) }}
+                            </span>
+                        @endif
+                    </div>
                     @if($user->teacher)
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-chalkboard-teacher"></i> Dados do Professor
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <strong>Número de Registro:</strong>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        {{ $user->teacher->registration_number }}
-                                    </div>
-                                </div>
-                                @if($user->teacher->crbm)
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-sm-3">
-                                            <strong>CRBM:</strong>
-                                        </div>
-                                        <div class="col-sm-9">
-                                            {{ $user->teacher->crbm }}
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($user->student)
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h5 class="mb-0">
-                                    <i class="fas fa-user-graduate"></i> Dados do Estudante
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <strong>RA:</strong>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        {{ $user->student->ra }}
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <strong>Curso:</strong>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        {{ $user->student->course }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-info-circle"></i> Informações do Sistema
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <strong>ID do Usuário:</strong><br>
-                                <small class="text-muted">{{ $user->id }}</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <strong>Criado em:</strong><br>
-                                <small class="text-muted">{{ $user->created_at->format('d/m/Y H:i:s') }}</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <strong>Última atualização:</strong><br>
-                                <small class="text-muted">{{ $user->updated_at->format('d/m/Y H:i:s') }}</small>
-                            </div>
-
-                            @if($user->email_verified_at)
-                                <div class="mb-3">
-                                    <strong>Email verificado em:</strong><br>
-                                    <small class="text-muted">{{ $user->email_verified_at->format('d/m/Y H:i:s') }}</small>
-                                </div>
+                        <div class="mb-3">
+                            <strong>Número de Registro:</strong><br>
+                            <span>{{ $user->teacher->registration_number }}</span>
+                            @if($user->teacher->crbm)
+                                <br><strong>CRBM:</strong><br>
+                                <span>{{ $user->teacher->crbm }}</span>
                             @endif
                         </div>
+                    @endif
+                    @if($user->student)
+                        <div class="mb-3">
+                            <strong>RA:</strong><br>
+                            <span>{{ $user->student->ra }}</span><br>
+                            <strong>Curso:</strong><br>
+                            <span>{{ $user->student->course }}</span>
+                        </div>
+                    @endif
+                    <h5 class="mb-3 mt-4"><i class="fas fa-info-circle"></i> Informações do Sistema</h5>
+                    <div class="mb-2">
+                        <strong>Criado em:</strong><br>
+                        <small class="text-muted">{{ $user->created_at->format('d/m/Y H:i:s') }}</small>
                     </div>
-
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-cog"></i> Ações
-                            </h5>
+                    <div class="mb-2">
+                        <strong>Última atualização:</strong><br>
+                        <small class="text-muted">{{ $user->updated_at->format('d/m/Y H:i:s') }}</small>
+                    </div>
+                    @if($user->email_verified_at)
+                        <div class="mb-2">
+                            <strong>Email verificado em:</strong><br>
+                            <small class="text-muted">{{ $user->email_verified_at->format('d/m/Y H:i:s') }}</small>
                         </div>
-                        <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <a href="{{ route('user-management.edit', $user->id) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit"></i> Editar Usuário
-                                </a>
-
-                                @if($user->id !== auth()->id())
-                                    <button type="button" class="btn btn-danger"
-                                            onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')">
-                                        <i class="fas fa-trash"></i> Excluir Usuário
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
+                    @endif
+                    <div class="d-flex justify-content-center align-items-center mt-4">
+                        <a href="{{ route('user-management.edit', $user->id) }}" class="btn btn-success">Editar</a>
                     </div>
                 </div>
             </div>

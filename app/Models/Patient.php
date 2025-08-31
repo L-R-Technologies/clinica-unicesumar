@@ -15,11 +15,13 @@ class Patient extends Model
         'cpf',
         'rg',
         'phone',
+        'lgpd_consent_at',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'lgpd_consent_at' => 'datetime',
     ];
 
     public function user()

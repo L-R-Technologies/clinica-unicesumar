@@ -33,17 +33,17 @@
                         </li>
                         @if(auth()->user()->hasRole('student'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('student.dashboard') }}">Painel do Aluno</a>
+                                <a class="nav-link" href="#">Painel do Aluno</a>
                             </li>
                         @endif
                         @if(auth()->user()->hasRole('teacher'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('teacher.dashboard') }}">Painel do Professor</a>
+                                <a class="nav-link" href="#">Painel do Professor</a>
                             </li>
                         @endif
                         @if(auth()->user()->hasRole('patient'))
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('patient.dashboard') }}">Painel do Paciente</a>
+                                <a class="nav-link" href="#">Painel do Paciente</a>
                             </li>
                         @endif
                         <li class="nav-item dropdown">
@@ -51,7 +51,7 @@
                                 {{ auth()->user()->name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{{ route('profile.show') }}">Perfil</a></li>
+                                <li><a class="dropdown-item" href="#">Perfil</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">

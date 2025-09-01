@@ -134,7 +134,7 @@
                                     <i class="fas fa-users fa-3x text-muted mb-3"></i>
                                     <h5 class="text-muted">Nenhum usuário encontrado</h5>
                                     <p class="text-muted">
-                                        @if($search || $roleFilter)
+                                        @if($search || $roleFilter || $statusFilter)
                                             Tente ajustar os filtros de busca.
                                         @else
                                             Comece criando o primeiro usuário.
@@ -148,3 +148,4 @@
             </div>
         </div>
     </div>
+</div>

@@ -11,6 +11,7 @@ class UserIndex extends Component
 {
     public $search = '';
     public $roleFilter = '';
+    public $statusFilter = '';
 
     public function updatedSearch()
     {
@@ -22,10 +23,16 @@ class UserIndex extends Component
         // Livewire automaticamente re-renderiza quando roleFilter muda
     }
 
+    public function updatedStatusFilter()
+    {
+        // Livewire automaticamente re-renderiza quando statusFilter muda
+    }
+
     public function clearFilters()
     {
         $this->search = '';
         $this->roleFilter = '';
+        $this->statusFilter = '';
     }
 
     public function deleteUser($userId)
@@ -62,13 +69,11 @@ class UserIndex extends Component
     {
         $userManagementService = app(UserManagementService::class);
 
-        if ($this->search) {
-            return $userManagementService->searchUsers($this->search);
-        } elseif ($this->roleFilter) {
-            return $userManagementService->getUsersByRole($this->roleFilter);
-        } else {
-            return $userManagementService->getAllUsers();
-        }
+        return $userManagementService->getFilteredUsers([
+            'search' => $this->search,
+            'role' => $this->roleFilter,
+            'status' => $this->statusFilter,
+        ]);
     }
 
     public function render()

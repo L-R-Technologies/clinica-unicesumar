@@ -29,6 +29,7 @@
 
                 {{-- Campos específicos por role --}}
                 @if(auth()->user()->hasRole('student'))
+                    @include('auth.partials.profile-name-email')
                     <div class="mb-3">
                         <label for="ra">RA</label>
                         <input id="ra" type="text" class="form-control @if ($errors->updateProfileInformation->has('ra')) is-invalid @endif" name="ra" value="{{ old('ra', optional($user->student)->ra) }}">
@@ -46,6 +47,7 @@
                 @endif
 
                 @if(auth()->user()->hasRole('teacher'))
+                    @include('auth.partials.profile-name-email')
                     <div class="mb-3">
                         <label for="registration_number">Matrícula</label>
                         <input id="registration_number" type="text" class="form-control @if ($errors->updateProfileInformation->has('registration_number')) is-invalid @endif" name="registration_number" value="{{ old('registration_number', optional($user->teacher)->registration_number) }}">
@@ -68,20 +70,7 @@
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title mb-3">Informações Gerais</h5>
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Nome</label>
-                                    <input id="name" type="text" class="form-control @if($errors->updateProfileInformation->has('name')) is-invalid @endif" name="name" value="{{ old('name', $user->name) }}" autofocus>
-                                    @if($errors->updateProfileInformation->has('name'))
-                                        <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('name') }}</div>
-                                    @endif
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">E-mail</label>
-                                    <input id="email" type="email" class="form-control @if($errors->updateProfileInformation->has('email')) is-invalid @endif" name="email" value="{{ old('email', $user->email) }}">
-                                    @if($errors->updateProfileInformation->has('email'))
-                                        <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('email') }}</div>
-                                    @endif
-                                </div>
+                                @include('auth.partials.profile-name-email')
                                 <div class="mb-3">
                                     <label for="birth_date">Data de Nascimento</label>
                                     <input id="birth_date" type="date" class="form-control @if ($errors->updateProfileInformation->has('birth_date')) is-invalid @endif" name="birth_date" value="{{ old('birth_date', optional($user->patient)->birth_date) }}">

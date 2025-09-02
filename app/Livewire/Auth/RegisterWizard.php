@@ -4,6 +4,7 @@ namespace App\Livewire\Auth;
 
 use Livewire\Component;
 use App\Actions\Fortify\CreateNewUser;
+use Illuminate\Auth\Events\Registered;
 use Exception;
 
 class RegisterWizard extends Component
@@ -135,7 +136,9 @@ class RegisterWizard extends Component
 
         $user = $createNewUser->create($userData);
 
-        session()->flash('success', 'Cadastro realizado com sucesso!');
+        event(new Registered($user));
+        session()->flash('success', 'Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta.');
+
         return redirect()->route('login');
     }
 

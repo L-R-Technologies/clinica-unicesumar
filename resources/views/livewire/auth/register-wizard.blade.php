@@ -63,7 +63,16 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="cpf">CPF</label>
-                        <input type="text" wire:model.defer="cpf" id="cpf" class="form-control @error('cpf') is-invalid @enderror">
+                        <input type="text" wire:model.defer="cpf" id="cpf" maxlength="14" class="form-control @error('cpf') is-invalid @enderror"
+                            x-data
+                            x-on:input="
+                                let v = $el.value.replace(/\D/g, '');
+                                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                                v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                                $el.value = v;
+                            "
+                        >
                         @error('cpf') <span class="invalid-feedback">{{ $message }}</span> @enderror
                     </div>
                     <div class="col-md-6 mb-3">
@@ -80,7 +89,15 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="phone">Telefone</label>
-                        <input type="text" wire:model.defer="phone" id="phone" class="form-control @error('phone') is-invalid @enderror">
+                        <input type="text" wire:model.defer="phone" id="phone" maxlength="15" class="form-control @error('phone') is-invalid @enderror"
+                            x-data
+                            x-on:input="
+                                let v = $el.value.replace(/\D/g, '');
+                                v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
+                                v = v.replace(/(\d{5})(\d)/, '$1-$2');
+                                $el.value = v;
+                            "
+                        >
                         @error('phone') <span class="invalid-feedback">{{ $message }}</span> @enderror
                     </div>
                 </div>
@@ -94,9 +111,15 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="zip_code">CEP</label>
-                        <input type="text" wire:model.lazy="zip_code" id="zip_code" class="form-control @error('zip_code') is-invalid @enderror" placeholder="00000-000" maxlength="9">
+                        <input type="text" wire:model.lazy="zip_code" id="zip_code" maxlength="9" class="form-control @error('zip_code') is-invalid @enderror" placeholder="00000-000"
+                            x-data
+                            x-on:input="
+                                let v = $el.value.replace(/\D/g, '');
+                                v = v.replace(/(\d{5})(\d{1,3})$/, '$1-$2');
+                                $el.value = v;
+                            "
+                        >
                         @error('zip_code') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                        <small class="text-muted">Digite o CEP para preencher automaticamente o endereço</small>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="street">Rua</label>
@@ -165,54 +188,3 @@
         @endif
     </form>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Formatação automática do CEP
-    const cepInput = document.getElementById('zip_code');
-    if (cepInput) {
-        cepInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 5) {
-                value = value.replace(/^(\d{5})(\d)/, '$1-$2');
-            }
-            e.target.value = value;
-        });
-    }
-
-    // Formatação automática do CPF
-    const cpfInput = document.getElementById('cpf');
-    if (cpfInput) {
-        cpfInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 3) {
-                value = value.replace(/^(\d{3})(\d)/, '$1.$2');
-            }
-            if (value.length > 7) {
-                value = value.replace(/^(\d{3}\.\d{3})(\d)/, '$1.$2');
-            }
-            if (value.length > 11) {
-                value = value.replace(/^(\d{3}\.\d{3}\.\d{3})(\d)/, '$1-$2');
-            }
-            e.target.value = value;
-        });
-    }
-
-    // Formatação automática do telefone
-    const phoneInput = document.getElementById('phone');
-    if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 2) {
-                value = value.replace(/^(\d{2})(\d)/, '($1) $2');
-            }
-            if (value.length > 10) {
-                value = value.replace(/^(\(\d{2}\) \d{5})(\d)/, '$1-$2');
-            } else if (value.length > 9) {
-                value = value.replace(/^(\(\d{2}\) \d{4})(\d)/, '$1-$2');
-            }
-            e.target.value = value;
-        });
-    }
-});
-</script>

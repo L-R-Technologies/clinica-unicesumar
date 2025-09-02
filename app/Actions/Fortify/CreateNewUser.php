@@ -51,6 +51,16 @@ class CreateNewUser implements CreatesNewUsers
             'zip_code' => ['required', 'string', 'max:20'],
         ];
 
+        if (isset($input['cpf'])) {
+            $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
+        }
+        if (isset($input['phone'])) {
+            $input['phone'] = preg_replace('/\D/', '', $input['phone']);
+        }
+        if (isset($input['zip_code'])) {
+            $input['zip_code'] = preg_replace('/\D/', '', $input['zip_code']);
+        }
+
         $validator = Validator::make($input, $rules);
         $validator->validate();
 

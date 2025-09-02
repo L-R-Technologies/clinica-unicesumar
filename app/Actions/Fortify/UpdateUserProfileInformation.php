@@ -36,6 +36,17 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $rules['ra'] = ['required', 'string', 'max:9', Rule::unique('students')->ignore(optional($user->student)->id)];
             $rules['course'] = ['required', 'string', 'max:100'];
         } elseif ($user->role === 'patient') {
+
+            if (isset($input['cpf'])) {
+                $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
+            }
+            if (isset($input['phone'])) {
+                $input['phone'] = preg_replace('/\D/', '', $input['phone']);
+            }
+            if (isset($input['zip_code'])) {
+                $input['zip_code'] = preg_replace('/\D/', '', $input['zip_code']);
+            }
+
             $rules = array_merge($rules, [
                 'birth_date' => ['required', 'date'],
                 'ethnicity' => ['required', 'string', 'max:100'],

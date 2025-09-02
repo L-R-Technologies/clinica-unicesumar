@@ -1,4 +1,19 @@
 <div class="mb-3">
+    <label for="zip_code" class="form-label">CEP</label>
+    <input id="zip_code" type="text" maxlength="9" class="form-control @if($errors->updateProfileInformation->has('zip_code')) is-invalid @endif" name="zip_code" value="{{ old('zip_code', optional(optional($user->patient)->address)->zip_code ?? '') }}"
+        x-data="{ init() { let v = $el.value.replace(/\D/g, ''); v = v.replace(/(\d{5})(\d{1,3})$/, '$1-$2'); $el.value = v; } }"
+        x-init="init()"
+        x-on:input="
+            let v = $el.value.replace(/\D/g, '');
+            v = v.replace(/(\d{5})(\d{1,3})$/, '$1-$2');
+            $el.value = v;
+        "
+    >
+    @if($errors->updateProfileInformation->has('zip_code'))
+        <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('zip_code') }}</div>
+    @endif
+</div>
+<div class="mb-3">
     <label for="street" class="form-label">Rua</label>
     <input id="street" type="text" class="form-control @if($errors->updateProfileInformation->has('street')) is-invalid @endif" name="street" value="{{ old('street', optional(optional($user->patient)->address)->street ?? '') }}">
     @if($errors->updateProfileInformation->has('street'))
@@ -45,12 +60,5 @@
     <input id="country" type="text" class="form-control @if($errors->updateProfileInformation->has('country')) is-invalid @endif" name="country" value="{{ old('country', optional(optional($user->patient)->address)->country ?? '') }}">
     @if($errors->updateProfileInformation->has('country'))
         <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('country') }}</div>
-    @endif
-</div>
-<div class="mb-3">
-    <label for="zip_code" class="form-label">CEP</label>
-    <input id="zip_code" type="text" class="form-control @if($errors->updateProfileInformation->has('zip_code')) is-invalid @endif" name="zip_code" value="{{ old('zip_code', optional(optional($user->patient)->address)->zip_code ?? '') }}">
-    @if($errors->updateProfileInformation->has('zip_code'))
-        <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('zip_code') }}</div>
     @endif
 </div>

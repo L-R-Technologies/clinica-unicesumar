@@ -30,7 +30,17 @@
 
 <div class="mb-3">
     <label for="cpf" class="form-label">CPF</label>
-    <input id="cpf" type="text" class="form-control @if($errors->updateProfileInformation->has('cpf')) is-invalid @endif" name="cpf" value="{{ old('cpf', optional($user->patient)->cpf ?? '') }}">
+        <input id="cpf" type="text" maxlength="14" class="form-control @if($errors->updateProfileInformation->has('cpf')) is-invalid @endif" name="cpf" value="{{ old('cpf', optional($user->patient)->cpf ?? '') }}"
+            x-data="{ init() { let v = $el.value.replace(/\D/g, ''); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); $el.value = v; } }"
+            x-init="init()"
+            x-on:input="
+                let v = $el.value.replace(/\D/g, '');
+                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                $el.value = v;
+            "
+        >
     @if($errors->updateProfileInformation->has('cpf'))
         <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('cpf') }}</div>
     @endif
@@ -46,7 +56,16 @@
 
 <div class="mb-3">
     <label for="phone" class="form-label">Telefone</label>
-    <input id="phone" type="text" class="form-control @if($errors->updateProfileInformation->has('phone')) is-invalid @endif" name="phone" value="{{ old('phone', optional($user->patient)->phone ?? '') }}">
+        <input id="phone" type="text" maxlength="15" class="form-control @if($errors->updateProfileInformation->has('phone')) is-invalid @endif" name="phone" value="{{ old('phone', optional($user->patient)->phone ?? '') }}"
+            x-data="{ init() { let v = $el.value.replace(/\D/g, ''); v = v.replace(/^(\d{2})(\d)/g, '($1) $2'); v = v.replace(/(\d{5})(\d)/, '$1-$2'); $el.value = v; } }"
+            x-init="init()"
+            x-on:input="
+                let v = $el.value.replace(/\D/g, '');
+                v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
+                v = v.replace(/(\d{5})(\d)/, '$1-$2');
+                $el.value = v;
+            "
+        >
     @if($errors->updateProfileInformation->has('phone'))
         <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('phone') }}</div>
     @endif

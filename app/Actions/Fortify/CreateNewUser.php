@@ -36,9 +36,9 @@ class CreateNewUser implements CreatesNewUsers
             'birth_date' => ['required', 'date'],
             'ethnicity' => ['required', 'string', 'max:100'],
             'sex' => ['required', 'in:male,female,other'],
-            'cpf' => ['required', 'string', 'max:11', Rule::unique(Patient::class)],
+            'cpf' => ['required', 'string', 'min:11', 'max:11', Rule::unique(Patient::class)],
             'rg' => ['required', 'string', 'max:20'],
-            'phone' => ['required', 'string', 'max:20'],
+            'phone' => ['required', 'string', 'min:11', 'max:11'],
             'lgpd_consent' => ['required', 'accepted'],
             // Campos do endereço
             'street' => ['required', 'string', 'max:255'],
@@ -48,7 +48,7 @@ class CreateNewUser implements CreatesNewUsers
             'city' => ['required', 'string', 'max:100'],
             'state' => ['required', 'string', 'max:100'],
             'country' => ['required', 'string', 'max:100'],
-            'zip_code' => ['required', 'string', 'max:20'],
+            'zip_code' => ['required', 'string', 'min:8', 'max:8'],
         ];
 
         if (isset($input['cpf'])) {

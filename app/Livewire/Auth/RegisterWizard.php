@@ -22,12 +22,12 @@ class RegisterWizard extends Component
         // Step 2
         'birth_date' => 'required|date|before:today',
         'sex' => 'required|in:male,female,other',
-        'cpf' => 'required|string|max:14|unique:patients,cpf',
+        'cpf' => 'required|string|min:11|max:11|unique:patients,cpf',
         'rg' => 'required|string|max:20',
         'ethnicity' => 'required|string|max:100',
-        'phone' => 'required|string|max:15',
+        'phone' => 'required|string|min:11|max:11',
         // Step 3
-        'zip_code' => 'required|string|max:9',
+        'zip_code' => 'required|string|min:8|max:8',
         'street' => 'required|string|max:255',
         'number' => 'required|string|max:10',
         'neighborhood' => 'required|string|max:100',

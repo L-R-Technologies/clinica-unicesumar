@@ -52,7 +52,7 @@
                             @include('auth.partials.patient-personal-fields')
                         </div>
                         <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
-                            @include('auth.partials.patient-address-fields')
+                            @livewire('auth.patient-address-form', ['address' => optional($user->patient)->address])
                         </div>
                         <div class="tab-pane fade" id="revoke-access" role="tabpanel" aria-labelledby="revoke-access-tab">
                             <p>Revogar acesso</p>

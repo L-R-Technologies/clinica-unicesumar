@@ -137,9 +137,10 @@ class RegisterWizard extends Component
         $user = $createNewUser->create($userData);
 
         event(new Registered($user));
-        session()->flash('success', 'Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta.');
-
-        return redirect()->route('login');
+        return redirect()->route('login')->with(
+            'success',
+            'Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta.'
+        );
     }
 
     private function cleanCpf($cpf)

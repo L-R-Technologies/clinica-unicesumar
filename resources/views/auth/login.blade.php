@@ -11,6 +11,11 @@
                 <i class="fa fa-user-circle fa-3x text-primary mb-2"></i>
                 <h2 class="fw-bold">Login</h2>
             </div>
+            @if (session('success'))
+                <div class="alert alert-success" role="alert">
+                    {{ session('success') }}
+                </div>
+            @endif
             <form action="{{ route('login.store') }}" method="POST" name="login">
                 @csrf
 

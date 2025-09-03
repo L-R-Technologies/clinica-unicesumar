@@ -51,7 +51,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'birth_date' => ['required', 'date'],
                 'ethnicity' => ['required', 'string', 'max:100'],
                 'sex' => ['required', 'in:male,female,other'],
-                'cpf' => ['required', 'string', 'min:11', 'max:11', Rule::unique('patients')->ignore(optional($user->patient)->id)],
+                'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique('patients')->ignore(optional($user->patient)->id)],
                 'rg' => ['required', 'string', 'max:20'],
                 'phone' => ['required', 'string', 'min:11', 'max:11'],
                 'street' => ['required', 'string', 'max:255'],

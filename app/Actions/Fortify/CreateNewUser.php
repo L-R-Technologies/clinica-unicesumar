@@ -36,7 +36,7 @@ class CreateNewUser implements CreatesNewUsers
             'birth_date' => ['required', 'date'],
             'ethnicity' => ['required', 'string', 'max:100'],
             'sex' => ['required', 'in:male,female,other'],
-            'cpf' => ['required', 'string', 'min:11', 'max:11', Rule::unique(Patient::class)],
+            'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique(Patient::class)],
             'rg' => ['required', 'string', 'max:20'],
             'phone' => ['required', 'string', 'min:11', 'max:11'],
             'lgpd_consent' => ['required', 'accepted'],

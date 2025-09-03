@@ -23,7 +23,7 @@ class RegisterWizard extends Component
         // Step 2
         'birth_date' => 'required|date|before:today',
         'sex' => 'required|in:male,female,other',
-        'cpf' => 'required|string|min:14|max:14|unique:patients,cpf',
+        'cpf' => 'required|cpf|string|min:14|max:14|unique:patients,cpf',
         'rg' => 'required|string|max:20',
         'ethnicity' => 'required|string|max:100',
         'phone' => 'required|string|min:15|max:15',

@@ -11,30 +11,23 @@ class PatientAddressForm extends Component
 
     public function mount($address = null)
     {
-        if ($address) {
-            $this->zip_code = $this->formatCep($address->zip_code ?? '');
-            $this->street = $address->street ?? '';
-            $this->number = $address->number ?? '';
-            $this->complement = $address->complement ?? '';
-            $this->neighborhood = $address->neighborhood ?? '';
-            $this->city = $address->city ?? '';
-            $this->state = $address->state ?? '';
-            $this->country = $address->country ?? '';
-        }
+        $this->zip_code = request()->old('zip_code', $address->zip_code ?? '');
+        $this->street = request()->old('street', $address->street ?? '');
+        $this->number = request()->old('number', $address->number ?? '');
+        $this->complement = request()->old('complement', $address->complement ?? '');
+        $this->neighborhood = request()->old('neighborhood', $address->neighborhood ?? '');
+        $this->city = request()->old('city', $address->city ?? '');
+        $this->state = request()->old('state', $address->state ?? '');
+        $this->country = request()->old('country', $address->country ?? '');
     }
 
-    private function formatCep($cep)
+    public function fetchAddress()
     {
-        $clean = preg_replace('/\D/', '', $cep);
-        if (strlen($clean) === 8) {
-            return substr($clean, 0, 5) . '-' . substr($clean, 5);
-        }
-        return $cep;
-    }
+        $cleanCep = preg_replace('/\D/', '', $this->zip_code);
 
-    public function fetchAddress($cep)
-    {
-        $cleanCep = preg_replace('/\D/', '', $cep);
+        if (strlen($cleanCep) !== 8) {
+            return;
+        }
 
         try {
             $response = file_get_contents("https://viacep.com.br/ws/{$cleanCep}/json/");

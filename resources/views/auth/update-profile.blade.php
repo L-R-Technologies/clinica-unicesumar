@@ -22,6 +22,11 @@
                     </div>
                 @endif
             @endif
+            @if ($errors->updateProfileInformation->any())
+                <div class="alert alert-danger" role="alert">
+                    Corrija os campos destacados. Lembre-se de conferir todas as abas do formulário.
+                </div>
+            @endif
             <form method="POST" action="{{ route('user-profile-information.update') }}">
                 @csrf
                 @method('PUT')

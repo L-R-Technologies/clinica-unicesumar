@@ -4,6 +4,7 @@ namespace App\Livewire\Auth;
 
 use Livewire\Component;
 use App\Actions\Fortify\CreateNewUser;
+use Illuminate\Auth\Events\Registered;
 use Exception;
 
 class RegisterWizard extends Component
@@ -22,12 +23,12 @@ class RegisterWizard extends Component
         // Step 2
         'birth_date' => 'required|date|before:today',
         'sex' => 'required|in:male,female,other',
-        'cpf' => 'required|string|max:14|unique:patients,cpf',
+        'cpf' => 'required|cpf|string|min:14|max:14|unique:patients,cpf',
         'rg' => 'required|string|max:20',
         'ethnicity' => 'required|string|max:100',
-        'phone' => 'required|string|max:15',
+        'phone' => 'required|string|min:15|max:15',
         // Step 3
-        'zip_code' => 'required|string|max:9',
+        'zip_code' => 'required|string|min:9|max:9',
         'street' => 'required|string|max:255',
         'number' => 'required|string|max:10',
         'neighborhood' => 'required|string|max:100',
@@ -135,8 +136,11 @@ class RegisterWizard extends Component
 
         $user = $createNewUser->create($userData);
 
-        session()->flash('success', 'Cadastro realizado com sucesso!');
-        return redirect()->route('login');
+        event(new Registered($user));
+        return redirect()->route('login')->with(
+            'success',
+            'Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta.'
+        );
     }
 
     private function cleanCpf($cpf)

@@ -12,13 +12,30 @@ use Exception;
 
 class UserManagementService
 {
-    public function getAllUsers()
+    public function getFilteredUsers(array $filters = [])
     {
-        return User::with(['teacher', 'student'])
+        $query = User::with(['teacher', 'student'])
             ->whereIn('role', ['teacher', 'student'])
-            ->where('id', '!=', Auth::id())
-            ->orderBy('name')
-            ->get();
+            ->where('id', '!=', Auth::id());
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if (!empty($filters['role'])) {
+            $query->where('role', $filters['role']);
+        }
+
+        if (!empty($filters['status'])) {
+            $active = $filters['status'] === 'active' ? 1 : 0;
+            $query->where('active', $active);
+        }
+
+        return $query->orderBy('name')->get();
     }
 
     public function getUsersByRole(string $role)

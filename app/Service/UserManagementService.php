@@ -2,13 +2,13 @@
 
 namespace App\Service;
 
-use App\Models\User;
-use App\Models\Teacher;
 use App\Models\Student;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Teacher;
+use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserManagementService
 {
@@ -18,19 +18,19 @@ class UserManagementService
             ->whereIn('role', ['teacher', 'student'])
             ->where('id', '!=', Auth::id());
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%");
+                    ->orWhere('email', 'LIKE', "%{$search}%");
             });
         }
 
-        if (!empty($filters['role'])) {
+        if (! empty($filters['role'])) {
             $query->where('role', $filters['role']);
         }
 
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $active = $filters['status'] === 'active' ? 1 : 0;
             $query->where('active', $active);
         }
@@ -77,7 +77,6 @@ class UserManagementService
             DB::commit();
 
             return $user->load('teacher');
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -109,7 +108,6 @@ class UserManagementService
             DB::commit();
 
             return $user->load('student');
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -126,24 +124,26 @@ class UserManagementService
                 'email' => $userData['email'],
             ];
 
-            if (!empty($userData['password'])) {
+            if (! empty($userData['password'])) {
                 $updateData['password'] = Hash::make($userData['password']);
             }
 
             $user->update($updateData);
 
-            if ($user->role === 'teacher' && !empty($specificData)) {
-                if ($user->teacher) {
-                    $user->teacher->update([
+            if ($user->role === 'teacher' && ! empty($specificData)) {
+                $teacher = $user->teacher;
+                if ($teacher) {
+                    $teacher->update([
                         'registration_number' => $specificData['registration_number'],
-                        'crbm' => $specificData['crbm'] ?? $user->teacher->crbm,
+                        'crbm' => $specificData['crbm'] ?? $teacher->getAttribute('crbm'),
                     ]);
                 }
-            } elseif ($user->role === 'student' && !empty($specificData)) {
-                if ($user->student) {
-                    $user->student->update([
+            } elseif ($user->role === 'student' && ! empty($specificData)) {
+                $student = $user->student;
+                if ($student) {
+                    $student->update([
                         'ra' => $specificData['ra'],
-                        'course' => $specificData['course'] ?? $user->student->course,
+                        'course' => $specificData['course'] ?? $student->getAttribute('course'),
                     ]);
                 }
             }
@@ -151,7 +151,6 @@ class UserManagementService
             DB::commit();
 
             return $user->fresh()->load(['teacher', 'student']);
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -176,7 +175,6 @@ class UserManagementService
             DB::commit();
 
             return true;
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -190,7 +188,7 @@ class UserManagementService
             ->where('id', '!=', Auth::id())
             ->where(function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%{$search}%")
-                      ->orWhere('email', 'LIKE', "%{$search}%");
+                    ->orWhere('email', 'LIKE', "%{$search}%");
             })
             ->orderBy('name')
             ->get();
@@ -201,12 +199,11 @@ class UserManagementService
         DB::beginTransaction();
 
         try {
-            $user->update(['active' => !$user->active]);
+            $user->update(['active' => ! $user->active]);
 
             DB::commit();
 
             return $user->fresh();
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -222,9 +219,9 @@ class UserManagementService
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users' . ($userId ? ",email,{$userId}" : ''),
+            'email' => 'required|string|email|max:255|unique:users'.($userId ? ",email,{$userId}" : ''),
             'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
-            'registration_number' => 'required|string|max:10|unique:teachers,registration_number' . ($userId ? ",{$userId},user_id" : ''),
+            'registration_number' => 'required|string|max:10|unique:teachers,registration_number'.($userId ? ",{$userId},user_id" : ''),
             'crbm' => 'nullable|string|max:10',
         ];
 
@@ -235,9 +232,9 @@ class UserManagementService
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users' . ($userId ? ",email,{$userId}" : ''),
+            'email' => 'required|string|email|max:255|unique:users'.($userId ? ",email,{$userId}" : ''),
             'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
-            'ra' => 'required|string|max:9|unique:students,ra' . ($userId ? ",{$userId},user_id" : ''),
+            'ra' => 'required|string|max:9|unique:students,ra'.($userId ? ",{$userId},user_id" : ''),
             'course' => 'required|string|max:255',
         ];
 

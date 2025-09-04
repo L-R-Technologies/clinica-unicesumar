@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Patient;
 use App\Models\Address;
+use App\Models\Patient;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class PatientsSeeder extends Seeder
 {
@@ -16,7 +16,7 @@ class PatientsSeeder extends Seeder
             'email' => 'paciente@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'patient',
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
         ]);
 
         $address = Address::where('street', 'Rua Itajubá - Seeder')->first();

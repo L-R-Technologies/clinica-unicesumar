@@ -2,12 +2,26 @@
 
 namespace App\Livewire\Auth;
 
-use Livewire\Component;
 use Exception;
+use Livewire\Component;
 
 class PatientAddressForm extends Component
 {
-    public $zip_code, $street, $number, $complement, $neighborhood, $city, $state, $country;
+    public $zip_code;
+
+    public $street;
+
+    public $number;
+
+    public $complement;
+
+    public $neighborhood;
+
+    public $city;
+
+    public $state;
+
+    public $country;
 
     public function mount($address = null)
     {
@@ -33,14 +47,13 @@ class PatientAddressForm extends Component
             $response = file_get_contents("https://viacep.com.br/ws/{$cleanCep}/json/");
             $data = json_decode($response, true);
 
-            if (!isset($data['erro'])) {
+            if (! isset($data['erro'])) {
                 $this->street = $data['logradouro'] ?? '';
                 $this->neighborhood = $data['bairro'] ?? '';
                 $this->city = $data['localidade'] ?? '';
                 $this->state = $data['uf'] ?? '';
                 $this->country = 'Brasil';
                 $this->complement = $data['complemento'] ?? '';
-
             }
         } catch (Exception $e) {
             // Em caso de erro, não faz nada - deixa o usuário preencher manualmente

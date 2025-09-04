@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Teacher;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class TeachersSeeder extends Seeder
 {
@@ -15,7 +15,7 @@ class TeachersSeeder extends Seeder
             'email' => 'professor@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'teacher',
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
         ]);
 
         Teacher::create([

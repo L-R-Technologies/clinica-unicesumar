@@ -3,7 +3,6 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
@@ -17,7 +16,6 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update(User $user, array $input): void
     {
-
         $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -36,7 +34,6 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             $rules['ra'] = ['required', 'string', 'max:9', Rule::unique('students')->ignore(optional($user->student)->id)];
             $rules['course'] = ['required', 'string', 'max:100'];
         } elseif ($user->role === 'patient') {
-
             if (isset($input['cpf'])) {
                 $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
             }
@@ -68,7 +65,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         $validator = Validator::make($input, $rules);
         $validator->validateWithBag('updateProfileInformation');
 
-        if ($input['email'] !== $user->email && $user instanceof MustVerifyEmail) {
+        if ($input['email'] !== $user->email) {
             $this->updateVerifiedUser($user, $input);
         } else {
             $user->forceFill([
@@ -88,8 +85,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'course' => $input['course'],
             ]);
         } elseif ($user->role === 'patient' && $user->patient) {
-            if ($user->patient->address) {
-                $user->patient->address->update([
+            $patient = $user->patient;
+            $address = $patient->address;
+            if ($address) {
+                $address->update([
                     'street' => $input['street'],
                     'number' => $input['number'],
                     'complement' => $input['complement'] ?? null,
@@ -100,8 +99,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                     'zip_code' => $input['zip_code'],
                 ]);
             }
-            $user->patient->update([
-                'address_id' => $user->patient->address ? $user->patient->address->id : null,
+            $patient->update([
+                'address_id' => $address ? $address->id : null,
                 'birth_date' => $input['birth_date'],
                 'ethnicity' => $input['ethnicity'],
                 'sex' => $input['sex'],

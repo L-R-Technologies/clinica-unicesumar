@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Address extends Model
 {
@@ -22,7 +23,7 @@ class Address extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function patients()
+    public function patients(): HasMany
     {
         return $this->hasMany(Patient::class);
     }

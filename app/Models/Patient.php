@@ -3,7 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read Address|null $address
+ * @property int $user_id
+ * @property int|null $address_id
+ * @property string $birth_date
+ * @property string $ethnicity
+ * @property string $sex
+ * @property string $cpf
+ * @property string $rg
+ * @property string $phone
+ */
 class Patient extends Model
 {
     protected $fillable = [
@@ -24,12 +36,12 @@ class Patient extends Model
         'lgpd_consent_at' => 'datetime',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function address()
+    public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
     }

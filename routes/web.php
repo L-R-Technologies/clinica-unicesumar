@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
-
 
 Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');

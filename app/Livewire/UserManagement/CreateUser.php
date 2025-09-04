@@ -2,23 +2,29 @@
 
 namespace App\Livewire\UserManagement;
 
-use Livewire\Component;
 use App\Service\UserManagementService;
-use Illuminate\Validation\ValidationException;
 use Exception;
+use Illuminate\Validation\ValidationException;
+use Livewire\Component;
 
 class CreateUser extends Component
 {
     public $userType = 'teacher';
+
     public $name = '';
+
     public $email = '';
+
     public $password = '';
+
     public $showPassword = false;
 
     public $registrationNumber = '';
+
     public $crbm = '';
 
     public $ra = '';
+
     public $course = '';
 
     public function generatePassword()
@@ -29,7 +35,7 @@ class CreateUser extends Component
 
     public function togglePassword()
     {
-        $this->showPassword = !$this->showPassword;
+        $this->showPassword = ! $this->showPassword;
     }
 
     public function updatedUserType()
@@ -65,8 +71,8 @@ class CreateUser extends Component
             }
 
             session()->flash('success', 'Usuário criado com sucesso!');
-            return redirect()->route('user-management.index');
 
+            return redirect()->route('user-management.index');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $messages) {
                 foreach ($messages as $message) {
@@ -74,7 +80,7 @@ class CreateUser extends Component
                 }
             }
         } catch (Exception $e) {
-            $this->addError('form', 'Erro ao criar usuário: ' . $e->getMessage());
+            $this->addError('form', 'Erro ao criar usuário: '.$e->getMessage());
         }
     }
 

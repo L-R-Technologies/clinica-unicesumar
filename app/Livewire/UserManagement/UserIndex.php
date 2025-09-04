@@ -2,15 +2,17 @@
 
 namespace App\Livewire\UserManagement;
 
-use Livewire\Component;
-use App\Service\UserManagementService;
 use App\Models\User;
+use App\Service\UserManagementService;
 use Exception;
+use Livewire\Component;
 
 class UserIndex extends Component
 {
     public $search = '';
+
     public $roleFilter = '';
+
     public $statusFilter = '';
 
     public function updatedSearch()
@@ -43,9 +45,8 @@ class UserIndex extends Component
             $userManagementService = app(UserManagementService::class);
             $userManagementService->deleteUser($user);
             session()->flash('success', 'Usuário removido com sucesso!');
-
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao remover usuário: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao remover usuário: '.$e->getMessage());
         }
     }
 
@@ -59,9 +60,8 @@ class UserIndex extends Component
 
             $message = $updatedUser->active ? 'Usuário ativado com sucesso!' : 'Usuário desativado com sucesso!';
             session()->flash('success', $message);
-
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao alterar status do usuário: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao alterar status do usuário: '.$e->getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ class UserIndex extends Component
     public function render()
     {
         return view('livewire.user-management.user-index', [
-            'users' => $this->getUsers()
+            'users' => $this->getUsers(),
         ]);
     }
 }

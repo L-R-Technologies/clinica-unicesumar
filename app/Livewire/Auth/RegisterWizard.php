@@ -2,17 +2,51 @@
 
 namespace App\Livewire\Auth;
 
-use Livewire\Component;
 use App\Actions\Fortify\CreateNewUser;
-use Illuminate\Auth\Events\Registered;
 use Exception;
+use Illuminate\Auth\Events\Registered;
+use Livewire\Component;
 
 class RegisterWizard extends Component
 {
     public $step = 1;
-    public $name, $email, $password, $password_confirmation;
-    public $birth_date, $sex, $cpf, $rg, $ethnicity, $phone;
-    public $zip_code, $street, $number, $neighborhood, $complement, $city, $state, $country;
+
+    public $name;
+
+    public $email;
+
+    public $password;
+
+    public $password_confirmation;
+
+    public $birth_date;
+
+    public $sex;
+
+    public $cpf;
+
+    public $rg;
+
+    public $ethnicity;
+
+    public $phone;
+
+    public $zip_code;
+
+    public $street;
+
+    public $number;
+
+    public $neighborhood;
+
+    public $complement;
+
+    public $city;
+
+    public $state;
+
+    public $country;
+
     public $lgpd_consent = false;
 
     protected $rules = [
@@ -70,14 +104,14 @@ class RegisterWizard extends Component
             $response = file_get_contents("https://viacep.com.br/ws/{$cep}/json/");
             $data = json_decode($response, true);
 
-            if (!isset($data['erro'])) {
+            if (! isset($data['erro'])) {
                 $this->street = $data['logradouro'] ?? '';
                 $this->neighborhood = $data['bairro'] ?? '';
                 $this->city = $data['localidade'] ?? '';
                 $this->state = $data['uf'] ?? '';
                 $this->country = 'Brasil';
 
-                if (!empty($data['complemento'])) {
+                if (! empty($data['complemento'])) {
                     $this->complement = $data['complemento'];
                 }
             }
@@ -137,6 +171,7 @@ class RegisterWizard extends Component
         $user = $createNewUser->create($userData);
 
         event(new Registered($user));
+
         return redirect()->route('login')->with(
             'success',
             'Cadastro realizado com sucesso! Verifique seu email para confirmar sua conta.'

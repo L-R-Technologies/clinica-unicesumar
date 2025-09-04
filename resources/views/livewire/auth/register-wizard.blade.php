@@ -164,7 +164,7 @@
                 </div>
                 <div class="d-flex justify-content-between mt-3">
                     <button type="button" class="btn btn-outline-primary" wire:click="prevStep">Voltar</button>
-                    <button type="submit" class="btn btn-primary" id="registerButton">Cadastrar</button>
+                    <button type="submit" class="btn btn-success" id="registerButton">Salvar</button>
                 </div>
             </div>
         @endif

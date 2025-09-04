@@ -144,7 +144,7 @@
 
                         <div class="d-flex justify-content-center mt-4">
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-save"></i> Salvar Alterações
+                                Salvar
                             </button>
                         </div>
                     </form>

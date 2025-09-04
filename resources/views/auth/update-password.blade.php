@@ -44,7 +44,7 @@
                     <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" autocomplete="new-password">
                 </div>
                 <div class="d-grid gap-2 mb-2">
-                    <button type="submit" class="btn btn-primary btn-lg">Alterar Senha</button>
+                    <button type="submit" class="btn btn-success btn-lg">Salvar</button>
                 </div>
             </form>
         </div>

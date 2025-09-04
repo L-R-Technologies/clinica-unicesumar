@@ -149,7 +149,7 @@
                                     <div wire:loading wire:target="save" class="spinner-border spinner-border-sm me-2" role="status">
                                         <span class="visually-hidden">Carregando...</span>
                                     </div>
-                                    <i class="fas fa-save"></i> Criar Usuário
+                                    Salvar
                                 </button>
                             </div>
                         </form>

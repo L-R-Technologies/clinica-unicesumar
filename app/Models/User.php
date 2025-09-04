@@ -4,12 +4,18 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property-read Student|null $student
+ * @property-read Teacher|null $teacher
+ * @property-read Patient|null $patient
+ * @property string $role
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -60,17 +66,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === $role;
     }
 
-    public function teacher()
+    public function teacher(): HasOne
     {
         return $this->hasOne(Teacher::class);
     }
 
-    public function student()
+    public function student(): HasOne
     {
         return $this->hasOne(Student::class);
     }
 
-    public function patient()
+    public function patient(): HasOne
     {
         return $this->hasOne(Patient::class);
     }

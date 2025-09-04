@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Service\UserManagementService;
 use App\Models\User;
-use Illuminate\Validation\ValidationException;
+use App\Service\UserManagementService;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class UserManagementController extends Controller
 {
@@ -49,7 +49,6 @@ class UserManagementController extends Controller
                 ];
 
                 $this->userManagementService->createTeacher($userData, $teacherData);
-
             } elseif ($userType === 'student') {
                 $validatedData = $this->userManagementService->validateStudentData($request->all());
 
@@ -65,7 +64,6 @@ class UserManagementController extends Controller
                 ];
 
                 $this->userManagementService->createStudent($userData, $studentData);
-
             } else {
                 return back()->withErrors(['user_type' => 'Tipo de usuário inválido.']);
             }
@@ -73,14 +71,13 @@ class UserManagementController extends Controller
             return redirect()
                 ->route('user-management.index')
                 ->with('success', 'Usuário criado com sucesso!');
-
         } catch (ValidationException $e) {
             return back()
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao criar usuário: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Erro ao criar usuário: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -88,12 +85,14 @@ class UserManagementController extends Controller
     public function show($id)
     {
         $user = User::with(['teacher', 'student'])->findOrFail($id);
+
         return view('user-management.show', compact('user'));
     }
 
     public function edit($id)
     {
         $user = User::with(['teacher', 'student'])->findOrFail($id);
+
         return view('user-management.edit', compact('user'));
     }
 
@@ -120,7 +119,6 @@ class UserManagementController extends Controller
                     'registration_number' => $validatedData['registration_number'],
                     'crbm' => $validatedData['crbm'] ?? null,
                 ];
-
             } elseif ($user->role === 'student') {
                 $validatedData = $this->userManagementService->validateStudentData($request->all(), $user->id);
 
@@ -146,14 +144,13 @@ class UserManagementController extends Controller
             return redirect()
                 ->route('user-management.index')
                 ->with('success', 'Usuário atualizado com sucesso!');
-
         } catch (ValidationException $e) {
             return back()
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar usuário: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Erro ao atualizar usuário: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -168,16 +165,16 @@ class UserManagementController extends Controller
             return redirect()
                 ->route('user-management.index')
                 ->with('success', 'Usuário removido com sucesso!');
-
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao remover usuário: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Erro ao remover usuário: '.$e->getMessage()]);
         }
     }
 
     public function generatePassword()
     {
         $password = $this->userManagementService->generateTemporaryPassword();
+
         return response()->json(['password' => $password]);
     }
 
@@ -193,13 +190,12 @@ class UserManagementController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $message,
-                'active' => $updatedUser->active
+                'active' => $updatedUser->active,
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao alterar status do usuário: ' . $e->getMessage()
+                'message' => 'Erro ao alterar status do usuário: '.$e->getMessage(),
             ], 500);
         }
     }

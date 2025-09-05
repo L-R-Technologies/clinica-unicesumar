@@ -11,7 +11,6 @@ return new class extends Migration
     {
         Schema::create('patient_histories', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->datetime('date');

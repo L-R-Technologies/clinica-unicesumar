@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Samples;
 
 class SamplesSeeder extends Seeder
 {
@@ -13,31 +12,27 @@ class SamplesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('samples')->insert([
-            [
-                'patient_id' => 1,
-                'user_id' => 2, // profissional que coletou
-                'code' => 'SMP000001',
-                'type' => 'Sangue',
-                'date' => now()->subDays(3),
-                'location' => 'Laboratório Central',
-                'status' => 'under_review',
-                'notified' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'patient_id' => 2,
-                'user_id' => 3,
-                'code' => 'SMP000002',
-                'type' => 'Urina',
-                'date' => now()->subDays(1),
-                'location' => 'Laboratório Norte',
-                'status' => 'stored',
-                'notified' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+        
+        Samples::create([
+            'patient_id' => 1,
+            'user_id' => 2, 
+            'code' => 'SMP000001',
+            'type' => 'Sangue',
+            'date' => now()->subDays(3),
+            'location' => 'Laboratório Central',
+            'status' => 'under_review',
+            'notified' => false,
+        ]);
+
+        Samples::create([
+            'patient_id' => 2,
+            'user_id' => 3,
+            'code' => 'SMP000002',
+            'type' => 'Urina',
+            'date' => now()->subDays(1),
+            'location' => 'Laboratório Norte',
+            'status' => 'stored',
+            'notified' => true,
         ]);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Sample;
 use Illuminate\Database\Seeder;
-use App\Models\Samples;
 
 class SamplesSeeder extends Seeder
 {
@@ -12,10 +12,9 @@ class SamplesSeeder extends Seeder
      */
     public function run(): void
     {
-        
-        Samples::create([
+        Sample::create([
             'patient_id' => 1,
-            'user_id' => 2, 
+            'user_id' => 2,
             'code' => 'SMP000001',
             'type' => 'Sangue',
             'date' => now()->subDays(3),
@@ -24,7 +23,7 @@ class SamplesSeeder extends Seeder
             'notified' => false,
         ]);
 
-        Samples::create([
+        Sample::create([
             'patient_id' => 2,
             'user_id' => 3,
             'code' => 'SMP000002',

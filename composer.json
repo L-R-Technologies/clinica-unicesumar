@@ -70,7 +70,8 @@
         "check": [
             "@lint:test",
             "@analyse"
-        ]
+        ],
+        "setup-hooks": "bash scripts/setup-hooks.sh"
     },
     "extra": {
         "laravel": {

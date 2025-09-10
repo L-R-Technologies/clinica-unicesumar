@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Samples;
+use App\Models\Sample;
 use Illuminate\Database\Seeder;
 
 class SamplesSeeder extends Seeder
@@ -12,7 +12,7 @@ class SamplesSeeder extends Seeder
      */
     public function run(): void
     {
-        Samples::create([
+        Sample::create([
             'patient_id' => 1,
             'user_id' => 2,
             'code' => 'SMP000001',
@@ -23,7 +23,7 @@ class SamplesSeeder extends Seeder
             'notified' => false,
         ]);
 
-        Samples::create([
+        Sample::create([
             'patient_id' => 2,
             'user_id' => 3,
             'code' => 'SMP000002',

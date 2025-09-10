@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Exam;
+use Illuminate\Database\Seeder;
 
 class ExamsSeeder extends Seeder
 {
@@ -12,9 +12,8 @@ class ExamsSeeder extends Seeder
      */
     public function run(): void
     {
-    
         Exam::create([
-            'user_id' => 2, 
+            'user_id' => 2,
             'patient_history_id' => 1,
             'patient_id' => 1,
             'sample_id' => 1,

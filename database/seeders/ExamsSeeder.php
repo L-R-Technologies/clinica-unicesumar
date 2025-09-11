@@ -32,7 +32,7 @@ class ExamsSeeder extends Seeder
         Exam::create([
             'user_id' => 3,
             'patient_history_id' => 2,
-            'patient_id' => 2,
+            'patient_id' => 1,
             'sample_id' => 2,
             'type' => 'Urinálise',
             'date' => now()->subDay(),

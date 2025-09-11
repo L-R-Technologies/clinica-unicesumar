@@ -24,7 +24,7 @@ class SamplesSeeder extends Seeder
         ]);
 
         Sample::create([
-            'patient_id' => 2,
+            'patient_id' => 1,
             'user_id' => 3,
             'code' => 'SMP000002',
             'type' => 'Urina',

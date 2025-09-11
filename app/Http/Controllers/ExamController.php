@@ -60,10 +60,11 @@ class ExamController extends Controller
     public function edit($id)
     {
         $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample'])->findOrFail($id);
+        $patientId = $exam->patient_id;
 
         $patients = $this->examService->getPatients();
-        $patientHistories = $this->examService->getPatientHistories($exam->patient_id);
-        $samples = $this->examService->getSamples();
+        $patientHistories = $this->examService->getPatientHistories($patientId);
+        $samples = $this->examService->getSamples($patientId);
         $examTypes = $this->examService->getExamTypes();
         $statusOptions = $this->examService->getStatusOptions();
 
@@ -105,13 +106,5 @@ class ExamController extends Controller
             return back()
                 ->withErrors(['error' => 'Erro ao remover exame: '.$e->getMessage()]);
         }
-    }
-
-    public function getPatientHistories(Request $request)
-    {
-        $patientId = $request->get('patient_id');
-        $histories = $this->examService->getPatientHistories($patientId);
-
-        return response()->json($histories);
     }
 }

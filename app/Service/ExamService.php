@@ -151,20 +151,20 @@ class ExamService
         return Patient::with('user')->get();
     }
 
-    public function getPatientHistories($patientId = null)
+    public function getPatientHistories($patientId)
     {
-        $query = PatientHistory::select('id', 'patient_id', 'date');
-
-        if ($patientId) {
-            $query->where('patient_id', $patientId);
-        }
+        $query = PatientHistory::select('id', 'patient_id', 'date')
+            ->where('patient_id', $patientId);
 
         return $query->orderBy('date')->get();
     }
 
-    public function getSamples()
+    public function getSamples($patientId)
     {
-        return Sample::select('id', 'type')->orderBy('type')->get();
+        $query = Sample::select('id', 'type', 'code')
+            ->where('patient_id', $patientId);
+
+        return $query->orderBy('type')->get();
     }
 
     public function getStatusOptions()

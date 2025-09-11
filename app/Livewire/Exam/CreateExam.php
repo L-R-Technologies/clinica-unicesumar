@@ -34,7 +34,6 @@ class CreateExam extends Component
     {
         $examService = app(ExamService::class);
         $this->patients = $examService->getPatients();
-        $this->samples = $examService->getSamples();
         $this->examTypes = $examService->getExamTypes();
         $this->date = now()->format('Y-m-d\TH:i');
     }
@@ -44,10 +43,13 @@ class CreateExam extends Component
         if ($this->patient_id) {
             $examService = app(ExamService::class);
             $this->patientHistories = $examService->getPatientHistories($this->patient_id);
+            $this->samples = $examService->getSamples($this->patient_id);
         } else {
             $this->patientHistories = [];
+            $this->samples = [];
         }
         $this->patient_history_id = '';
+        $this->sample_id = '';
     }
 
     public function save()

@@ -53,16 +53,16 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label for="patient_history_id" class="form-label">Histórico do Paciente *</label>
+                                    <label for="patient_history_id" class="form-label">Anamnese do Paciente *</label>
                                     <select class="form-select @error('patient_history_id') is-invalid @enderror"
                                         id="patient_history_id" wire:model="patient_history_id" required
                                         {{ empty($patientHistories) ? 'disabled' : '' }}>
                                         <option value="">
-                                            {{ empty($patientHistories) ? 'Selecione um paciente primeiro' : 'Selecione um histórico' }}
+                                            {{ empty($patientHistories) ? 'Selecione um paciente primeiro' : 'Selecione uma anamnese' }}
                                         </option>
                                         @foreach($patientHistories as $history)
                                             <option value="{{ $history->id }}">
-                                                {{ $history->date->format('d/m/Y') }} - {{ Str::limit($history->description, 50) }}
+                                                {{ $history->date->format('d/m/Y') }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -89,18 +89,18 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="sample_id" class="form-label">Amostra *</label>
-                                    <select class="form-select @error('sample_id') is-invalid @enderror"
-                                        id="sample_id" wire:model="sample_id" required>
-                                        <option value="">Selecione uma amostra</option>
-                                        @foreach($samples as $sample)
-                                            <option value="{{ $sample->id }}">
-                                                {{ $sample->type }}
-                                                @if($sample->description)
-                                                    - {{ $sample->description }}
-                                                @endif
+                                        <select class="form-select @error('sample_id') is-invalid @enderror"
+                                            id="sample_id" wire:model="sample_id" required
+                                            {{ empty($samples) ? 'disabled' : '' }}>
+                                            <option value="">
+                                                {{ empty($samples) ? 'Selecione um paciente primeiro' : 'Selecione uma amostra' }}
                                             </option>
-                                        @endforeach
-                                    </select>
+                                            @foreach($samples as $sample)
+                                                <option value="{{ $sample->id }}">
+                                                    {{ $sample->code }} - {{ $sample->type }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     @error('sample_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -124,12 +124,6 @@
                                 @error('observation')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                                <div class="form-text">Campo opcional para observações gerais sobre o exame</div>
-                            </div>
-
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i>
-                                <strong>Informação:</strong> O campo de resultados ficará disponível apenas na edição do exame, após sua criação.
                             </div>
 
                             <div class="d-flex justify-content-center mt-4">

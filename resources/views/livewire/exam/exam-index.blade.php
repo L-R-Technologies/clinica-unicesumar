@@ -84,11 +84,6 @@
                                         <div class="list-group-item py-3 px-2 border-0 shadow-sm mb-2 rounded bg-white">
                                             <div class="d-flex flex-wrap flex-md-nowrap align-items-center gap-2 w-100">
                                                 <div class="flex-grow-1 d-flex flex-wrap align-items-center gap-3 min-width-0">
-                                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
-                                                        <span class="fw-semibold small text-secondary">Tipo</span>
-                                                        <span class="mb-0 text-truncate" style="max-width: 180px;"
-                                                              title="{{ $exam->type }}">{{ $exam->type }}</span>
-                                                    </div>
                                                     <div class="d-flex flex-column align-items-start" style="min-width: 140px;">
                                                         <span class="fw-semibold small text-secondary">Paciente</span>
                                                         <span class="text-muted small text-truncate d-block"
@@ -101,9 +96,16 @@
                                                               style="max-width: 180px;"
                                                               title="{{ $exam->user->name }}">{{ $exam->user->name }}</span>
                                                     </div>
+                                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
+                                                        <span class="fw-semibold small text-secondary">Tipo</span>
+                                                        <span class="mb-0 text-truncate" style="max-width: 180px;"
+                                                              title="{{ $exam->type }}">{{ $exam->type }}</span>
+                                                    </div>
                                                     <div class="d-flex flex-column align-items-start" style="min-width: 100px;">
-                                                        <span class="fw-semibold small text-secondary">Data</span>
-                                                        <span class="text-muted small">{{ $exam->date->format('d/m/Y H:i') }}</span>
+                                                        <span class="fw-semibold small text-secondary">Amostra</span>
+                                                        <span class="text-muted small text-truncate d-block"
+                                                              style="max-width: 120px;"
+                                                              title="{{ $exam->sample->code }}">{{ $exam->sample->code }}</span>
                                                     </div>
                                                     <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
                                                         <span class="fw-semibold small text-secondary">Status</span>
@@ -125,10 +127,8 @@
                                                         @endswitch
                                                     </div>
                                                     <div class="d-flex flex-column align-items-start" style="min-width: 100px;">
-                                                        <span class="fw-semibold small text-secondary">Amostra</span>
-                                                        <span class="text-muted small text-truncate d-block"
-                                                              style="max-width: 120px;"
-                                                              title="{{ $exam->sample->type }}">{{ $exam->sample->type }}</span>
+                                                        <span class="fw-semibold small text-secondary">Data</span>
+                                                        <span class="text-muted small">{{ $exam->date->format('d/m/Y H:i') }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex align-items-center ms-auto mt-2 mt-md-0">

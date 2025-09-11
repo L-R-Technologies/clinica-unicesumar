@@ -76,10 +76,10 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <strong>Nome:</strong><br>
-                                <span>{{ $exam->patient->name }}</span>
+                                <span>{{ $exam->patient->user->name }}</span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <strong>Histórico:</strong><br>
+                                <strong>Anamnese:</strong><br>
                                 <span>{{ $exam->patientHistory->date->format('d/m/Y') }}</span><br>
                                 <small class="text-muted">{{ Str::limit($exam->patientHistory->description, 100) }}</small>
                             </div>
@@ -90,15 +90,13 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <strong>Código:</strong><br>
+                                <span>{{ $exam->sample->code }}</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
                                 <strong>Tipo:</strong><br>
                                 <span>{{ $exam->sample->type }}</span>
                             </div>
-                            @if($exam->sample->description)
-                            <div class="col-md-6 mb-3">
-                                <strong>Descrição:</strong><br>
-                                <span>{{ $exam->sample->description }}</span>
-                            </div>
-                            @endif
                         </div>
 
                         <!-- Observações -->

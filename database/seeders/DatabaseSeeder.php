@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             TeachersSeeder::class,
             AddressesSeeder::class,
             PatientsSeeder::class,
+            SamplesSeeder::class,
         ]);
     }
 }

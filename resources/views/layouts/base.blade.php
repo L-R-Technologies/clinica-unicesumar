@@ -121,7 +121,7 @@
                             @if (auth()->user()->hasRole('teacher'))
                                 <li class="nav-item d-flex align-items-center">
                                     <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="#">
+                                        href="{{ route('anamneses.index') }}">
                                         <i class="fa-solid fa-desktop fa-lg"></i>
                                         <span>Máquinas</span>
                                     </a>

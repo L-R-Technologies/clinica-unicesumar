@@ -32,7 +32,6 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
-        Route::get('/exam/patient-histories', [ExamController::class, 'getPatientHistories'])->name('exam.patient-histories');
     });
 
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');

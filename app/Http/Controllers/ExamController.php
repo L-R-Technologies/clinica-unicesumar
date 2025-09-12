@@ -60,15 +60,8 @@ class ExamController extends Controller
     public function edit($id)
     {
         $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample'])->findOrFail($id);
-        $patientId = $exam->patient_id;
 
-        $patients = $this->examService->getPatients();
-        $patientHistories = $this->examService->getPatientHistories($patientId);
-        $samples = $this->examService->getSamples($patientId);
-        $examTypes = $this->examService->getExamTypes();
-        $statusOptions = $this->examService->getStatusOptions();
-
-        return view('exam.edit', compact('exam', 'patients', 'patientHistories', 'samples', 'examTypes', 'statusOptions'));
+        return view('exam.edit', compact('exam'));
     }
 
     public function update(Request $request, $id)

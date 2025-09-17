@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ExamType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -21,6 +22,7 @@ class Exam extends Model
     ];
 
     protected $casts = [
+        'type' => ExamType::class,
         'date' => 'datetime',
         'results' => 'array',
         'created_at' => 'datetime',

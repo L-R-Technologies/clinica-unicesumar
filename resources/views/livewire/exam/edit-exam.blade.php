@@ -76,7 +76,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="type" class="form-label">Tipo de Exame</label>
                                     <input type="text" class="form-control" id="type"
-                                           value="{{ $type }}" disabled readonly>
+                                           value="{{ $exam->type->getLabel() }}" disabled readonly>
                                     <div class="form-text">O tipo do exame não pode ser alterado após a criação.</div>
                                 </div>
 
@@ -152,15 +152,118 @@
                             </div>
 
                             <h5 class="mb-3 mt-4">Resultados do Exame</h5>
-                            <div class="mb-3">
-                                <label for="results" class="form-label">Resultados (JSON)</label>
-                                <textarea class="form-control @error('results') is-invalid @enderror"
-                                    id="results" wire:model="results" rows="6"
-                                    placeholder='Exemplo: {"hemoglobina": "12.5 g/dL", "leucocitos": "7000/µL"}'></textarea>
-                                @error('results')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+
+                            @php
+                                $resultsLabels = $this->getResultsLabels();
+                            @endphp
+                            @if(!empty($resultsLabels))
+                                <!-- Campos específicos para o tipo de exame -->
+                                <div class="row">
+                                    @foreach($resultsLabels as $key => $label)
+                                        <div class="col-md-6 mb-3">
+                                            <label for="resultsData.{{ $key }}" class="form-label">{{ $label }}</label>
+
+                                            @if(in_array($key, ['hcg', 'vdrl', 'rapid_test_syphilis', 'nitrite', 'protein', 'ketones', 'glucose', 'bilirubin', 'hemoglobin', 'leukocytes', 'mucus', 'blood', 'mucus_filaments', 'casts', 'crystals', 'helminth_eggs', 'protozoa']))
+                                                <!-- Campos de seleção para resultados qualitativos -->
+                                                <select class="form-select @error('resultsData.' . $key) is-invalid @enderror"
+                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}">
+                                                    <option value="">Selecionar</option>
+                                                    @if($key === 'hcg')
+                                                        <option value="Positivo">Positivo</option>
+                                                        <option value="Negativo">Negativo</option>
+                                                    @elseif(in_array($key, ['vdrl', 'rapid_test_syphilis']))
+                                                        <option value="Reagente">Reagente</option>
+                                                        <option value="Não reagente">Não reagente</option>
+                                                    @elseif(in_array($key, ['nitrite', 'protein', 'ketones', 'glucose', 'bilirubin', 'hemoglobin', 'leukocytes']))
+                                                        <option value="Positivo">Positivo</option>
+                                                        <option value="Negativo">Negativo</option>
+                                                        <option value="Traços">Traços</option>
+                                                    @elseif(in_array($key, ['mucus', 'blood']))
+                                                        <option value="Presente">Presente</option>
+                                                        <option value="Ausente">Ausente</option>
+                                                    @elseif(in_array($key, ['mucus_filaments', 'casts', 'crystals', 'helminth_eggs', 'protozoa']))
+                                                        <option value="Presentes">Presentes</option>
+                                                        <option value="Ausentes">Ausentes</option>
+                                                        <option value="Não encontrados">Não encontrados</option>
+                                                    @endif
+                                                </select>
+                                            @elseif($key === 'abo_group')
+                                                <!-- Campo específico para grupo ABO -->
+                                                <select class="form-select @error('resultsData.' . $key) is-invalid @enderror"
+                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}">
+                                                    <option value="">Selecionar</option>
+                                                    <option value="A">A</option>
+                                                    <option value="B">B</option>
+                                                    <option value="AB">AB</option>
+                                                    <option value="O">O</option>
+                                                </select>
+                                            @elseif($key === 'rh_factor')
+                                                <!-- Campo específico para fator Rh -->
+                                                <select class="form-select @error('resultsData.' . $key) is-invalid @enderror"
+                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}">
+                                                    <option value="">Selecionar</option>
+                                                    <option value="Positivo">Positivo</option>
+                                                    <option value="Negativo">Negativo</option>
+                                                </select>
+                                            @elseif(in_array($key, ['color', 'aspect', 'consistency', 'urobilinogen']))
+                                                <!-- Campos de texto com sugestões -->
+                                                <input type="text" class="form-control @error('resultsData.' . $key) is-invalid @enderror"
+                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}"
+                                                    placeholder="@if($key === 'color') Ex: Amarelo claro, Amarelo escuro @elseif($key === 'aspect') Ex: Límpido, Turvo @elseif($key === 'consistency') Ex: Pastosa, Líquida, Endurecida @elseif($key === 'urobilinogen') Ex: Normal, Aumentado @endif">
+                                            @elseif(in_array($key, ['observations', 'gram_stain_result', 'growth_result', 'final_result']))
+                                                <!-- Campos de texto longo -->
+                                                <textarea class="form-control @error('resultsData.' . $key) is-invalid @enderror"
+                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}" rows="3"
+                                                    placeholder="{{ $label }}"></textarea>
+                                            @else
+                                                <!-- Campos de texto padrão -->
+                                                <input type="text" class="form-control @error('resultsData.' . $key) is-invalid @enderror"
+                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}"
+                                                    placeholder="{{ $label }}">
+                                            @endif
+
+                                            @error('resultsData.' . $key)
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        @if($loop->iteration % 2 === 0 || $loop->last)
+                                </div>
+                                @if(!$loop->last && $loop->iteration % 2 === 0)
+                                    <div class="row">
+                                @endif
+                            @endif
+                        @endforeach
+                    @if(count($resultsLabels) % 2 !== 0)
+                        </div>
+                    @endif
+                            @else
+                                <div class="mb-3">
+                                    <label for="results" class="form-label">Resultados (JSON)</label>
+                                    <textarea class="form-control @error('results') is-invalid @enderror"
+                                        id="results" wire:model="results" rows="6"
+                                        placeholder='Exemplo: {"parametro": "valor", "parametro2": "valor2"}'></textarea>
+                                    @error('results')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="form-text">
+                                        Digite os resultados em formato JSON. Exemplo: {"parametro1": "valor1", "parametro2": "valor2"}
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Justificativa de Rejeição (mostrar apenas se status for rejeitado) -->
+                            @if($exam->status === 'rejected')
+                                <div class="mb-3 mt-4">
+                                    <label for="justification_rejection" class="form-label">Justificativa da Rejeição</label>
+                                    <textarea class="form-control @error('justification_rejection') is-invalid @enderror"
+                                        id="justification_rejection" wire:model="justification_rejection" rows="3"
+                                        placeholder="Descreva os motivos da rejeição..."></textarea>
+                                    @error('justification_rejection')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endif
 
                             <!-- Informações de Status -->
                             <div class="row mb-3 mt-4">

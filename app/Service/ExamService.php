@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Enums\ExamType;
 use App\Models\Exam;
 use App\Models\Patient;
 use App\Models\PatientHistory;
@@ -29,7 +30,6 @@ class ExamService
 
         $validator = Validator::make($data, $rules);
 
-        // Validação customizada para verificar se o histórico pertence ao paciente
         $validator->after(function ($validator) use ($data) {
             if (! empty($data['patient_id']) && ! empty($data['patient_history_id'])) {
                 $history = PatientHistory::find($data['patient_history_id']);
@@ -45,7 +45,6 @@ class ExamService
 
         $validated = $validator->validated();
 
-        // Validar e converter JSON dos resultados se fornecido
         if (! empty($validated['results'])) {
             $decoded = json_decode($validated['results'], true);
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -66,7 +65,6 @@ class ExamService
             $examData['user_id'] = $userId;
             $examData['status'] = 'pending';
 
-            // Remove results field for creation
             unset($examData['results']);
 
             $exam = Exam::create($examData);
@@ -179,21 +177,6 @@ class ExamService
 
     public function getExamTypes()
     {
-        return [
-            'Hemograma Completo',
-            'Glicemia de Jejum',
-            'Colesterol Total',
-            'Triglicerídeos',
-            'Creatinina',
-            'Ureia',
-            'TGO/AST',
-            'TGP/ALT',
-            'Parasitológico de Fezes',
-            'Urocultura',
-            'Cultura de Escarro',
-            'TSH',
-            'T4 Livre',
-            'Outros',
-        ];
+        return ExamType::getOptions();
     }
 }

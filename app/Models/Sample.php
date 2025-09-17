@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SampleType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,6 +21,7 @@ class Sample extends Model
     ];
 
     protected $casts = [
+        'type' => SampleType::class,
         'date' => 'datetime',
         'notified' => 'boolean',
         'created_at' => 'datetime',

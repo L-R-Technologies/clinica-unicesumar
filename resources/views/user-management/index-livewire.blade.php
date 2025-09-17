@@ -1,5 +1,5 @@
 @extends('layouts.base')
 
 @section('content')
-    @livewire('user-management.user-index')
+    @livewire('UserManagement.UserIndex')
 @endsection

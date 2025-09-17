@@ -10,7 +10,7 @@
         <div class="d-flex align-items-center justify-content-center" style="min-height: 90vh;">
             <div class="card shadow-lg p-4 w-100" style="max-width: 500px;">
                 <h2 class="fw-bold text-center mb-4">Registro</h2>
-                @livewire('auth.register-wizard')
+                @livewire('Auth.RegisterWizard')
             </div>
         </div>
     </div>

@@ -3,7 +3,8 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
-use App\Http\Livewire\Samples\SampleList; // Adicionado para o CRUD de Amostras
+use App\Http\Livewire\Samples\CreateSample;
+use App\Http\Livewire\Samples\SampleList;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
@@ -15,6 +16,9 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
 
     // ROTA PARA O CRUD DE AMOSTRAS
     Route::get('/samples', SampleList::class)->name('samples.index');
+    Route::get('/samples/create', CreateSample::class)->name('samples.create');
+    Route::get('/samples/{sample}', \App\Http\Livewire\Samples\ShowSample::class)->name('samples.show');
+    Route::get('/samples/{sample}/edit', \App\Http\Livewire\Samples\EditSample::class)->name('samples.edit');
 
     // Rotas para gerenciamento de usuários (apenas para professores)
     Route::middleware(['role:teacher'])->group(function () {

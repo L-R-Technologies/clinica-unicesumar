@@ -105,8 +105,8 @@
                                 </li>
                                 <li class="nav-item d-flex align-items-center">
                                     <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="#">
-                                        <i class="fa-solid fa-notes-medical fa-lg"></i>
+                                        href="{{ route('anamneses.index') }}">
+                                        <i class="fa-solid fa-desktop fa-lg"></i>
                                         <span>Anamneses</span>
                                     </a>
                                 </li>
@@ -121,7 +121,7 @@
                             @if (auth()->user()->hasRole('teacher'))
                                 <li class="nav-item d-flex align-items-center">
                                     <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="{{ route('anamneses.index') }}">
+                                        href="#">
                                         <i class="fa-solid fa-desktop fa-lg"></i>
                                         <span>Máquinas</span>
                                     </a>

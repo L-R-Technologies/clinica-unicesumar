@@ -3,24 +3,18 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
-use App\Http\Livewire\Samples\CreateSample;
-use App\Http\Livewire\Samples\SampleList;
+use App\Livewire\Samples\CreateSample;
+use App\Livewire\Samples\EditSample;
+use App\Livewire\Samples\SampleList;
+use App\Livewire\Samples\ShowSample;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
-// Grupo de rotas que exigem que o usuário esteja autenticado, verificado e ativo
 Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
-    // ROTA PARA O CRUD DE AMOSTRAS
-    Route::get('/samples', SampleList::class)->name('samples.index');
-    Route::get('/samples/create', CreateSample::class)->name('samples.create');
-    Route::get('/samples/{sample}', \App\Http\Livewire\Samples\ShowSample::class)->name('samples.show');
-    Route::get('/samples/{sample}/edit', \App\Http\Livewire\Samples\EditSample::class)->name('samples.edit');
-
-    // Rotas para gerenciamento de usuários (apenas para professores)
     Route::middleware(['role:teacher'])->group(function () {
         Route::get('/user/management', [UserManagementController::class, 'index'])->name('user-management.index');
         Route::get('/user/management/create', [UserManagementController::class, 'create'])->name('user-management.create');
@@ -33,29 +27,13 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
     });
 
-    // Rotas para o perfil do próprio usuário
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
 
-    // Exemplos de rotas com middleware de validação de tipo de usuário
-
-    // Rotas apenas para professores
-    // Route::middleware(['role:teacher'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas apenas para estudantes
-    // Route::middleware(['role:student'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas apenas para pacientes
-    // Route::middleware(['role:patient'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas que permitem múltiplos tipos de usuário
-    // Route::middleware(['role:teacher,student'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
+    Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/samples', SampleList::class)->name('samples.index');
+        Route::get('/samples/create', CreateSample::class)->name('samples.create');
+        Route::get('/samples/{sample}', ShowSample::class)->name('samples.show');
+        Route::get('/samples/{sample}/edit', EditSample::class)->name('samples.edit');
+    });
 });

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Samples;
+namespace App\Livewire\Samples;
 
 use App\Models\Sample;
 use Livewire\Attributes\Layout;

@@ -135,10 +135,6 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 	git clone git@github.com:L-R-Technologies/clinica-unicesumar.git
 	cd clinica-unicesumar
 	```
- 1.5 Entre na brench:
-	```bash
-	git checkout feat/samples-crud
-	```
 
 2. Copie o arquivo de ambiente:
 	```bash

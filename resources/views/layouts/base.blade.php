@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base Laravel Blade</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+        xintegrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <style>
@@ -83,8 +83,8 @@
                         @else
                             @if (auth()->user()->hasRole('student') || auth()->user()->hasRole('teacher'))
                                 <li class="nav-item d-flex align-items-center">
-                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="/home">
+                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100 {{ request()->routeIs('home') ? 'active' : '' }}"
+                                        href="{{ route('home') }}">
                                         <i class="fa-solid fa-house fa-lg"></i>
                                         <span>Dashboard</span>
                                     </a>
@@ -97,8 +97,9 @@
                                     </a>
                                 </li>
                                 <li class="nav-item d-flex align-items-center">
-                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="#">
+                                    {{-- ESTE É O LINK QUE ALTERAMOS --}}
+                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100 {{ request()->routeIs('samples.index') ? 'active' : '' }}"
+                                        href="{{ route('samples.index') }}">
                                         <i class="fa-solid fa-vial fa-lg"></i>
                                         <span>Amostras</span>
                                     </a>
@@ -127,7 +128,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item d-flex align-items-center">
-                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
+                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100 {{ request()->routeIs('user-management.index') ? 'active' : '' }}"
                                         href="{{ route('user-management.index') }}">
                                         <i class="fa-solid fa-users-gear fa-lg"></i>
                                         <span>Usuários</span>
@@ -183,9 +184,15 @@
             </div>
         </nav>
     @endif
+
+    @if (isset($slot))
+    {{ $slot }}
+    @else
     @yield('content')
+    @endif
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous">
+        xintegrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous">
     </script>
     @livewireScripts
 </body>

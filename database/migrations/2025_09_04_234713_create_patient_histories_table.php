@@ -33,7 +33,6 @@ return new class() extends Migration
             $table->enum('menstrual_period', ['yes', 'no', 'n/a'])->default('n/a');
             $table->boolean('recent_fever_or_flu')->default(false);
             $table->text('observation')->nullable();
-            $table->timestamps();
         });
     }
 

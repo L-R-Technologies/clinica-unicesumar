@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
 use App\Livewire\Samples\CreateSample;
@@ -28,6 +29,18 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
     });
 
+    Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
+    Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
+
+    Route::resource('anamneses', PatientHistoryController::class);
+
+    Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/samples', SampleList::class)->name('samples.index');
+        Route::get('/samples/create', CreateSample::class)->name('samples.create');
+        Route::get('/samples/{sample}', ShowSample::class)->name('samples.show');
+        Route::get('/samples/{sample}/edit', EditSample::class)->name('samples.edit');
+    });
+
     Route::middleware(['role:teacher,student'])->group(function () {
         Route::get('/exam', [ExamController::class, 'index'])->name('exam.index');
         Route::get('/exam/create', [ExamController::class, 'create'])->name('exam.create');
@@ -36,15 +49,5 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
-    });
-
-    Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
-    Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
-
-    Route::middleware(['role:teacher,student'])->group(function () {
-        Route::get('/samples', SampleList::class)->name('samples.index');
-        Route::get('/samples/create', CreateSample::class)->name('samples.create');
-        Route::get('/samples/{sample}', ShowSample::class)->name('samples.show');
-        Route::get('/samples/{sample}/edit', EditSample::class)->name('samples.edit');
     });
 });

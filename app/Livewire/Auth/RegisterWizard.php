@@ -51,7 +51,7 @@ class RegisterWizard extends Component
 
     protected $rules = [
         // Step 1
-        'name' => 'required|string|max:255',
+        'name' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|min:8|confirmed',
         // Step 2
@@ -59,17 +59,17 @@ class RegisterWizard extends Component
         'sex' => 'required|in:male,female,other',
         'cpf' => 'required|cpf|string|min:14|max:14|unique:patients,cpf',
         'rg' => 'required|string|max:20',
-        'ethnicity' => 'required|string|max:100',
+        'ethnicity' => 'required|string|regex:/^[\pL\s]+$/u|max:100',
         'phone' => 'required|string|min:15|max:15',
         // Step 3
         'zip_code' => 'required|string|min:9|max:9',
-        'street' => 'required|string|max:255',
+        'street' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
         'number' => 'required|string|max:10',
-        'neighborhood' => 'required|string|max:100',
+        'neighborhood' => 'required|string|regex:/^[\pL\s]+$/u|max:100',
         'complement' => 'nullable|string|max:100',
-        'city' => 'required|string|max:100',
-        'state' => 'required|string|max:50',
-        'country' => 'required|string|max:50',
+        'city' => 'required|string|regex:/^[\pL\s]+$/u|max:100',
+        'state' => 'required|string|regex:/^[\pL\s]+$/u|max:50',
+        'country' => 'required|string|regex:/^[\pL\s]+$/u|max:50',
         'lgpd_consent' => 'accepted',
     ];
 

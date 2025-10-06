@@ -1,16 +1,20 @@
 <?php
 
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
-use App\Http\Controllers\PatientHistoryController;
+use App\Livewire\Samples\CreateSample;
+use App\Livewire\Samples\EditSample;
+use App\Livewire\Samples\SampleList;
+use App\Livewire\Samples\ShowSample;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
 Route::middleware(['auth', 'verified', 'active'])->group(function () {
-    Route::resource('anamneses', PatientHistoryController::class);
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
     Route::middleware(['role:teacher'])->group(function () {
@@ -28,25 +32,22 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
 
-    // Exemplos de rotas com middleware de validação de tipo de usuário
+    Route::resource('anamneses', PatientHistoryController::class);
 
-    // Rotas apenas para professores
-    // Route::middleware(['role:teacher'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
+    Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/samples', SampleList::class)->name('samples.index');
+        Route::get('/samples/create', CreateSample::class)->name('samples.create');
+        Route::get('/samples/{sample}', ShowSample::class)->name('samples.show');
+        Route::get('/samples/{sample}/edit', EditSample::class)->name('samples.edit');
+    });
 
-    // // Rotas apenas para estudantes
-    // Route::middleware(['role:student'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas apenas para pacientes
-    // Route::middleware(['role:patient'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas que permitem múltiplos tipos de usuário
-    // Route::middleware(['role:teacher,student'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
+    Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/exam', [ExamController::class, 'index'])->name('exam.index');
+        Route::get('/exam/create', [ExamController::class, 'create'])->name('exam.create');
+        Route::post('/exam', [ExamController::class, 'store'])->name('exam.store');
+        Route::get('/exam/{id}', [ExamController::class, 'show'])->name('exam.show');
+        Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
+        Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
+        Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
+    });
 });

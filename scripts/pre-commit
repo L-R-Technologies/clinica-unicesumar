@@ -1,0 +1,8 @@
+#!/bin/sh
+echo "🔍 Executando verificações de código..."
+composer run check
+if [ $? -ne 0 ]; then
+  echo "❌ Verificações falharam! Corrija os erros antes de fazer commit."
+  exit 1
+fi
+echo "✅ Código aprovado!"

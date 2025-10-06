@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\PatientHistory;
+use Illuminate\Database\Seeder;
 
 class PatientHistoriesSeeder extends Seeder
 {
@@ -42,7 +42,7 @@ class PatientHistoriesSeeder extends Seeder
         // Segundo histórico
         PatientHistory::create([
             'user_id' => 3,
-            'patient_id' => 2,
+            'patient_id' => 1,
             'date' => now()->subDays(2),
             'fasting' => false,
             'fasting_hours' => null,

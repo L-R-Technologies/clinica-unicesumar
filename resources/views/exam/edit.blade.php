@@ -1,5 +1,5 @@
 @extends('layouts.base')
 
 @section('content')
-    @livewire('UserManagement.UserIndex')
+    <livewire:exam.edit-exam :exam="$exam" />
 @endsection

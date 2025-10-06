@@ -6,7 +6,6 @@ use App\Models\PatientHistory;
 use App\Service\PatientHistoryService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -27,14 +26,14 @@ class PatientHistoryController extends Controller
         // Filtro por paciente (nome)
         if ($request->filled('patient')) {
             $query->whereHas('patient', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->patient . '%');
+                $q->where('name', 'like', '%'.$request->patient.'%');
             });
         }
 
         // Filtro por profissional (nome)
         if ($request->filled('professional')) {
             $query->whereHas('user', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->professional . '%');
+                $q->where('name', 'like', '%'.$request->professional.'%');
             });
         }
 
@@ -67,14 +66,16 @@ class PatientHistoryController extends Controller
                 ->route('anamneses.index')
                 ->with('success', 'Anamnese criada com sucesso!');
         } catch (ValidationException $e) {
-            Log::error("ERRO BNESSA POHA: ".$e->getMessage());
+            Log::error('ERRO BNESSA POHA: '.$e->getMessage());
+
             return back()
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
-            Log::error("EXCEPTION NO SEU CU: ".$e->getMessage());
+            Log::error('EXCEPTION NO SEU CU: '.$e->getMessage());
+
             return back()
-                ->withErrors(['error' => 'Erro ao criar anamnese: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Erro ao criar anamnese: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -111,7 +112,7 @@ class PatientHistoryController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar anamnese: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Erro ao atualizar anamnese: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -128,7 +129,7 @@ class PatientHistoryController extends Controller
                 ->with('success', 'Anamnese removida com sucesso!');
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao remover anamnese: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Erro ao remover anamnese: '.$e->getMessage()]);
         }
     }
 }

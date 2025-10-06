@@ -17,7 +17,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     public function update(User $user, array $input): void
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -46,18 +46,18 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
             $rules = array_merge($rules, [
                 'birth_date' => ['required', 'date'],
-                'ethnicity' => ['required', 'string', 'max:100'],
+                'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'sex' => ['required', 'in:male,female,other'],
                 'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique('patients')->ignore(optional($user->patient)->id)],
                 'rg' => ['required', 'string', 'max:20'],
                 'phone' => ['required', 'string', 'min:11', 'max:11'],
-                'street' => ['required', 'string', 'max:255'],
+                'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
                 'number' => ['required', 'string', 'max:20'],
                 'complement' => ['nullable', 'string', 'max:100'],
-                'neighborhood' => ['required', 'string', 'max:100'],
-                'city' => ['required', 'string', 'max:100'],
-                'state' => ['required', 'string', 'max:100'],
-                'country' => ['required', 'string', 'max:100'],
+                'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+                'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+                'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+                'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'zip_code' => ['required', 'string', 'min:8', 'max:8'],
             ]);
         }

@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Teacher extends Model
+class ExamRejection extends Model
 {
     protected $fillable = [
+        'exam_id',
         'user_id',
-        'supervisor_id',
-        'registration_number',
-        'professional_license',
+        'justification',
     ];
 
     protected $casts = [
@@ -19,13 +18,13 @@ class Teacher extends Model
         'updated_at' => 'datetime',
     ];
 
+    public function exam(): BelongsTo
+    {
+        return $this->belongsTo(Exam::class);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function supervisor(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'supervisor_id');
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\SampleType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,8 +11,8 @@ class Sample extends Model
     protected $fillable = [
         'patient_id',
         'user_id',
+        'sample_type_id',
         'code',
-        'type',
         'date',
         'location',
         'status',
@@ -21,8 +20,7 @@ class Sample extends Model
     ];
 
     protected $casts = [
-        'type' => SampleType::class,
-        'date' => 'datetime',
+        'date' => 'date',
         'notified' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -42,5 +40,10 @@ class Sample extends Model
     public function exams(): HasMany
     {
         return $this->hasMany(Exam::class);
+    }
+
+    public function sampleType(): BelongsTo
+    {
+        return $this->belongsTo(SampleType::class);
     }
 }

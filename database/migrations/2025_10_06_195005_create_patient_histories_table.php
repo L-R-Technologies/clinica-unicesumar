@@ -6,13 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class() extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('patient_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
-            $table->datetime('date');
             $table->boolean('fasting')->default(false);
             $table->integer('fasting_hours')->nullable();
             $table->boolean('alcohol_last_24h')->default(false);
@@ -22,6 +24,8 @@ return new class() extends Migration
             $table->text('supplements')->nullable();
             $table->boolean('chronic_disease')->default(false);
             $table->text('chronic_disease_details')->nullable();
+            $table->boolean('infectious_disease_history')->default(false);
+            $table->text('infectious_disease_details')->nullable();
             $table->boolean('recent_surgery')->default(false);
             $table->text('surgery_details')->nullable();
             $table->boolean('allergies')->default(false);
@@ -33,9 +37,14 @@ return new class() extends Migration
             $table->enum('menstrual_period', ['yes', 'no', 'n/a'])->default('n/a');
             $table->boolean('recent_fever_or_flu')->default(false);
             $table->text('observation')->nullable();
+            $table->timestamp('recorded_at');
+            $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('patient_histories');

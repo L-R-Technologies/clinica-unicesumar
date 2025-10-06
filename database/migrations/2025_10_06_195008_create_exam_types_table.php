@@ -11,8 +11,11 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::table('patients', function (Blueprint $table) {
-            $table->timestamp('lgpd_consent_at')->nullable()->after('phone');
+        Schema::create('exam_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 100);
+            $table->text('description')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::table('patients', function (Blueprint $table) {
-            $table->dropColumn('lgpd_consent_at');
-        });
+        Schema::dropIfExists('exam_types');
     }
 };

@@ -5,16 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Teacher extends Model
+class Calibration extends Model
 {
     protected $fillable = [
         'user_id',
-        'supervisor_id',
-        'registration_number',
-        'professional_license',
+        'machine_id',
+        'calibration_date',
+        'value',
+        'status',
+        'observation',
     ];
 
     protected $casts = [
+        'calibration_date' => 'date',
+        'value' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -24,8 +28,8 @@ class Teacher extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function supervisor(): BelongsTo
+    public function machine(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'supervisor_id');
+        return $this->belongsTo(Machine::class);
     }
 }

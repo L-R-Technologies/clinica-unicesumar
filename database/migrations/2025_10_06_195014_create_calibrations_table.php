@@ -11,16 +11,14 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::create('patients', function (Blueprint $table) {
+        Schema::create('calibrations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('address_id')->constrained()->onDelete('cascade');
-            $table->date('birth_date');
-            $table->string('ethnicity', 50);
-            $table->enum('sex', ['male', 'female', 'other']);
-            $table->string('cpf', 11)->unique();
-            $table->string('rg', 20);
-            $table->string('phone', 20);
+            $table->foreignId('machine_id')->constrained()->onDelete('cascade');
+            $table->date('calibration_date');
+            $table->float('value');
+            $table->enum('status', ['approved', 'rejected'])->default('approved');
+            $table->text('observation')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('patients');
+        Schema::dropIfExists('calibrations');
     }
 };

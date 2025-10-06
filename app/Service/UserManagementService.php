@@ -218,7 +218,7 @@ class UserManagementService
     public function validateTeacherData(array $data, $userId = null): array
     {
         $rules = [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
             'email' => 'required|string|email|max:255|unique:users'.($userId ? ",email,{$userId}" : ''),
             'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
             'registration_number' => 'required|string|max:10|unique:teachers,registration_number'.($userId ? ",{$userId},user_id" : ''),
@@ -231,7 +231,7 @@ class UserManagementService
     public function validateStudentData(array $data, $userId = null): array
     {
         $rules = [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
             'email' => 'required|string|email|max:255|unique:users'.($userId ? ",email,{$userId}" : ''),
             'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
             'ra' => 'required|string|max:9|unique:students,ra'.($userId ? ",{$userId},user_id" : ''),

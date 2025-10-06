@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Samples;
 
+use App\Enums\SampleType;
 use App\Models\Sample;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -13,7 +14,7 @@ class EditSample extends Component
 
     public ?int $patient_id = null;
 
-    public string $type = '';
+    public string|SampleType $type = '';
 
     public string $date = '';
 

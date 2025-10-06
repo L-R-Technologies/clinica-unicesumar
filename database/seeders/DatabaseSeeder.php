@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
             AddressesSeeder::class,
             PatientsSeeder::class,
             SamplesSeeder::class,
+            PatientHistoriesSeeder::class,
+            ExamsSeeder::class,
         ]);
     }
 }

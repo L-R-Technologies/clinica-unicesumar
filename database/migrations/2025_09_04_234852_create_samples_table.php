@@ -13,7 +13,19 @@ return new class() extends Migration
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('code', 12)->unique();
-            $table->string('type', 100);
+            $table->enum('type', [
+                'whole_blood',
+                'serum',
+                'plasma',
+                'urine',
+                'stool',
+                'vaginal_swab',
+                'urethral_swab',
+                'throat_swab',
+                'sputum',
+                'csf',
+                'secretion',
+            ]);
             $table->date('date');
             $table->string('location', 100);
             $table->enum('status', ['under_review', 'stored', 'discarded'])->default('under_review');

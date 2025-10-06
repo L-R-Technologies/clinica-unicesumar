@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\SampleType;
 use App\Models\Patient;
 use App\Models\Sample;
 use App\Models\User;
@@ -28,7 +29,11 @@ class SamplesSeeder extends Seeder
         }
 
         Sample::create([
-            'patient_id' => $patient->id, // Usa o ID real do primeiro paciente encontrado
+            'patient_id' => 1,
+            'user_id' => 2,
+            'code' => '14092025-001',
+            'type' => SampleType::WHOLE_BLOOD->value,
+            'patient_id' => $patient->id,
             'user_id' => $user->id,
             'code' => 'SMP000001',
             'type' => 'Sangue',
@@ -38,7 +43,26 @@ class SamplesSeeder extends Seeder
             'notified' => false,
         ]);
 
-        // Removida a criação da segunda amostra, pois só temos um paciente no seeder.
-        // Se precisar de mais amostras, primeiro adicione mais pacientes no PatientsSeeder.
+        Sample::create([
+            'patient_id' => 1,
+            'user_id' => 3,
+            'code' => '14092025-002',
+            'type' => SampleType::URINE->value,
+            'date' => now()->subDays(1),
+            'location' => 'Laboratório Norte',
+            'status' => 'stored',
+            'notified' => true,
+        ]);
+
+        Sample::create([
+            'patient_id' => 1,
+            'user_id' => 2,
+            'code' => '14092025-003',
+            'type' => SampleType::SERUM->value,
+            'date' => now(),
+            'location' => 'Laboratório Central',
+            'status' => 'under_review',
+            'notified' => false,
+        ]);
     }
 }

@@ -22,7 +22,7 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -33,20 +33,20 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
             // Campos do paciente
             'birth_date' => ['required', 'date'],
-            'ethnicity' => ['required', 'string', 'max:100'],
+            'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'sex' => ['required', 'in:male,female,other'],
             'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique(Patient::class)],
             'rg' => ['required', 'string', 'max:20'],
             'phone' => ['required', 'string', 'min:11', 'max:11'],
             'lgpd_consent' => ['required', 'accepted'],
             // Campos do endereço
-            'street' => ['required', 'string', 'max:255'],
+            'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
             'number' => ['required', 'string', 'max:20'],
             'complement' => ['nullable', 'string', 'max:100'],
-            'neighborhood' => ['required', 'string', 'max:100'],
-            'city' => ['required', 'string', 'max:100'],
-            'state' => ['required', 'string', 'max:100'],
-            'country' => ['required', 'string', 'max:100'],
+            'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'zip_code' => ['required', 'string', 'min:8', 'max:8'],
         ];
 

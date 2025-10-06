@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
@@ -25,6 +26,16 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::put('/user/management/{id}', [UserManagementController::class, 'update'])->name('user-management.update');
         Route::delete('/user/management/{id}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
         Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
+    });
+
+    Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/exam', [ExamController::class, 'index'])->name('exam.index');
+        Route::get('/exam/create', [ExamController::class, 'create'])->name('exam.create');
+        Route::post('/exam', [ExamController::class, 'store'])->name('exam.store');
+        Route::get('/exam/{id}', [ExamController::class, 'show'])->name('exam.show');
+        Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
+        Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
+        Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
     });
 
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');

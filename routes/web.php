@@ -4,6 +4,10 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
+use App\Livewire\Samples\CreateSample;
+use App\Livewire\Samples\EditSample;
+use App\Livewire\Samples\SampleList;
+use App\Livewire\Samples\ShowSample;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
@@ -37,25 +41,10 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
 
-    // Exemplos de rotas com middleware de validação de tipo de usuário
-
-    // Rotas apenas para professores
-    // Route::middleware(['role:teacher'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas apenas para estudantes
-    // Route::middleware(['role:student'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas apenas para pacientes
-    // Route::middleware(['role:patient'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
-
-    // // Rotas que permitem múltiplos tipos de usuário
-    // Route::middleware(['role:teacher,student'])->group(function () {
-    //     Route::get('/rota', [Controller::class, 'funcao']);
-    // });
+    Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/samples', SampleList::class)->name('samples.index');
+        Route::get('/samples/create', CreateSample::class)->name('samples.create');
+        Route::get('/samples/{sample}', ShowSample::class)->name('samples.show');
+        Route::get('/samples/{sample}/edit', EditSample::class)->name('samples.edit');
+    });
 });

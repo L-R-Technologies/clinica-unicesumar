@@ -86,6 +86,92 @@ class SamplesSeeder extends Seeder
                 'status' => 'stored',
                 'notified' => true,
             ],
+
+            // Amostras da Paciente 3 (Ana Paula Costa)
+            [
+                'patient_id' => 3,
+                'user_id' => 3, // Aluno 1
+                'sample_type_id' => 1, // Sangue Total
+                'code' => 'SMP000008',
+                'date' => now()->subDays(3),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+            [
+                'patient_id' => 3,
+                'user_id' => 4, // Aluno 2
+                'sample_type_id' => 2, // Soro
+                'code' => 'SMP000009',
+                'date' => now()->subDays(3),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+
+            // Amostras do Paciente 4 (Carlos Eduardo Ferreira)
+            [
+                'patient_id' => 4,
+                'user_id' => 2, // Professor
+                'sample_type_id' => 1, // Sangue Total
+                'code' => 'SMP000010',
+                'date' => now()->subDays(4),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+            [
+                'patient_id' => 4,
+                'user_id' => 3, // Aluno 1
+                'sample_type_id' => 2, // Soro
+                'code' => 'SMP000011',
+                'date' => now()->subDays(4),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+            [
+                'patient_id' => 4,
+                'user_id' => 4, // Aluno 2
+                'sample_type_id' => 4, // Urina
+                'code' => 'SMP000012',
+                'date' => now()->subDays(4),
+                'location' => 'Laboratório Norte',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+
+            // Amostras da Paciente 5 (Fernanda Lima Silva)
+            [
+                'patient_id' => 5,
+                'user_id' => 2, // Professor
+                'sample_type_id' => 1, // Sangue Total
+                'code' => 'SMP000013',
+                'date' => now()->subDays(6),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+            [
+                'patient_id' => 5,
+                'user_id' => 3, // Aluno 1
+                'sample_type_id' => 2, // Soro
+                'code' => 'SMP000014',
+                'date' => now()->subDays(6),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+            [
+                'patient_id' => 5,
+                'user_id' => 4, // Aluno 2
+                'sample_type_id' => 4, // Urina
+                'code' => 'SMP000015',
+                'date' => now()->subDays(6),
+                'location' => 'Laboratório Norte',
+                'status' => 'stored',
+                'notified' => true,
+            ],
         ];
 
         foreach ($samples as $sample) {

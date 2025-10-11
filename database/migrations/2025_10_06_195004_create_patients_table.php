@@ -15,13 +15,13 @@ return new class() extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('address_id')->nullable()->constrained()->onDelete('set null');
-            $table->date('birthday');
-            $table->string('ethnicity', 50)->nullable();
+            $table->date('birth_date');
+            $table->string('ethnicity', 50);
             $table->enum('sex', ['male', 'female', 'other', 'prefer_not_say']);
-            $table->string('cpf', 11)->unique();
-            $table->string('rg', 20)->nullable();
-            $table->string('phone', 20)->nullable();
-            $table->timestamp('lgpd_consent_at')->nullable();
+            $table->string('cpf', 11);
+            $table->string('rg', 20);
+            $table->string('phone', 11);
+            $table->timestamp('lgpd_consent_at');
             $table->timestamps();
         });
     }

@@ -13,9 +13,16 @@ class DatabaseSeeder extends Seeder
             TeachersSeeder::class,
             AddressesSeeder::class,
             PatientsSeeder::class,
-            SamplesSeeder::class,
             PatientHistoriesSeeder::class,
+            SampleTypesSeeder::class,
+            ExamTypesSeeder::class,
+            ExamTypeFieldsSeeder::class,
+            SamplesSeeder::class,
             ExamsSeeder::class,
+            ExamRejectionsSeeder::class,
+            ExamFeedbacksSeeder::class,
+            MachinesSeeder::class,
+            CalibrationsSeeder::class,
         ]);
     }
 }

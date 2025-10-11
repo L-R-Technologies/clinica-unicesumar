@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\SampleType;
-use App\Models\Patient;
 use App\Models\Sample;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class SamplesSeeder extends Seeder
@@ -15,54 +12,84 @@ class SamplesSeeder extends Seeder
      */
     public function run(): void
     {
-        // Pega o primeiro paciente que encontrar no banco de dados.
-        $patient = Patient::first();
+        $samples = [
+            // Amostras da Paciente 1 (Maria Silva Santos)
+            [
+                'patient_id' => 1,
+                'user_id' => 2, // Professor
+                'sample_type_id' => 1, // Sangue Total
+                'code' => 'SMP000001',
+                'date' => now()->subDays(5),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+            [
+                'patient_id' => 1,
+                'user_id' => 3, // Aluno 1
+                'sample_type_id' => 2, // Soro
+                'code' => 'SMP000002',
+                'date' => now()->subDays(5),
+                'location' => 'Laboratório Central',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+            [
+                'patient_id' => 1,
+                'user_id' => 4, // Aluno 2
+                'sample_type_id' => 4, // Urina
+                'code' => 'SMP000003',
+                'date' => now()->subDays(2),
+                'location' => 'Laboratório Norte',
+                'status' => 'stored',
+                'notified' => true,
+            ],
 
-        // Pega o primeiro usuário (apenas como exemplo para o user_id)
-        $user = User::first();
+            // Amostras do Paciente 2 (João Carlos Oliveira)
+            [
+                'patient_id' => 2,
+                'user_id' => 2, // Professor
+                'sample_type_id' => 1, // Sangue Total
+                'code' => 'SMP000004',
+                'date' => now()->subDays(1),
+                'location' => 'Laboratório Central',
+                'status' => 'under review',
+                'notified' => false,
+            ],
+            [
+                'patient_id' => 2,
+                'user_id' => 3, // Aluno 1
+                'sample_type_id' => 3, // Plasma
+                'code' => 'SMP000005',
+                'date' => now()->subDays(1),
+                'location' => 'Laboratório Central',
+                'status' => 'under review',
+                'notified' => false,
+            ],
+            [
+                'patient_id' => 2,
+                'user_id' => 4, // Aluno 2
+                'sample_type_id' => 5, // Fezes
+                'code' => 'SMP000006',
+                'date' => now()->subDays(1),
+                'location' => 'Laboratório de Parasitologia',
+                'status' => 'under review',
+                'notified' => false,
+            ],
+            [
+                'patient_id' => 2,
+                'user_id' => 2, // Professor
+                'sample_type_id' => 4, // Urina
+                'code' => 'SMP000007',
+                'date' => now()->subDays(1),
+                'location' => 'Laboratório Norte',
+                'status' => 'stored',
+                'notified' => true,
+            ],
+        ];
 
-        // CORRIGIDO: Agora verifica se existe PELO MENOS UM paciente.
-        if (! $patient || ! $user) {
-            $this->command->warn('Não foram encontrados pacientes ou usuários suficientes. Pulando o SamplesSeeder.');
-
-            return;
+        foreach ($samples as $sample) {
+            Sample::create($sample);
         }
-
-        Sample::create([
-            'patient_id' => 1,
-            'user_id' => 2,
-            'code' => '14092025-001',
-            'type' => SampleType::WHOLE_BLOOD->value,
-            'patient_id' => $patient->id,
-            'user_id' => $user->id,
-            'code' => 'SMP000001',
-            'type' => 'Sangue',
-            'date' => now()->subDays(3),
-            'location' => 'Laboratório Central',
-            'status' => 'under_review',
-            'notified' => false,
-        ]);
-
-        Sample::create([
-            'patient_id' => 1,
-            'user_id' => 3,
-            'code' => '14092025-002',
-            'type' => SampleType::URINE->value,
-            'date' => now()->subDays(1),
-            'location' => 'Laboratório Norte',
-            'status' => 'stored',
-            'notified' => true,
-        ]);
-
-        Sample::create([
-            'patient_id' => 1,
-            'user_id' => 2,
-            'code' => '14092025-003',
-            'type' => SampleType::SERUM->value,
-            'date' => now(),
-            'location' => 'Laboratório Central',
-            'status' => 'under_review',
-            'notified' => false,
-        ]);
     }
 }

@@ -21,7 +21,7 @@ class TeachersSeeder extends Seeder
         Teacher::create([
             'user_id' => $teacher->id,
             'registration_number' => 'T2025001',
-            'crbm' => 'CRBM12345',
+            'professional_license' => 'CRBM12345',
         ]);
     }
 }

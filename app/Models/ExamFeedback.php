@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ExamFeedback extends Model
 {
+    protected $table = 'exam_feedbacks';
+
     protected $fillable = [
         'exam_id',
         'clarity',

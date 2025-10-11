@@ -15,9 +15,9 @@ return new class() extends Migration
             $table->id();
             $table->foreignId('exam_type_id')->constrained()->onDelete('cascade');
             $table->string('name', 100);
-            $table->string('label');
+            $table->string('label', 100);
             $table->enum('field_type', ['int', 'float', 'string', 'boolean']);
-            $table->string('unit', 50)->nullable();
+            $table->string('unit', 20)->nullable();
             $table->timestamps();
         });
     }

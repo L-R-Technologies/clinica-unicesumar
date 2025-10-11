@@ -17,8 +17,8 @@ return new class() extends Migration
             $table->string('model', 100);
             $table->string('serial_number', 100)->unique();
             $table->string('location', 100);
-            $table->float('calibration_range_min')->nullable();
-            $table->float('calibration_range_max')->nullable();
+            $table->float('calibration_range_min');
+            $table->float('calibration_range_max');
             $table->enum('status', ['active', 'calibrating', 'inactive'])->default('active');
             $table->timestamps();
         });

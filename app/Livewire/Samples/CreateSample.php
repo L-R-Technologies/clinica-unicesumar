@@ -4,6 +4,7 @@ namespace App\Livewire\Samples;
 
 use App\Models\Patient;
 use App\Models\Sample;
+use App\Models\SampleType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -14,23 +15,25 @@ class CreateSample extends Component
 {
     public ?int $patient_id = null;
 
-    public string $type = '';
+    public ?int $sample_type_id = null;
 
     public string $date = '';
 
-    public string $status = 'under_review';
+    public string $status = 'under review';
 
     public string $location = '';
 
     public $patients = [];
 
+    public $sampleTypes = [];
+
     protected function rules()
     {
         return [
             'patient_id' => ['required', 'integer', 'exists:patients,id'],
-            'type' => ['required', 'string', 'max:100'],
+            'sample_type_id' => ['required', 'integer', 'exists:sample_types,id'],
             'date' => ['required', 'date'],
-            'status' => ['required', 'in:under_review,stored,discarded'],
+            'status' => ['required', 'in:under review,stored,discarded'],
             'location' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -38,6 +41,7 @@ class CreateSample extends Component
     public function mount()
     {
         $this->patients = Patient::with('user')->get()->sortBy('user.name');
+        $this->sampleTypes = SampleType::orderBy('name')->get();
         $this->date = now()->format('Y-m-d');
     }
 
@@ -64,7 +68,7 @@ class CreateSample extends Component
         Sample::create([
             'patient_id' => $validatedData['patient_id'],
             'user_id' => Auth::id(),
-            'type' => $validatedData['type'],
+            'sample_type_id' => $validatedData['sample_type_id'],
             'date' => $validatedData['date'],
             'status' => $validatedData['status'],
             'location' => $validatedData['location'],

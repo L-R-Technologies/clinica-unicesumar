@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Samples;
 
-use App\Enums\SampleType;
 use App\Models\Sample;
+use App\Models\SampleType;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -14,7 +14,7 @@ class EditSample extends Component
 
     public ?int $patient_id = null;
 
-    public string|SampleType $type = '';
+    public ?int $sample_type_id = null;
 
     public string $date = '';
 
@@ -22,12 +22,14 @@ class EditSample extends Component
 
     public string $location = '';
 
+    public $sampleTypes = [];
+
     protected function rules()
     {
         return [
-            'type' => ['required', 'string', 'max:100'],
+            'sample_type_id' => ['required', 'integer', 'exists:sample_types,id'],
             'date' => ['required', 'date'],
-            'status' => ['required', 'in:under_review,stored,discarded'],
+            'status' => ['required', 'in:under review,stored,discarded'],
             'location' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -36,10 +38,11 @@ class EditSample extends Component
     {
         $this->sample = $sample;
         $this->patient_id = $sample->patient_id;
-        $this->type = $sample->type;
+        $this->sample_type_id = $sample->sample_type_id;
         $this->date = $sample->date->format('Y-m-d');
         $this->status = $sample->status;
         $this->location = $sample->location;
+        $this->sampleTypes = SampleType::orderBy('name')->get();
     }
 
     public function save()

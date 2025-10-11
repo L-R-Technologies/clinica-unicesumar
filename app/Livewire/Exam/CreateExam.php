@@ -16,7 +16,7 @@ class CreateExam extends Component
 
     public $sample_id = '';
 
-    public $type = '';
+    public $exam_type_id = '';
 
     public $date = '';
 
@@ -60,8 +60,8 @@ class CreateExam extends Component
             $examData = [
                 'patient_id' => $this->patient_id,
                 'patient_history_id' => $this->patient_history_id,
-                'sample_id' => $this->sample_id,
-                'type' => $this->type,
+                'sample_id' => $this->sample_id ?: null,
+                'exam_type_id' => $this->exam_type_id,
                 'date' => $this->date,
                 'observation' => $this->observation,
             ];

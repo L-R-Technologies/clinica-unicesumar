@@ -133,12 +133,12 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Parasitológico de fezes para investigação de sintomas gastrointestinais.',
             ],
             [
-                'patient_id' => 2,
-                'exam_type_id' => 5, // Urinálise Completa
                 'user_id' => 2, // Professor
+                'patient_id' => 2,
+                'patient_history_id' => 3,
+                'exam_type_id' => 5, // Urinálise Completa
                 'date' => now()->subDays(1),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'densidade' => '1.022',
                     'ph' => '6.0',
                     'glicose' => 'Negativo',
@@ -147,18 +147,19 @@ class ExamsSeeder extends Seeder
                     'sedimento' => 'Leucócitos: 2-4/campo',
                     'cristais' => 'Ausentes',
                     'observacoes' => 'Ligeira proteinúria',
-                ]),
-                'analyzed_at' => now()->subHours(2),
+                ],
+                'status' => 'approved',
+                'observation' => 'Ligeira proteinúria',
             ],
 
             // Exames da Paciente 3 (Ana Paula Costa) - Investigação de Anemia
             [
-                'patient_id' => 3,
-                'exam_type_id' => 1, // Hemograma Completo
                 'user_id' => 3, // Aluno 1
+                'patient_id' => 3,
+                'patient_history_id' => 4,
+                'exam_type_id' => 1, // Hemograma Completo
                 'date' => now()->subDays(3),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'hemoglobina' => '9.8',
                     'hematocrito' => '29.5',
                     'hemaceas' => '4.2',
@@ -168,57 +169,61 @@ class ExamsSeeder extends Seeder
                     'leucocitos' => '5800',
                     'plaquetas' => '280000',
                     'observacoes' => 'Anemia microcítica hipocrômica',
-                ]),
-                'analyzed_at' => now()->subDays(2)->subHours(3),
+                ],
+                'status' => 'approved',
+                'observation' => 'Anemia microcítica hipocrômica',
             ],
             [
-                'patient_id' => 3,
-                'exam_type_id' => 3, // Ferro Sérico
                 'user_id' => 4, // Aluno 2
+                'patient_id' => 3,
+                'patient_history_id' => 4,
+                'exam_type_id' => 3, // Ferro Sérico
                 'date' => now()->subDays(3),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'ferro_serico' => '45',
                     'capacidade_ligacao_ferro' => '420',
                     'transferrina' => '380',
                     'saturacao_transferrina' => '10.7',
                     'observacoes' => 'Deficiência de ferro',
-                ]),
-                'analyzed_at' => now()->subDays(2)->subHours(2),
+                ],
+                'status' => 'approved',
+                'observation' => 'Deficiência de ferro',
             ],
 
             // Exames do Paciente 4 (Carlos Eduardo Ferreira) - Controle Diabetes
             [
-                'patient_id' => 4,
-                'exam_type_id' => 2, // Glicose em Jejum
                 'user_id' => 2, // Professor
+                'patient_id' => 4,
+                'patient_history_id' => 5,
+                'exam_type_id' => 2, // Glicose em Jejum
                 'date' => now()->subDays(4),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'glicose_jejum' => '145',
                     'observacoes' => 'Hiperglicemia leve',
-                ]),
-                'analyzed_at' => now()->subDays(3)->subHours(5),
+                ],
+                'status' => 'approved',
+                'observation' => 'Hiperglicemia leve',
             ],
             [
-                'patient_id' => 4,
-                'exam_type_id' => 8, // Hemoglobina Glicada
                 'user_id' => 3, // Aluno 1
+                'patient_id' => 4,
+                'patient_history_id' => 5,
+                'exam_type_id' => 8, // Hemoglobina Glicada
                 'date' => now()->subDays(4),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'hba1c' => '7.8',
                     'observacoes' => 'Controle glicêmico inadequado',
-                ]),
-                'analyzed_at' => now()->subDays(3)->subHours(4),
+                ],
+                'status' => 'approved',
+                'observation' => 'Controle glicêmico inadequado',
             ],
             [
-                'patient_id' => 4,
-                'exam_type_id' => 5, // Urinálise Completa
                 'user_id' => 4, // Aluno 2
+                'patient_id' => 4,
+                'patient_history_id' => 5,
+                'exam_type_id' => 5, // Urinálise Completa
                 'date' => now()->subDays(4),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'densidade' => '1.030',
                     'ph' => '5.5',
                     'glicose' => 'Positivo (+)',
@@ -227,42 +232,45 @@ class ExamsSeeder extends Seeder
                     'sedimento' => 'Normal',
                     'cristais' => 'Ausentes',
                     'observacoes' => 'Glicosúria presente',
-                ]),
-                'analyzed_at' => now()->subDays(3)->subHours(3),
+                ],
+                'status' => 'approved',
+                'observation' => 'Glicosúria presente',
             ],
 
             // Exames da Paciente 5 (Fernanda Lima Silva) - Controle Hipotireoidismo
             [
-                'patient_id' => 5,
-                'exam_type_id' => 7, // TSH
                 'user_id' => 2, // Professor
+                'patient_id' => 5,
+                'patient_history_id' => 6,
+                'exam_type_id' => 7, // TSH
                 'date' => now()->subDays(6),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'tsh' => '8.5',
                     'observacoes' => 'TSH elevado - hipotireoidismo',
-                ]),
-                'analyzed_at' => now()->subDays(5)->subHours(2),
+                ],
+                'status' => 'approved',
+                'observation' => 'TSH elevado - hipotireoidismo',
             ],
             [
-                'patient_id' => 5,
-                'exam_type_id' => 6, // T4 Livre
                 'user_id' => 3, // Aluno 1
+                'patient_id' => 5,
+                'patient_history_id' => 6,
+                'exam_type_id' => 6, // T4 Livre
                 'date' => now()->subDays(6),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     't4_livre' => '0.8',
                     'observacoes' => 'T4 livre no limite inferior',
-                ]),
-                'analyzed_at' => now()->subDays(5)->subHours(1),
+                ],
+                'status' => 'approved',
+                'observation' => 'T4 livre no limite inferior',
             ],
             [
-                'patient_id' => 5,
-                'exam_type_id' => 1, // Hemograma Completo
                 'user_id' => 4, // Aluno 2
+                'patient_id' => 5,
+                'patient_history_id' => 6,
+                'exam_type_id' => 1, // Hemograma Completo
                 'date' => now()->subDays(6),
-                'status' => 'analyzed',
-                'results' => json_encode([
+                'results' => [
                     'hemoglobina' => '12.5',
                     'hematocrito' => '37.2',
                     'hemaceas' => '4.1',
@@ -272,8 +280,9 @@ class ExamsSeeder extends Seeder
                     'leucocitos' => '6200',
                     'plaquetas' => '320000',
                     'observacoes' => 'Hemograma dentro da normalidade',
-                ]),
-                'analyzed_at' => now()->subDays(5),
+                ],
+                'status' => 'approved',
+                'observation' => 'Hemograma dentro da normalidade',
             ],
         ];
 

@@ -6,7 +6,6 @@ use App\Models\PatientHistory;
 use App\Service\PatientHistoryService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class PatientHistoryController extends Controller
@@ -38,18 +37,18 @@ class PatientHistoryController extends Controller
         }
 
         // Filtro por data da coleta
-        if ($request->filled('date')) {
-            $query->whereDate('date', $request->date);
+        if ($request->filled('recorded_at')) {
+            $query->whereDate('recorded_at', $request->recorded_at);
         }
 
         $anamneses = $query->latest()->paginate(10)->withQueryString();
 
-        return view('anamneses.index', compact('anamneses'));
+        return view('patient-history.index', compact('anamneses'));
     }
 
     public function create()
     {
-        return view('anamneses.create');
+        return view('patient-history.create');
     }
 
     public function store(Request $request)
@@ -63,17 +62,13 @@ class PatientHistoryController extends Controller
             $this->patientHistoryService->create($validatedData);
 
             return redirect()
-                ->route('anamneses.index')
+                ->route('patient-histories.index')
                 ->with('success', 'Anamnese criada com sucesso!');
         } catch (ValidationException $e) {
-            Log::error('ERRO BNESSA POHA: '.$e->getMessage());
-
             return back()
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
-            Log::error('EXCEPTION NO SEU CU: '.$e->getMessage());
-
             return back()
                 ->withErrors(['error' => 'Erro ao criar anamnese: '.$e->getMessage()])
                 ->withInput();
@@ -84,14 +79,14 @@ class PatientHistoryController extends Controller
     {
         $anamnese = PatientHistory::with(['patient', 'user'])->findOrFail($id);
 
-        return view('anamneses.show', compact('anamnese'));
+        return view('patient-history.show', compact('anamnese'));
     }
 
     public function edit($id)
     {
         $anamnese = PatientHistory::findOrFail($id);
 
-        return view('anamneses.edit', compact('anamnese'));
+        return view('patient-history.edit', compact('anamnese'));
     }
 
     public function update(Request $request, $id)
@@ -104,7 +99,7 @@ class PatientHistoryController extends Controller
             $this->patientHistoryService->update($anamnesis, $validatedData);
 
             return redirect()
-                ->route('anamneses.index')
+                ->route('patient-histories.index')
                 ->with('success', 'Anamnese atualizada com sucesso!');
         } catch (ValidationException $e) {
             return back()
@@ -125,7 +120,7 @@ class PatientHistoryController extends Controller
             $this->patientHistoryService->delete($anamnesis);
 
             return redirect()
-                ->route('anamneses.index')
+                ->route('patient-histories.index')
                 ->with('success', 'Anamnese removida com sucesso!');
         } catch (Exception $e) {
             return back()

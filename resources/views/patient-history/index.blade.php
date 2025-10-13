@@ -4,7 +4,7 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Anamneses</h2>
-        <a href="{{ route('anamneses.create') }}" class="btn btn-primary">
+        <a href="{{ route('patient-histories.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Nova Anamnese
         </a>
     </div>
@@ -23,7 +23,7 @@
     @endif
 
     <!-- Filtros -->
-    <form method="GET" action="{{ route('anamneses.index') }}" class="card mb-4">
+    <form method="GET" action="{{ route('patient-histories.index') }}" class="card mb-4">
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-3">
@@ -44,7 +44,7 @@
                     <button type="submit" class="btn btn-primary me-2">
                         <i class="fas fa-filter"></i> Filtrar
                     </button>
-                    <a href="{{ route('anamneses.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('patient-histories.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-times"></i> Limpar
                     </a>
                 </div>
@@ -78,21 +78,21 @@
                                     <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
                                         <span class="fw-semibold small text-secondary">Data</span>
                                         <span class="mb-0 text-truncate">
-                                            {{ $anamnese->date->format('d/m/Y') }}
+                                            {{ $anamnese->recorded_at->format('d/m/Y') }}
                                         </span>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center ms-auto mt-2 mt-md-0">
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('anamneses.show', $anamnese->id) }}"
+                                        <a href="{{ route('patient-histories.show', $anamnese->id) }}"
                                            class="btn btn-sm btn-outline-primary" title="Visualizar">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ route('anamneses.edit', $anamnese->id) }}"
+                                        <a href="{{ route('patient-histories.edit', $anamnese->id) }}"
                                            class="btn btn-sm btn-outline-secondary" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('anamneses.destroy', $anamnese->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('patient-histories.destroy', $anamnese->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger"

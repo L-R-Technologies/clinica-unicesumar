@@ -32,7 +32,7 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
 
-    Route::resource('anamneses', PatientHistoryController::class);
+    Route::resource('patient-histories', PatientHistoryController::class);
 
     Route::middleware(['role:teacher,student'])->group(function () {
         Route::get('/samples', SampleList::class)->name('samples.index');

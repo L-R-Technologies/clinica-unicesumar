@@ -6,7 +6,7 @@
         <div class="card-body">
             <h2 class="text-center mb-4">Editar Anamnese</h2>
 
-            <form action="{{ route('anamneses.update', $anamnese->id) }}" method="POST">
+            <form action="{{ route('patient-histories.update', $anamnese->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -35,10 +35,10 @@
                 {{-- Data da coleta --}}
                 <div class="mb-3">
                     <label class="form-label">Data da coleta</label>
-                    <input type="date" name="date"
-                           class="form-control @error('date') is-invalid @enderror"
-                           value="{{ old('date', $anamnese->date->format('Y-m-d')) }}" required>
-                    @error('date')
+                    <input type="date" name="recorded_at"
+                           class="form-control @error('recorded_at') is-invalid @enderror"
+                           value="{{ old('recorded_at', $anamnese->recorded_at->format('Y-m-d')) }}" required>
+                    @error('recorded_at')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -136,7 +136,7 @@
                 {{-- Botões --}}
                 <div class="d-flex justify-content-center mt-4">
                     <button type="submit" class="btn btn-success">Atualizar</button>
-                    <a href="{{ route('anamneses.index') }}" class="btn btn-secondary ms-2">Cancelar</a>
+                    <a href="{{ route('patient-histories.index') }}" class="btn btn-secondary ms-2">Cancelar</a>
                 </div>
             </form>
         </div>

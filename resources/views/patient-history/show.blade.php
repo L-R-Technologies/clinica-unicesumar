@@ -5,7 +5,7 @@
     <div class="col-lg-8">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Detalhes da Anamnese</h2>
-            <a href="{{ route('anamneses.index') }}" class="btn btn-primary">Voltar</a>
+            <a href="{{ route('patient-histories.index') }}" class="btn btn-primary">Voltar</a>
         </div>
 
         <div class="card shadow-sm p-4 mb-4">
@@ -14,7 +14,7 @@
                 <div class="col-md-6"><strong>Paciente:</strong> {{ $anamnese->patient->name ?? 'N/A' }}</div>
                 <div class="col-md-6"><strong>Profissional:</strong> {{ $anamnese->user->name ?? 'N/A' }}</div>
             </div>
-            <div class="mb-3"><strong>Data:</strong> {{ $anamnese->date->format('d/m/Y') }}</div>
+            <div class="mb-3"><strong>Data:</strong> {{ $anamnese->recorded_at->format('d/m/Y') }}</div>
         </div>
 
         <div class="card shadow-sm p-4 mb-4">

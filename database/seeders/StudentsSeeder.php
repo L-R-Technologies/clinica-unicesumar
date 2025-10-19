@@ -11,16 +11,16 @@ class StudentsSeeder extends Seeder
     public function run(): void
     {
         $student1 = User::create([
-            'name' => 'Aluno 1',
-            'email' => 'aluno1@email.com',
+            'name' => 'Lucas Henrique Souza',
+            'email' => 'lucas.souza@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'student',
             'email_verified_at' => now(),
         ]);
 
         $student2 = User::create([
-            'name' => 'Aluno 2',
-            'email' => 'aluno2@email.com',
+            'name' => 'Juliana Mendes Rocha',
+            'email' => 'juliana.rocha@email.com',
             'password' => bcrypt('123456789'),
             'role' => 'student',
             'email_verified_at' => now(),

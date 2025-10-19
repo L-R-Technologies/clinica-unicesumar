@@ -137,6 +137,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 2,
                 'patient_history_id' => 3,
                 'exam_type_id' => 5, // Urinálise Completa
+                'sample_id' => 7,
                 'date' => now()->subDays(1),
                 'results' => [
                     'densidade' => '1.022',
@@ -158,6 +159,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 3,
                 'patient_history_id' => 4,
                 'exam_type_id' => 1, // Hemograma Completo
+                'sample_id' => 16, // Nova amostra específica para este exame
                 'date' => now()->subDays(3),
                 'results' => [
                     'hemoglobina' => '9.8',
@@ -178,6 +180,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 3,
                 'patient_history_id' => 4,
                 'exam_type_id' => 3, // Ferro Sérico
+                'sample_id' => 8,
                 'date' => now()->subDays(3),
                 'results' => [
                     'ferro_serico' => '45',
@@ -196,6 +199,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 4,
                 'patient_history_id' => 5,
                 'exam_type_id' => 2, // Glicose em Jejum
+                'sample_id' => 9,
                 'date' => now()->subDays(4),
                 'results' => [
                     'glicose_jejum' => '145',
@@ -209,6 +213,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 4,
                 'patient_history_id' => 5,
                 'exam_type_id' => 8, // Hemoglobina Glicada
+                'sample_id' => 10,
                 'date' => now()->subDays(4),
                 'results' => [
                     'hba1c' => '7.8',
@@ -222,6 +227,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 4,
                 'patient_history_id' => 5,
                 'exam_type_id' => 5, // Urinálise Completa
+                'sample_id' => 17, // Nova amostra específica para este exame
                 'date' => now()->subDays(4),
                 'results' => [
                     'densidade' => '1.030',
@@ -243,6 +249,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 5,
                 'patient_history_id' => 6,
                 'exam_type_id' => 7, // TSH
+                'sample_id' => 11,
                 'date' => now()->subDays(6),
                 'results' => [
                     'tsh' => '8.5',
@@ -256,6 +263,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 5,
                 'patient_history_id' => 6,
                 'exam_type_id' => 6, // T4 Livre
+                'sample_id' => 12,
                 'date' => now()->subDays(6),
                 'results' => [
                     't4_livre' => '0.8',
@@ -269,6 +277,7 @@ class ExamsSeeder extends Seeder
                 'patient_id' => 5,
                 'patient_history_id' => 6,
                 'exam_type_id' => 1, // Hemograma Completo
+                'sample_id' => 13,
                 'date' => now()->subDays(6),
                 'results' => [
                     'hemoglobina' => '12.5',

@@ -12,167 +12,47 @@ class SamplesSeeder extends Seeder
      */
     public function run(): void
     {
-        $samples = [
-            // Amostras da Paciente 1 (Maria Silva Santos)
-            [
-                'patient_id' => 1,
-                'user_id' => 2, // Professor
-                'sample_type_id' => 1, // Sangue Total
-                'code' => 'SMP000001',
-                'date' => now()->subDays(5),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-            [
-                'patient_id' => 1,
-                'user_id' => 3, // Aluno 1
-                'sample_type_id' => 2, // Soro
-                'code' => 'SMP000002',
-                'date' => now()->subDays(5),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-            [
-                'patient_id' => 1,
-                'user_id' => 4, // Aluno 2
-                'sample_type_id' => 4, // Urina
-                'code' => 'SMP000003',
-                'date' => now()->subDays(2),
-                'location' => 'Laboratório Norte',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-
-            // Amostras do Paciente 2 (João Carlos Oliveira)
-            [
-                'patient_id' => 2,
-                'user_id' => 2, // Professor
-                'sample_type_id' => 1, // Sangue Total
-                'code' => 'SMP000004',
-                'date' => now()->subDays(1),
-                'location' => 'Laboratório Central',
-                'status' => 'under review',
-                'notified' => false,
-            ],
-            [
-                'patient_id' => 2,
-                'user_id' => 3, // Aluno 1
-                'sample_type_id' => 3, // Plasma
-                'code' => 'SMP000005',
-                'date' => now()->subDays(1),
-                'location' => 'Laboratório Central',
-                'status' => 'under review',
-                'notified' => false,
-            ],
-            [
-                'patient_id' => 2,
-                'user_id' => 4, // Aluno 2
-                'sample_type_id' => 5, // Fezes
-                'code' => 'SMP000006',
-                'date' => now()->subDays(1),
-                'location' => 'Laboratório de Parasitologia',
-                'status' => 'under review',
-                'notified' => false,
-            ],
-            [
-                'patient_id' => 2,
-                'user_id' => 2, // Professor
-                'sample_type_id' => 4, // Urina
-                'code' => 'SMP000007',
-                'date' => now()->subDays(1),
-                'location' => 'Laboratório Norte',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-
-            // Amostras da Paciente 3 (Ana Paula Costa)
-            [
-                'patient_id' => 3,
-                'user_id' => 3, // Aluno 1
-                'sample_type_id' => 1, // Sangue Total
-                'code' => 'SMP000008',
-                'date' => now()->subDays(3),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-            [
-                'patient_id' => 3,
-                'user_id' => 4, // Aluno 2
-                'sample_type_id' => 2, // Soro
-                'code' => 'SMP000009',
-                'date' => now()->subDays(3),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-
-            // Amostras do Paciente 4 (Carlos Eduardo Ferreira)
-            [
-                'patient_id' => 4,
-                'user_id' => 2, // Professor
-                'sample_type_id' => 1, // Sangue Total
-                'code' => 'SMP000010',
-                'date' => now()->subDays(4),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-            [
-                'patient_id' => 4,
-                'user_id' => 3, // Aluno 1
-                'sample_type_id' => 2, // Soro
-                'code' => 'SMP000011',
-                'date' => now()->subDays(4),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-            [
-                'patient_id' => 4,
-                'user_id' => 4, // Aluno 2
-                'sample_type_id' => 4, // Urina
-                'code' => 'SMP000012',
-                'date' => now()->subDays(4),
-                'location' => 'Laboratório Norte',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-
-            // Amostras da Paciente 5 (Fernanda Lima Silva)
-            [
-                'patient_id' => 5,
-                'user_id' => 2, // Professor
-                'sample_type_id' => 1, // Sangue Total
-                'code' => 'SMP000013',
-                'date' => now()->subDays(6),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-            [
-                'patient_id' => 5,
-                'user_id' => 3, // Aluno 1
-                'sample_type_id' => 2, // Soro
-                'code' => 'SMP000014',
-                'date' => now()->subDays(6),
-                'location' => 'Laboratório Central',
-                'status' => 'stored',
-                'notified' => true,
-            ],
-            [
-                'patient_id' => 5,
-                'user_id' => 4, // Aluno 2
-                'sample_type_id' => 4, // Urina
-                'code' => 'SMP000015',
-                'date' => now()->subDays(6),
-                'location' => 'Laboratório Norte',
-                'status' => 'stored',
-                'notified' => true,
-            ],
+        $samples = [];
+        $rawSamples = [
+            [1, 2, 1, now()->subDays(5), 'Geladeira 1', 'stored', true],
+            [1, 3, 2, now()->subDays(5), 'Geladeira 2', 'stored', true],
+            [1, 4, 4, now()->subDays(2), 'Geladeira 1', 'stored', true],
+            [2, 2, 1, now()->subDays(1), 'Geladeira 2', 'under review', false],
+            [2, 3, 3, now()->subDays(1), 'Geladeira 1', 'under review', false],
+            [2, 4, 5, now()->subDays(1), 'Geladeira 2', 'under review', false],
+            [2, 2, 4, now()->subDays(1), 'Geladeira 1', 'stored', true],
+            [3, 3, 1, now()->subDays(3), 'Geladeira 2', 'stored', true],
+            [3, 4, 2, now()->subDays(3), 'Geladeira 1', 'stored', true],
+            [4, 2, 1, now()->subDays(4), 'Geladeira 2', 'stored', true],
+            [4, 3, 2, now()->subDays(4), 'Geladeira 1', 'stored', true],
+            [4, 4, 4, now()->subDays(4), 'Geladeira 2', 'stored', true],
+            [5, 2, 1, now()->subDays(6), 'Geladeira 1', 'stored', true],
+            [5, 3, 2, now()->subDays(6), 'Geladeira 2', 'stored', true],
+            [5, 4, 4, now()->subDays(6), 'Geladeira 1', 'stored', true],
+            [3, 3, 1, now()->subDays(3), 'Geladeira 2', 'stored', true],
+            [4, 4, 4, now()->subDays(4), 'Geladeira 1', 'stored', true],
         ];
+
+        $dateCount = [];
+        foreach ($rawSamples as $raw) {
+            $date = $raw[3]->format('dmY');
+            if (! isset($dateCount[$date])) {
+                $dateCount[$date] = 1;
+            } else {
+                $dateCount[$date]++;
+            }
+            $seq = str_pad($dateCount[$date], 3, '0', STR_PAD_LEFT);
+            $samples[] = [
+                'patient_id' => $raw[0],
+                'user_id' => $raw[1],
+                'sample_type_id' => $raw[2],
+                'code' => $date.'-'.$seq,
+                'date' => $raw[3],
+                'location' => $raw[4],
+                'status' => $raw[5],
+                'notified' => $raw[6],
+            ];
+        }
 
         foreach ($samples as $sample) {
             Sample::create($sample);

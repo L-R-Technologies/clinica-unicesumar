@@ -74,15 +74,15 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="type" class="form-label">Tipo de Exame *</label>
-                                    <select class="form-select @error('type') is-invalid @enderror"
-                                        id="type" wire:model="type" required>
+                                    <label for="exam_type_id" class="form-label">Tipo de Exame *</label>
+                                    <select class="form-select @error('exam_type_id') is-invalid @enderror"
+                                        id="exam_type_id" wire:model="exam_type_id" required>
                                         <option value="">Selecione o tipo</option>
                                         @foreach($examTypes as $examType)
-                                            <option value="{{ $examType }}">{{ $examType }}</option>
+                                            <option value="{{ $examType->id }}">{{ $examType->name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('type')
+                                    @error('exam_type_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -97,7 +97,7 @@
                                             </option>
                                             @foreach($samples as $sample)
                                                 <option value="{{ $sample->id }}">
-                                                    {{ $sample->code }} - {{ $sample->type }}
+                                                    {{ $sample->code }} - {{ $sample->sampleType->name }}
                                                 </option>
                                             @endforeach
                                         </select>

@@ -45,8 +45,12 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="typeFilter" class="form-label">Tipo</label>
-                                <input type="text" class="form-control" id="typeFilter"
-                                    wire:model.live.debounce.300ms="typeFilter" placeholder="Tipo do exame...">
+                                <select class="form-select" id="typeFilter" wire:model.live="typeFilter">
+                                    <option value="">Todos os tipos</option>
+                                    @foreach($examTypes as $examType)
+                                        <option value="{{ $examType->id }}">{{ $examType->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-md-2">
                                 <label for="dateFrom" class="form-label">Data de</label>
@@ -91,7 +95,7 @@
                                         {{ $exam->user->name ?? 'N/A' }}
                                     </div>
                                     <div class="col-md-1" data-label="Tipo">
-                                        {{ $exam->type }}
+                                        {{ $exam->examType->name ?? 'N/A' }}
                                     </div>
                                     <div class="col-md-2" data-label="Amostra">
                                         {{ $exam->sample->code ?? 'N/A' }}

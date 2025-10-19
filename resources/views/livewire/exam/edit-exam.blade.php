@@ -74,9 +74,9 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="type" class="form-label">Tipo de Exame</label>
-                                    <input type="text" class="form-control" id="type"
-                                           value="{{ $exam->type->getLabel() }}" disabled readonly>
+                                    <label for="exam_type_id" class="form-label">Tipo de Exame</label>
+                                    <input type="text" class="form-control" id="exam_type_id"
+                                           value="{{ $exam->examType->name }}" disabled readonly>
                                     <div class="form-text">O tipo do exame não pode ser alterado após a criação.</div>
                                 </div>
 
@@ -90,7 +90,7 @@
                                         </option>
                                         @foreach($samples as $sample)
                                             <option value="{{ $sample->id }}">
-                                                {{ $sample->code }} - {{ $sample->type }}
+                                                {{ $sample->code }} - {{ $sample->sampleType->name }}
                                             </option>
                                         @endforeach
                                     </select>

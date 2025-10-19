@@ -23,7 +23,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <strong>Tipo:</strong><br>
-                                <span>{{ $exam->type }}</span>
+                                <span>{{ $exam->examType->name }}</span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <strong>Data do Exame:</strong><br>
@@ -95,7 +95,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <strong>Tipo:</strong><br>
-                                <span>{{ $exam->sample->type }}</span>
+                                <span>{{ $exam->sample->sampleType->name }}</span>
                             </div>
                         </div>
 
@@ -169,7 +169,7 @@
                             <a href="{{ route('exam.edit', $exam->id) }}" class="btn btn-success">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $exam->id }}, '{{ $exam->type }}')">
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $exam->id }}, '{{ $exam->examType->name }}')">
                                 <i class="fas fa-trash"></i> Excluir
                             </button>
                         </div>

@@ -34,12 +34,14 @@ class SampleList extends Component
 
     public function render()
     {
-        $query = Sample::with(['patient.user', 'user']);
+        $query = Sample::with(['patient.user', 'user', 'sampleType']);
 
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('code', 'like', '%'.$this->search.'%')
-                    ->orWhere('type', 'like', '%'.$this->search.'%');
+                    ->orWhereHas('sampleType', function ($q) {
+                        $q->where('name', 'like', '%'.$this->search.'%');
+                    });
             });
         }
 

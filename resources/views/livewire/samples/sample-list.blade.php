@@ -73,7 +73,7 @@
                                 {{ $sample->user->name ?? 'N/A' }}
                             </div>
                             <div class="col-md-1" data-label="Tipo">
-                                {{ $sample->type }}
+                                {{ $sample->sampleType->name ?? 'N/A' }}
                             </div>
                             <div class="col-md-2" data-label="Data da Coleta">
                                 {{ \Carbon\Carbon::parse($sample->date)->format('d/m/Y') }}

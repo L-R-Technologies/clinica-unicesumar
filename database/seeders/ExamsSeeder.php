@@ -15,7 +15,7 @@ class ExamsSeeder extends Seeder
         $exams = [
             // Exames da Paciente 1 (Maria Silva Santos)
             [
-                'user_id' => 2, // Professor
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_history_id' => 1,
                 'patient_id' => 1,
                 'exam_type_id' => 1, // Hemograma Completo
@@ -41,7 +41,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Hemograma dentro dos parâmetros normais.',
             ],
             [
-                'user_id' => 3, // Aluno 1
+                'user_id' => 1, // Aluno 1 (Lucas Henrique Souza)
                 'patient_history_id' => 1,
                 'patient_id' => 1,
                 'exam_type_id' => 2, // Glicemia
@@ -54,7 +54,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Glicemia de jejum normal.',
             ],
             [
-                'user_id' => 4, // Aluno 2
+                'user_id' => 2, // Aluno 2 (Juliana Mendes Rocha)
                 'patient_history_id' => 2,
                 'patient_id' => 1,
                 'exam_type_id' => 16, // Urina Tipo I
@@ -77,7 +77,7 @@ class ExamsSeeder extends Seeder
 
             // Exames do Paciente 2 (João Carlos Oliveira)
             [
-                'user_id' => 2, // Professor
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_history_id' => 3,
                 'patient_id' => 2,
                 'exam_type_id' => 1, // Hemograma Completo
@@ -103,7 +103,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Leucocitose discreta. Avaliar processo inflamatório.',
             ],
             [
-                'user_id' => 3, // Aluno 1
+                'user_id' => 1, // Aluno 1 (Lucas Henrique Souza)
                 'patient_history_id' => 3,
                 'patient_id' => 2,
                 'exam_type_id' => 10, // Colesterol Total
@@ -116,7 +116,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Paciente não manteve jejum adequado conforme histórico.',
             ],
             [
-                'user_id' => 4, // Aluno 2
+                'user_id' => 2, // Aluno 2 (Juliana Mendes Rocha)
                 'patient_history_id' => 3,
                 'patient_id' => 2,
                 'exam_type_id' => 19, // Parasitológico de Fezes
@@ -133,7 +133,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Parasitológico de fezes para investigação de sintomas gastrointestinais.',
             ],
             [
-                'user_id' => 2, // Professor
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_id' => 2,
                 'patient_history_id' => 3,
                 'exam_type_id' => 5, // Urinálise Completa
@@ -155,7 +155,7 @@ class ExamsSeeder extends Seeder
 
             // Exames da Paciente 3 (Ana Paula Costa) - Investigação de Anemia
             [
-                'user_id' => 3, // Aluno 1
+                'user_id' => 1, // Aluno 1 (Lucas Henrique Souza)
                 'patient_id' => 3,
                 'patient_history_id' => 4,
                 'exam_type_id' => 1, // Hemograma Completo
@@ -176,7 +176,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Anemia microcítica hipocrômica',
             ],
             [
-                'user_id' => 4, // Aluno 2
+                'user_id' => 2, // Aluno 2 (Juliana Mendes Rocha)
                 'patient_id' => 3,
                 'patient_history_id' => 4,
                 'exam_type_id' => 3, // Ferro Sérico
@@ -195,7 +195,7 @@ class ExamsSeeder extends Seeder
 
             // Exames do Paciente 4 (Carlos Eduardo Ferreira) - Controle Diabetes
             [
-                'user_id' => 2, // Professor
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_id' => 4,
                 'patient_history_id' => 5,
                 'exam_type_id' => 2, // Glicose em Jejum
@@ -209,7 +209,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Hiperglicemia leve',
             ],
             [
-                'user_id' => 3, // Aluno 1
+                'user_id' => 1, // Aluno 1 (Lucas Henrique Souza)
                 'patient_id' => 4,
                 'patient_history_id' => 5,
                 'exam_type_id' => 8, // Hemoglobina Glicada
@@ -223,7 +223,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'Controle glicêmico inadequado',
             ],
             [
-                'user_id' => 4, // Aluno 2
+                'user_id' => 2, // Aluno 2 (Juliana Mendes Rocha)
                 'patient_id' => 4,
                 'patient_history_id' => 5,
                 'exam_type_id' => 5, // Urinálise Completa
@@ -245,7 +245,7 @@ class ExamsSeeder extends Seeder
 
             // Exames da Paciente 5 (Fernanda Lima Silva) - Controle Hipotireoidismo
             [
-                'user_id' => 2, // Professor
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_id' => 5,
                 'patient_history_id' => 6,
                 'exam_type_id' => 7, // TSH
@@ -259,7 +259,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'TSH elevado - hipotireoidismo',
             ],
             [
-                'user_id' => 3, // Aluno 1
+                'user_id' => 1, // Aluno 1 (Lucas Henrique Souza)
                 'patient_id' => 5,
                 'patient_history_id' => 6,
                 'exam_type_id' => 6, // T4 Livre
@@ -273,7 +273,7 @@ class ExamsSeeder extends Seeder
                 'observation' => 'T4 livre no limite inferior',
             ],
             [
-                'user_id' => 4, // Aluno 2
+                'user_id' => 2, // Aluno 2 (Juliana Mendes Rocha)
                 'patient_id' => 5,
                 'patient_history_id' => 6,
                 'exam_type_id' => 1, // Hemograma Completo

@@ -5,12 +5,13 @@ namespace App\Livewire\Samples;
 use App\Models\Sample;
 use App\Service\SampleService;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 #[Layout('layouts.base')]
-class SampleList extends Component
+class SampleIndex extends Component
 {
     use WithPagination;
 
@@ -63,9 +64,11 @@ class SampleList extends Component
             'search' => $this->search,
             'status' => $this->statusFilter,
             'date' => $this->dateFilter,
+            'user_id' => Auth::id(),
+            'user_role' => Auth::user()->role,
         ]);
 
-        return view('livewire.samples.sample-list', [
+        return view('livewire.samples.sample-index', [
             'samples' => $samples,
             'statusOptions' => $sampleService->getStatusOptions(),
         ]);

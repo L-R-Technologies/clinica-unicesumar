@@ -1,6 +1,8 @@
 @extends('layouts.base')
 
 @section('content')
+    @livewire('patient-history.show-patient-history', ['patientHistory' => $anamnese])
+@endsection
 <div class="container d-flex justify-content-center">
     <div class="col-lg-8">
         <div class="d-flex justify-content-between align-items-center mb-4">

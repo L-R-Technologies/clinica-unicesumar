@@ -1,6 +1,8 @@
 @extends('layouts.base')
 
 @section('content')
+    @livewire('patient-history.edit-patient-history', ['patientHistory' => $anamnese])
+@endsection
 <div class="container">
     <div class="card mx-auto" style="max-width: 700px;">
         <div class="card-body">
@@ -46,36 +48,82 @@
                 {{-- Dados Clínicos --}}
                 <h4 class="text-center mt-4 mb-3">Dados Clínicos</h4>
 
-                @php
-                    $clinicalFields = [
-                        ['id'=>'fasting','label'=>'Você está em jejum?','detail'=>'fasting_hours','type'=>'number','placeholder'=>'Há quantas horas?'],
-                        ['id'=>'on_supplements','label'=>'Faz uso de suplementos alimentares?','detail'=>'supplements','type'=>'text','placeholder'=>'Quais suplementos?'],
-                        ['id'=>'chronic_disease','label'=>'Possui alguma doença crônica?','detail'=>'chronic_disease_details','type'=>'text','placeholder'=>'Detalhes'],
-                        ['id'=>'recent_infections','label'=>'Possui histórico de doenças infecciosas recentes?','detail'=>'recent_infections_details','type'=>'text','placeholder'=>'Detalhes'],
-                        ['id'=>'recent_surgery','label'=>'Realizou algum procedimento cirúrgico recentemente?','detail'=>'surgery_details','type'=>'text','placeholder'=>'Detalhes'],
-                        ['id'=>'allergies','label'=>'Possui histórico de alergias?','detail'=>'allergy_details','type'=>'text','placeholder'=>'Detalhes'],
-                    ];
-                @endphp
+                {{-- Jejum --}}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="fasting_checkbox" name="fasting" value="1" {{ old('fasting', $anamnese->fasting) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="fasting_checkbox">Você está em jejum?</label>
+                </div>
+                <div class="ms-4 mb-3">
+                    <input type="number" name="fasting_hours" class="form-control" placeholder="Há quantas horas?" value="{{ old('fasting_hours', $anamnese->fasting_hours) }}" {{ old('fasting', $anamnese->fasting) ? '' : 'disabled' }}>
+                </div>
 
-                @foreach($clinicalFields as $field)
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="{{ $field['id'] }}_checkbox" name="{{ $field['id'] }}" value="1" {{ old($field['id'], $anamnese->{$field['id']}) ? 'checked' : '' }}>
-                        <label class="form-check-label" for="{{ $field['id'] }}_checkbox">{{ $field['label'] }}</label>
-                    </div>
-                    <div class="ms-4 mb-3" id="{{ $field['id'] }}_container" style="display: {{ old($field['id'], $anamnese->{$field['id']}) ? 'block' : 'none' }}">
-                        <input type="{{ $field['type'] }}" name="{{ $field['detail'] }}" class="form-control"
-                               placeholder="{{ $field['placeholder'] }}"
-                               value="{{ old($field['detail'], $anamnese->{$field['detail']}) }}">
-                    </div>
-                @endforeach
+                {{-- Álcool nas últimas 24h --}}
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="alcohol_last_24h_checkbox" name="alcohol_last_24h" value="1" {{ old('alcohol_last_24h', $anamnese->alcohol_last_24h) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="alcohol_last_24h_checkbox">Consumiu álcool nas últimas 24 horas?</label>
+                </div>
+
+                {{-- Medicação --}}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="on_medication_checkbox" name="on_medication" value="1" {{ old('on_medication', $anamnese->on_medication) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="on_medication_checkbox">Faz uso de medicamentos?</label>
+                </div>
+                <div class="ms-4 mb-3">
+                    <input type="text" name="medications" class="form-control" placeholder="Quais medicamentos?" value="{{ old('medications', $anamnese->medications) }}" {{ old('on_medication', $anamnese->on_medication) ? '' : 'disabled' }}>
+                </div>
+
+                {{-- Suplementos --}}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="on_supplements_checkbox" name="on_supplements" value="1" {{ old('on_supplements', $anamnese->on_supplements) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="on_supplements_checkbox">Faz uso de suplementos alimentares?</label>
+                </div>
+                <div class="ms-4 mb-3">
+                    <input type="text" name="supplements" class="form-control" placeholder="Quais suplementos?" value="{{ old('supplements', $anamnese->supplements) }}" {{ old('on_supplements', $anamnese->on_supplements) ? '' : 'disabled' }}>
+                </div>
+
+                {{-- Doença crônica --}}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="chronic_disease_checkbox" name="chronic_disease" value="1" {{ old('chronic_disease', $anamnese->chronic_disease) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="chronic_disease_checkbox">Possui alguma doença crônica?</label>
+                </div>
+                <div class="ms-4 mb-3">
+                    <input type="text" name="chronic_disease_details" class="form-control" placeholder="Detalhes" value="{{ old('chronic_disease_details', $anamnese->chronic_disease_details) }}" {{ old('chronic_disease', $anamnese->chronic_disease) ? '' : 'disabled' }}>
+                </div>
+
+                {{-- Infecções recentes --}}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="infectious_disease_history_checkbox" name="infectious_disease_history" value="1" {{ old('infectious_disease_history', $anamnese->infectious_disease_history) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="infectious_disease_history_checkbox">Possui histórico de doenças infecciosas recentes?</label>
+                </div>
+                <div class="ms-4 mb-3">
+                    <input type="text" name="infectious_disease_details" class="form-control" placeholder="Detalhes" value="{{ old('infectious_disease_details', $anamnese->infectious_disease_details) }}" {{ old('infectious_disease_history', $anamnese->infectious_disease_history) ? '' : 'disabled' }}>
+                </div>
+
+                {{-- Cirurgia recente --}}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="recent_surgery_checkbox" name="recent_surgery" value="1" {{ old('recent_surgery', $anamnese->recent_surgery) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="recent_surgery_checkbox">Realizou algum procedimento cirúrgico recentemente?</label>
+                </div>
+                <div class="ms-4 mb-3">
+                    <input type="text" name="surgery_details" class="form-control" placeholder="Detalhes" value="{{ old('surgery_details', $anamnese->surgery_details) }}" {{ old('recent_surgery', $anamnese->recent_surgery) ? '' : 'disabled' }}>
+                </div>
+
+                {{-- Alergias --}}
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="allergies_checkbox" name="allergies" value="1" {{ old('allergies', $anamnese->allergies) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="allergies_checkbox">Possui histórico de alergias?</label>
+                </div>
+                <div class="ms-4 mb-3">
+                    <input type="text" name="allergy_details" class="form-control" placeholder="Detalhes" value="{{ old('allergy_details', $anamnese->allergy_details) }}" {{ old('allergies', $anamnese->allergies) ? '' : 'disabled' }}>
+                </div>
 
                 {{-- Tabagismo --}}
                 <div class="form-check mb-2">
                     <input class="form-check-input" type="checkbox" id="smokes_checkbox" name="smokes" value="1" {{ old('smokes', $anamnese->smokes) ? 'checked' : '' }}>
                     <label class="form-check-label" for="smokes_checkbox">Você fuma?</label>
                 </div>
-                <div class="ms-4 mb-3" id="cigarettes_container" style="display: {{ old('smokes', $anamnese->smokes) ? 'block' : 'none' }}">
-                    <input type="number" name="cigarettes_per_day" class="form-control" placeholder="Quantos cigarros por dia?" value="{{ old('cigarettes_per_day', $anamnese->cigarettes_per_day) }}">
+                <div class="ms-4 mb-3">
+                    <input type="number" name="cigarettes_per_day" class="form-control" placeholder="Quantos cigarros por dia?" value="{{ old('cigarettes_per_day', $anamnese->cigarettes_per_day) }}" {{ old('smokes', $anamnese->smokes) ? '' : 'disabled' }}>
                 </div>
 
                 {{-- Atividade física --}}
@@ -142,21 +190,4 @@
         </div>
     </div>
 </div>
-
-{{-- Script para exibir/ocultar campos --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleFields = ['fasting', 'on_supplements', 'chronic_disease', 'recent_infections', 'recent_surgery', 'allergies', 'smokes'];
-
-        toggleFields.forEach(id => {
-            const checkbox = document.getElementById(id + '_checkbox');
-            const container = document.getElementById(id + (id==='smokes' ? '_container' : '_container'));
-            if(!checkbox || !container) return;
-
-            checkbox.addEventListener('change', function() {
-                container.style.display = this.checked ? 'block' : 'none';
-            });
-        });
-    });
-</script>
 @endsection

@@ -15,7 +15,7 @@ class PatientHistoriesSeeder extends Seeder
         $patientHistories = [
             // Histórico da Paciente 1 (Maria Silva Santos)
             [
-                'user_id' => 2, // Professor que preencheu
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_id' => 1,
                 'fasting' => true,
                 'fasting_hours' => 8,
@@ -44,7 +44,7 @@ class PatientHistoriesSeeder extends Seeder
 
             // Segundo histórico da Paciente 1
             [
-                'user_id' => 3, // Aluno 1 que preencheu
+                'user_id' => 1, // Aluno 1 (Lucas Henrique Souza)
                 'patient_id' => 1,
                 'fasting' => false,
                 'fasting_hours' => null,
@@ -73,7 +73,7 @@ class PatientHistoriesSeeder extends Seeder
 
             // Histórico do Paciente 2 (João Carlos Oliveira)
             [
-                'user_id' => 2, // Professor que preencheu
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_id' => 2,
                 'fasting' => true,
                 'fasting_hours' => 12,
@@ -102,7 +102,7 @@ class PatientHistoriesSeeder extends Seeder
 
             // Histórico da Paciente 3 (Ana Paula Costa)
             [
-                'user_id' => 3, // Aluno 1 que preencheu
+                'user_id' => 1, // Aluno 1 (Lucas Henrique Souza)
                 'patient_id' => 3,
                 'fasting' => true,
                 'fasting_hours' => 10,
@@ -131,7 +131,7 @@ class PatientHistoriesSeeder extends Seeder
 
             // Histórico do Paciente 4 (Carlos Eduardo Ferreira)
             [
-                'user_id' => 2, // Professor que preencheu
+                'user_id' => 3, // Professor (Ricardo Martins Alves)
                 'patient_id' => 4,
                 'fasting' => true,
                 'fasting_hours' => 14,
@@ -160,7 +160,7 @@ class PatientHistoriesSeeder extends Seeder
 
             // Histórico da Paciente 5 (Fernanda Lima Silva)
             [
-                'user_id' => 4, // Aluno 2 que preencheu
+                'user_id' => 2, // Aluno 2 (Juliana Mendes Rocha)
                 'patient_id' => 5,
                 'fasting' => false,
                 'fasting_hours' => null,

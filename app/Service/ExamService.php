@@ -98,6 +98,14 @@ class ExamService
     {
         $query = Exam::with(['user', 'patient.user', 'patientHistory', 'sample', 'examType']);
 
+        // Filtrar por responsável se for aluno
+        if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
+            if ($filters['user_role'] === 'student') {
+                $query->where('user_id', $filters['user_id']);
+            }
+            // Professores veem todos os exames, então não aplicamos filtro
+        }
+
         if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {

@@ -1,5 +1,5 @@
 <div>
-     <div class="container">
+    <div class="container">
         <h2>Amostras</h2>
     </div>
     <div class="container py-4">
@@ -23,8 +23,8 @@
                 <div class="row g-3 align-items-end">
                     <div class="col-md-3">
                         <label for="search" class="form-label">Buscar por código ou tipo</label>
-                        <input type="text" id="search" class="form-control" placeholder="Digite o código ou tipo..."
-                               wire:model.live.debounce.300ms="search">
+                        <input type="text" id="search" class="form-control"
+                            placeholder="Digite o código ou tipo..." wire:model.live.debounce.300ms="search">
                     </div>
                     <div class="col-md-3">
                         <label for="filterStatus" class="form-label">Status</label>
@@ -36,8 +36,8 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                         <label for="filterDate" class="form-label">Data da Coleta</label>
-                         <input type="date" id="filterDate" class="form-control" wire:model.live="dateFilter">
+                        <label for="filterDate" class="form-label">Data da Coleta</label>
+                        <input type="date" id="filterDate" class="form-control" wire:model.live="dateFilter">
                     </div>
                     <div class="col-md-3">
                         <button class="btn btn-outline-secondary w-100" wire:click="clearFilters">
@@ -61,7 +61,7 @@
                 </div>
 
                 @forelse ($samples as $sample)
-                    <div class="border rounded mb-2"> 
+                    <div class="border rounded mb-2">
                         <div class="row g-3 px-3 py-2 align-items-center">
                             <div class="col-md-2" data-label="Código Único">
                                 <span class="font-monospace">{{ $sample->code }}</span>
@@ -79,19 +79,24 @@
                                 {{ \Carbon\Carbon::parse($sample->date)->format('d/m/Y') }}
                             </div>
                             <div class="col-md-1" data-label="Status">
-                                <span class="badge {{ match($sample->status) { 'stored' => 'text-bg-success', 'under_review' => 'text-bg-warning', 'discarded' => 'text-bg-danger', default => 'text-bg-secondary' } }}">
-                                    {{ match($sample->status) { 'under_review' => 'Em Análise', 'stored' => 'Armazenada', 'discardada' => 'Descartada', default => ucfirst($sample->status) } }}
+                                <span
+                                    class="badge {{ match ($sample->status) {'stored' => 'text-bg-success','under_review' => 'text-bg-warning','discarded' => 'text-bg-danger',default => 'text-bg-secondary'} }}">
+                                    {{ match ($sample->status) {'under_review' => 'Em Análise','stored' => 'Armazenada','discardada' => 'Descartada',default => ucfirst($sample->status)} }}
                                 </span>
                             </div>
                             <div class="col-md-2 text-end">
                                 <div class="btn-group" role="group">
-                                    <a href="{{ route('samples.show', $sample->id) }}" class="btn btn-sm btn-outline-primary" title="Visualizar">
+                                    <a href="{{ route('samples.show', $sample->id) }}"
+                                        class="btn btn-sm btn-outline-primary" title="Visualizar">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('samples.edit', $sample->id) }}" class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <a href="{{ route('samples.edit', $sample->id) }}"
+                                        class="btn btn-sm btn-outline-secondary" title="Editar">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <button class="btn btn-sm btn-outline-danger" title="Deletar" wire:click="delete({{ $sample->id }})" wire:confirm="Tem certeza que deseja deletar esta amostra?">
+                                    <button class="btn btn-sm btn-outline-danger" title="Deletar"
+                                        wire:click="delete({{ $sample->id }})"
+                                        wire:confirm="Tem certeza que deseja deletar esta amostra?">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </div>

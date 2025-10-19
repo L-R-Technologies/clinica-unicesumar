@@ -181,6 +181,11 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 	php artisan db:seed
 	```
 
+10. Dar permissão de escrita:
+    ```bash
+    chown -R sail:sail storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
+    ```
 ---
 
 ## 7. Comandos Úteis

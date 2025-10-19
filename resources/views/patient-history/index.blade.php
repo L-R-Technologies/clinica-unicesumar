@@ -53,77 +53,58 @@
     </form>
 
     <!-- Lista de Anamneses -->
-    <div class="card">
+    <div class="card shadow-sm">
         <div class="card-body">
-            @if($anamneses->count() > 0)
-                <div class="list-group list-group-flush">
-                    @foreach($anamneses as $anamnese)
-                        <div class="list-group-item py-3 px-2 border-0 shadow-sm mb-2 rounded bg-white">
-                            <div class="d-flex flex-wrap flex-md-nowrap align-items-center gap-2 w-100">
-                                <div class="flex-grow-1 d-flex flex-wrap align-items-center gap-3 min-width-0">
-                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
-                                        <span class="fw-semibold small text-secondary">Paciente</span>
-                                        <span class="mb-0 text-truncate" style="max-width: 180px;"
-                                              title="{{ $anamnese->patient->name ?? 'N/A' }}">
-                                            {{ $anamnese->patient->name ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
-                                        <span class="fw-semibold small text-secondary">Profissional</span>
-                                        <span class="mb-0 text-truncate" style="max-width: 180px;"
-                                              title="{{ $anamnese->user->name ?? 'N/A' }}">
-                                            {{ $anamnese->user->name ?? 'N/A' }}
-                                        </span>
-                                    </div>
-                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
-                                        <span class="fw-semibold small text-secondary">Data</span>
-                                        <span class="mb-0 text-truncate">
-                                            {{ $anamnese->recorded_at->format('d/m/Y') }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-center ms-auto mt-2 mt-md-0">
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('patient-histories.show', $anamnese->id) }}"
-                                           class="btn btn-sm btn-outline-primary" title="Visualizar">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('patient-histories.edit', $anamnese->id) }}"
-                                           class="btn btn-sm btn-outline-secondary" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('patient-histories.destroy', $anamnese->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Tem certeza que deseja excluir esta anamnese?')"
-                                                    title="Excluir">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
+            <div class="row g-3 px-3 py-2 text-muted fw-bold d-none d-md-flex">
+                <div class="col-md-4">Paciente</div>
+                <div class="col-md-4">Profissional</div>
+                <div class="col-md-2">Data</div>
+                <div class="col-md-2 text-end">Ações</div>
+            </div>
+
+            @forelse($anamneses as $anamnese)
+                <div class="border rounded mb-2">
+                    <div class="row g-3 px-3 py-2 align-items-center">
+                        <div class="col-md-4" data-label="Paciente">
+                            {{ $anamnese->patient->name ?? 'N/A' }}
+                        </div>
+                        <div class="col-md-4" data-label="Profissional">
+                            {{ $anamnese->user->name ?? 'N/A' }}
+                        </div>
+                        <div class="col-md-2" data-label="Data">
+                            {{ $anamnese->recorded_at->format('d/m/Y') }}
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('patient-histories.show', $anamnese->id) }}"
+                                    class="btn btn-sm btn-outline-primary" title="Visualizar">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="{{ route('patient-histories.edit', $anamnese->id) }}"
+                                    class="btn btn-sm btn-outline-secondary" title="Editar">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form action="{{ route('patient-histories.destroy', $anamnese->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Tem certeza que deseja excluir esta anamnese?')"
+                                            title="Excluir">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
-
-                <div class="mt-3">
-                    {{ $anamneses->withQueryString()->links() }}
+            @empty
+                <div class="text-center text-muted py-4">
+                    Nenhuma anamnese encontrada com os filtros aplicados.
                 </div>
-            @else
-                <div class="text-center py-4">
-                    <i class="fas fa-notes-medical fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">Nenhuma anamnese encontrada</h5>
-                    <p class="text-muted">
-                        @if(request('patient') || request('professional') || request('date'))
-                            Tente ajustar os filtros de busca.
-                        @else
-                            Comece criando a primeira anamnese.
-                        @endif
-                    </p>
-                </div>
-            @endif
+            @endforelse
+        </div>
+        <div class="mt-3">
+            {{ $anamneses->withQueryString()->links() }}
         </div>
     </div>
 </div>

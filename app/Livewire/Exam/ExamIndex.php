@@ -5,6 +5,7 @@ namespace App\Livewire\Exam;
 use App\Models\Exam;
 use App\Service\ExamService;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -80,9 +81,11 @@ class ExamIndex extends Component
         return $examService->getFilteredExams([
             'search' => $this->search,
             'status' => $this->statusFilter,
-            'type' => $this->typeFilter,
+            'exam_type_id' => $this->typeFilter,
             'date_from' => $this->dateFrom,
             'date_to' => $this->dateTo,
+            'user_id' => Auth::id(),
+            'user_role' => Auth::user()->role,
         ]);
     }
 

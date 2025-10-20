@@ -9,8 +9,9 @@ class Teacher extends Model
 {
     protected $fillable = [
         'user_id',
+        'supervisor_id',
         'registration_number',
-        'crbm',
+        'professional_license',
     ];
 
     protected $casts = [
@@ -21,5 +22,10 @@ class Teacher extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function supervisor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'supervisor_id');
     }
 }

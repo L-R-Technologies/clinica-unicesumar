@@ -12,9 +12,9 @@
 
         <div class="card mx-auto" style="max-width: 600px;">
             <div class="card-body">
-                
+
                 <h5 class="mb-3"><i class="fa-solid fa-flask text-primary me-2"></i> Informações da Amostra</h5>
-                
+
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <strong class="text-secondary d-block">Código Único</strong>
@@ -30,7 +30,7 @@
                     </li>
                     <li class="mb-3">
                         <strong class="text-secondary d-block">Tipo de Amostra</strong>
-                        <span>{{ $sample->type }}</span>
+                        <span>{{ $sample->sampleType->name ?? 'N/A' }}</span>
                     </li>
                     <li class="mb-3">
                         <strong class="text-secondary d-block">Data da Coleta</strong>
@@ -51,7 +51,7 @@
                 <hr class="my-4">
 
                 <h5 class="mb-3"><i class="fa-solid fa-clock text-primary me-2"></i> Informações do Sistema</h5>
-                
+
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <strong class="text-secondary d-block">Criado em</strong>
@@ -62,7 +62,7 @@
                         <span>{{ $sample->updated_at->format('d/m/Y H:i:s') }}</span>
                     </li>
                 </ul>
-                
+
                 <div class="d-flex justify-content-end mt-4">
                     <a href="{{ route('samples.edit', $sample->id) }}" class="btn btn-success">Editar</a>
                 </div>

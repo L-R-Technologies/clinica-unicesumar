@@ -45,8 +45,12 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="typeFilter" class="form-label">Tipo</label>
-                                <input type="text" class="form-control" id="typeFilter"
-                                    wire:model.live.debounce.300ms="typeFilter" placeholder="Tipo do exame...">
+                                <select class="form-select" id="typeFilter" wire:model.live="typeFilter">
+                                    <option value="">Todos os tipos</option>
+                                    @foreach($examTypes as $examType)
+                                        <option value="{{ $examType->id }}">{{ $examType->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-md-2">
                                 <label for="dateFrom" class="form-label">Data de</label>
@@ -69,110 +73,85 @@
                 </div>
 
                 <!-- Lista de Exames -->
-                <div class="card">
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <div wire:loading class="text-center py-3">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Carregando...</span>
-                            </div>
+                        <div class="row g-3 px-3 py-2 text-muted fw-bold d-none d-md-flex">
+                            <div class="col-md-2">Paciente</div>
+                            <div class="col-md-2">Responsável</div>
+                            <div class="col-md-1">Tipo</div>
+                            <div class="col-md-2">Amostra</div>
+                            <div class="col-md-2">Data</div>
+                            <div class="col-md-1">Status</div>
+                            <div class="col-md-2 text-end">Ações</div>
                         </div>
 
-                        <div wire:loading.remove>
-                            @if ($exams->count() > 0)
-                                <div class="list-group list-group-flush">
-                                    @foreach ($exams as $exam)
-                                        <div class="list-group-item py-3 px-2 border-0 shadow-sm mb-2 rounded bg-white">
-                                            <div class="d-flex flex-wrap flex-md-nowrap align-items-center gap-2 w-100">
-                                                <div class="flex-grow-1 d-flex flex-wrap align-items-center gap-3 min-width-0">
-                                                    <div class="d-flex flex-column align-items-start" style="min-width: 140px;">
-                                                        <span class="fw-semibold small text-secondary">Paciente</span>
-                                                        <span class="text-muted small text-truncate d-block"
-                                                              style="max-width: 180px;"
-                                                              title="{{ $exam->patient->user->name }}">{{ $exam->patient->user->name }}</span>
-                                                    </div>
-                                                    <div class="d-flex flex-column align-items-start" style="min-width: 140px;">
-                                                        <span class="fw-semibold small text-secondary">Responsável</span>
-                                                        <span class="text-muted small text-truncate d-block"
-                                                              style="max-width: 180px;"
-                                                              title="{{ $exam->user->name }}">{{ $exam->user->name }}</span>
-                                                    </div>
-                                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
-                                                        <span class="fw-semibold small text-secondary">Tipo</span>
-                                                        <span class="mb-0 text-truncate" style="max-width: 180px;"
-                                                              title="{{ $exam->type }}">{{ $exam->type }}</span>
-                                                    </div>
-                                                    <div class="d-flex flex-column align-items-start" style="min-width: 100px;">
-                                                        <span class="fw-semibold small text-secondary">Amostra</span>
-                                                        <span class="text-muted small text-truncate d-block"
-                                                              style="max-width: 120px;"
-                                                              title="{{ $exam->sample->code }}">{{ $exam->sample->code }}</span>
-                                                    </div>
-                                                    <div class="d-flex flex-column align-items-start" style="min-width: 120px;">
-                                                        <span class="fw-semibold small text-secondary">Status</span>
-                                                        @switch($exam->status)
-                                                            @case('pending')
-                                                                <span class="badge bg-warning text-dark">Pendente</span>
-                                                                @break
-                                                            @case('pending_approval')
-                                                                <span class="badge bg-info">Pendente Aprovação</span>
-                                                                @break
-                                                            @case('approved')
-                                                                <span class="badge bg-success">Aprovado</span>
-                                                                @break
-                                                            @case('rejected')
-                                                                <span class="badge bg-danger">Rejeitado</span>
-                                                                @break
-                                                            @default
-                                                                <span class="badge bg-secondary">{{ ucfirst($exam->status) }}</span>
-                                                        @endswitch
-                                                    </div>
-                                                    <div class="d-flex flex-column align-items-start" style="min-width: 100px;">
-                                                        <span class="fw-semibold small text-secondary">Data</span>
-                                                        <span class="text-muted small">{{ $exam->date->format('d/m/Y H:i') }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex align-items-center ms-auto mt-2 mt-md-0">
-                                                    <div class="btn-group" role="group">
-                                                        <a href="{{ route('exam.show', $exam->id) }}"
-                                                           class="btn btn-sm btn-outline-primary" title="Visualizar">
-                                                            <i class="fas fa-eye"></i>
-                                                        </a>
-                                                        <a href="{{ route('exam.edit', $exam->id) }}"
-                                                           class="btn btn-sm btn-outline-secondary" title="Editar">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <button type="button" class="btn btn-sm btn-outline-danger"
-                                                                title="Excluir"
-                                                                onclick="confirmDelete({{ $exam->id }})"
-                                                                wire:loading.attr="disabled">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
+                        @forelse ($exams as $exam)
+                            <div class="border rounded mb-2">
+                                <div class="row g-3 px-3 py-2 align-items-center">
+                                    <div class="col-md-2" data-label="Paciente">
+                                        {{ $exam->patient->user->name ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-2" data-label="Responsável">
+                                        {{ $exam->user->name ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-1" data-label="Tipo">
+                                        {{ $exam->examType->name ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-2" data-label="Amostra">
+                                        {{ $exam->sample->code ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-2" data-label="Data">
+                                        {{ \Carbon\Carbon::parse($exam->date)->format('d/m/Y') }}
+                                    </div>
+                                    <div class="col-md-1" data-label="Status">
+                                        <span class="badge
+                                            {{ match ($exam->status) {
+                                                'approved' => 'text-bg-success',
+                                                'pending' => 'text-bg-warning',
+                                                'pending_approval' => 'text-bg-info',
+                                                'rejected' => 'text-bg-danger',
+                                                default => 'text-bg-secondary'
+                                            } }}">
+                                            {{ match ($exam->status) {
+                                                'pending' => 'Pendente',
+                                                'pending_approval' => 'Pendente Aprovação',
+                                                'approved' => 'Aprovado',
+                                                'rejected' => 'Rejeitado',
+                                                default => ucfirst($exam->status)
+                                            } }}
+                                        </span>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('exam.show', $exam->id) }}"
+                                                class="btn btn-sm btn-outline-primary" title="Visualizar">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('exam.edit', $exam->id) }}"
+                                                class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" title="Excluir"
+                                                onclick="confirmDelete({{ $exam->id }})"
+                                                wire:loading.attr="disabled">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
                                         </div>
-                                    @endforeach
+                                    </div>
                                 </div>
-
-                                <!-- Paginação -->
-                                <div class="d-flex justify-content-center mt-4">
-                                    {{ $exams->links() }}
-                                </div>
-                            @else
-                                <div class="text-center py-4">
-                                    <i class="fas fa-flask fa-3x text-muted mb-3"></i>
-                                    <h5 class="text-muted">Nenhum exame encontrado</h5>
-                                    <p class="text-muted">
-                                        @if ($search || $statusFilter || $typeFilter || $dateFrom || $dateTo)
-                                            Tente ajustar os filtros de busca.
-                                        @else
-                                            Comece criando o primeiro exame.
-                                        @endif
-                                    </p>
-                                </div>
-                            @endif
-                        </div>
+                            </div>
+                        @empty
+                            <div class="text-center text-muted py-4">
+                                Nenhum exame encontrado com os filtros aplicados.
+                            </div>
+                        @endforelse
                     </div>
+
+                    @if ($exams->hasPages())
+                        <div class="card-footer bg-transparent border-0">
+                            {{ $exams->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

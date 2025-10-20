@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\ExamType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Exam extends Model
 {
@@ -12,17 +13,15 @@ class Exam extends Model
         'user_id',
         'patient_history_id',
         'patient_id',
+        'exam_type_id',
         'sample_id',
-        'type',
         'date',
         'results',
         'status',
         'observation',
-        'justification_rejection',
     ];
 
     protected $casts = [
-        'type' => ExamType::class,
         'date' => 'datetime',
         'results' => 'array',
         'created_at' => 'datetime',
@@ -48,5 +47,20 @@ class Exam extends Model
     public function sample(): BelongsTo
     {
         return $this->belongsTo(Sample::class);
+    }
+
+    public function examType(): BelongsTo
+    {
+        return $this->belongsTo(ExamType::class);
+    }
+
+    public function rejections(): HasMany
+    {
+        return $this->hasMany(ExamRejection::class);
+    }
+
+    public function feedback(): HasOne
+    {
+        return $this->hasOne(ExamFeedback::class);
     }
 }

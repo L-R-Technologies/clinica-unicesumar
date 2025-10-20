@@ -3,12 +3,9 @@
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PatientHistoryController;
+use App\Http\Controllers\SampleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
-use App\Livewire\Samples\CreateSample;
-use App\Livewire\Samples\EditSample;
-use App\Livewire\Samples\SampleList;
-use App\Livewire\Samples\ShowSample;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
@@ -32,16 +29,23 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
 
-    Route::resource('anamneses', PatientHistoryController::class);
-
     Route::middleware(['role:teacher,student'])->group(function () {
-        Route::get('/samples', SampleList::class)->name('samples.index');
-        Route::get('/samples/create', CreateSample::class)->name('samples.create');
-        Route::get('/samples/{sample}', ShowSample::class)->name('samples.show');
-        Route::get('/samples/{sample}/edit', EditSample::class)->name('samples.edit');
-    });
+        Route::get('/patient-histories', [PatientHistoryController::class, 'index'])->name('patient-histories.index');
+        Route::get('/patient-histories/create', [PatientHistoryController::class, 'create'])->name('patient-histories.create');
+        Route::post('/patient-histories', [PatientHistoryController::class, 'store'])->name('patient-histories.store');
+        Route::get('/patient-histories/{id}', [PatientHistoryController::class, 'show'])->name('patient-histories.show');
+        Route::get('/patient-histories/{id}/edit', [PatientHistoryController::class, 'edit'])->name('patient-histories.edit');
+        Route::put('/patient-histories/{id}', [PatientHistoryController::class, 'update'])->name('patient-histories.update');
+        Route::delete('/patient-histories/{id}', [PatientHistoryController::class, 'destroy'])->name('patient-histories.destroy');
 
-    Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/samples', [SampleController::class, 'index'])->name('samples.index');
+        Route::get('/samples/create', [SampleController::class, 'create'])->name('samples.create');
+        Route::post('/samples', [SampleController::class, 'store'])->name('samples.store');
+        Route::get('/samples/{id}', [SampleController::class, 'show'])->name('samples.show');
+        Route::get('/samples/{id}/edit', [SampleController::class, 'edit'])->name('samples.edit');
+        Route::put('/samples/{id}', [SampleController::class, 'update'])->name('samples.update');
+        Route::delete('/samples/{id}', [SampleController::class, 'destroy'])->name('samples.destroy');
+
         Route::get('/exam', [ExamController::class, 'index'])->name('exam.index');
         Route::get('/exam/create', [ExamController::class, 'create'])->name('exam.create');
         Route::post('/exam', [ExamController::class, 'store'])->name('exam.store');

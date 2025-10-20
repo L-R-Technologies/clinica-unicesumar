@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property-read Address|null $address
@@ -21,7 +22,7 @@ class Patient extends Model
     protected $fillable = [
         'user_id',
         'address_id',
-        'birth_date',
+        'birthday',
         'ethnicity',
         'sex',
         'cpf',
@@ -33,6 +34,7 @@ class Patient extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'birthday' => 'date',
         'lgpd_consent_at' => 'datetime',
     ];
 
@@ -44,5 +46,20 @@ class Patient extends Model
     public function address(): BelongsTo
     {
         return $this->belongsTo(Address::class);
+    }
+
+    public function patientHistories(): HasMany
+    {
+        return $this->hasMany(PatientHistory::class);
+    }
+
+    public function exams(): HasMany
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    public function samples(): HasMany
+    {
+        return $this->hasMany(Sample::class);
     }
 }

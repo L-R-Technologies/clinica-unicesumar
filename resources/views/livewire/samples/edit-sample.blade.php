@@ -31,9 +31,15 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="type" class="form-label">Tipo de Amostra</label>
-                                <input type="text" id="type" class="form-control" wire:model.defer="type" placeholder="Ex: Sangue, Urina">
-                                @error('type') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                <label for="sample_type_id" class="form-label">Tipo de Amostra</label>
+                                <select id="sample_type_id" class="form-select @error('sample_type_id') is-invalid @enderror" 
+                                        wire:model.defer="sample_type_id">
+                                    <option value="">Selecione o tipo de amostra</option>
+                                    @foreach ($sampleTypes as $sampleType)
+                                        <option value="{{ $sampleType->id }}">{{ $sampleType->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('sample_type_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="mb-3">

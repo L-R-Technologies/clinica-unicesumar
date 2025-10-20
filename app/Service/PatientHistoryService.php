@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
+use App\Models\Patient;
 use App\Models\PatientHistory;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -17,7 +17,7 @@ class PatientHistoryService
         $validator = Validator::make($data, [
             'patient_id' => 'required|exists:patients,id',
             'user_id' => 'required|exists:users,id',
-            'date' => 'required|date',
+            'recorded_at' => 'required|date',
 
             'fasting' => 'nullable|boolean',
             'fasting_hours' => 'nullable|integer|min:0',
@@ -53,8 +53,6 @@ class PatientHistoryService
      */
     public function create(array $data): PatientHistory
     {
-        Log::info('ajfsjdgbsjfsb');
-
         return PatientHistory::create($data);
     }
 
@@ -72,5 +70,13 @@ class PatientHistoryService
     public function delete(PatientHistory $anamnesis): bool
     {
         return $anamnesis->delete();
+    }
+
+    /**
+     * Retorna todos os pacientes.
+     */
+    public function getPatients()
+    {
+        return Patient::with('user')->get()->sortBy('user.name');
     }
 }

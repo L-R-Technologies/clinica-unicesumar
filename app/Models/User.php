@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -28,8 +29,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
-        'email_verified_at',
         'active',
+        'email_verified_at',
     ];
 
     protected $casts = [
@@ -79,5 +80,40 @@ class User extends Authenticatable implements MustVerifyEmail
     public function patient(): HasOne
     {
         return $this->hasOne(Patient::class);
+    }
+
+    public function exams(): HasMany
+    {
+        return $this->hasMany(Exam::class);
+    }
+
+    public function samples(): HasMany
+    {
+        return $this->hasMany(Sample::class);
+    }
+
+    public function patientHistories(): HasMany
+    {
+        return $this->hasMany(PatientHistory::class);
+    }
+
+    public function calibrations(): HasMany
+    {
+        return $this->hasMany(Calibration::class);
+    }
+
+    public function examRejections(): HasMany
+    {
+        return $this->hasMany(ExamRejection::class);
+    }
+
+    public function supervisedTeachers(): HasMany
+    {
+        return $this->hasMany(Teacher::class, 'supervisor_id');
+    }
+
+    public function supervisedStudents(): HasMany
+    {
+        return $this->hasMany(Student::class, 'supervisor_id');
     }
 }

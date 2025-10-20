@@ -2,8 +2,9 @@
 
 namespace App\Livewire\Samples;
 
-use App\Models\Patient;
 use App\Models\Sample;
+use App\Service\SampleService;
+use Exception;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -21,39 +22,52 @@ class SampleList extends Component
 
     protected $paginationTheme = 'bootstrap';
 
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatusFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedDateFilter()
+    {
+        $this->resetPage();
+    }
+
     public function delete(Sample $sample)
     {
-        $sample->delete();
-        session()->flash('success', 'Amostra deletada com sucesso!');
+        try {
+            $sampleService = app(SampleService::class);
+            $sampleService->deleteSample($sample);
+
+            session()->flash('success', 'Amostra deletada com sucesso!');
+        } catch (Exception $e) {
+            session()->flash('error', 'Erro ao deletar amostra: '.$e->getMessage());
+        }
     }
 
     public function clearFilters()
     {
         $this->reset(['search', 'statusFilter', 'dateFilter']);
+        $this->resetPage();
     }
 
     public function render()
     {
-        $query = Sample::with(['patient.user', 'user']);
+        $sampleService = app(SampleService::class);
 
-        if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('code', 'like', '%'.$this->search.'%')
-                    ->orWhere('type', 'like', '%'.$this->search.'%');
-            });
-        }
+        $samples = $sampleService->getFilteredSamples([
+            'search' => $this->search,
+            'status' => $this->statusFilter,
+            'date' => $this->dateFilter,
+        ]);
 
-        if ($this->statusFilter) {
-            $query->where('status', $this->statusFilter);
-        }
-
-        if ($this->dateFilter) {
-            $query->whereDate('date', $this->dateFilter);
-        }
-
-        $samples = $query->orderBy('date', 'desc')->paginate(10);
-        $patients = Patient::with('user')->get()->sortBy('user.name');
-
-        return view('livewire.samples.sample-list', compact('samples', 'patients'));
+        return view('livewire.samples.sample-list', [
+            'samples' => $samples,
+            'statusOptions' => $sampleService->getStatusOptions(),
+        ]);
     }
 }

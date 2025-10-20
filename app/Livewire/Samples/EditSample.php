@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Samples;
 
-use App\Enums\SampleType;
 use App\Models\Sample;
+use App\Service\SampleService;
+use Exception;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -14,7 +16,7 @@ class EditSample extends Component
 
     public ?int $patient_id = null;
 
-    public string|SampleType $type = '';
+    public ?int $sample_type_id = null;
 
     public string $date = '';
 
@@ -22,35 +24,50 @@ class EditSample extends Component
 
     public string $location = '';
 
-    protected function rules()
-    {
-        return [
-            'type' => ['required', 'string', 'max:100'],
-            'date' => ['required', 'date'],
-            'status' => ['required', 'in:under_review,stored,discarded'],
-            'location' => ['nullable', 'string', 'max:255'],
-        ];
-    }
+    public $sampleTypes = [];
 
     public function mount(Sample $sample)
     {
+        $sampleService = app(SampleService::class);
+
         $this->sample = $sample;
         $this->patient_id = $sample->patient_id;
-        $this->type = $sample->type;
+        $this->sample_type_id = $sample->sample_type_id;
         $this->date = $sample->date->format('Y-m-d');
         $this->status = $sample->status;
         $this->location = $sample->location;
+
+        $this->sampleTypes = $sampleService->getSampleTypes();
     }
 
     public function save()
     {
-        $validatedData = $this->validate();
+        try {
+            $sampleService = app(SampleService::class);
 
-        $this->sample->update($validatedData);
+            $sampleData = [
+                'sample_type_id' => $this->sample_type_id,
+                'date' => $this->date,
+                'status' => $this->status,
+                'location' => $this->location,
+                'patient_id' => $this->patient_id,
+            ];
 
-        session()->flash('success', 'Amostra atualizada com sucesso!');
+            $validatedData = $sampleService->validateSampleData($sampleData, $this->sample->id);
+            $sampleService->updateSample($this->sample, $validatedData);
 
-        return redirect()->route('samples.index');
+            session()->flash('success', 'Amostra atualizada com sucesso!');
+
+            return redirect()->route('samples.index');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $this->addError($field, $message);
+                }
+            }
+        } catch (Exception $e) {
+            $this->addError('form', 'Erro ao atualizar amostra: '.$e->getMessage());
+        }
     }
 
     public function render()

@@ -98,14 +98,14 @@
                                 </li>
                                 <li class="nav-item d-flex align-items-center">
                                     <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="#">
+                                        href="{{ route('samples.index') }}">
                                         <i class="fa-solid fa-vial fa-lg"></i>
                                         <span>Amostras</span>
                                     </a>
                                 </li>
                                 <li class="nav-item d-flex align-items-center">
                                     <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="{{ route('anamneses.index') }}">
+                                        href="{{ route('patient-histories.index') }}">
                                         <i class="fa-solid fa-desktop fa-lg"></i>
                                         <span>Anamneses</span>
                                     </a>
@@ -183,6 +183,7 @@
             </div>
         </nav>
     @endif
+    {{ $slot ?? '' }}
     @yield('content')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous">

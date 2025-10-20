@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\SampleType;
-use App\Models\Patient;
 use App\Models\Sample;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class SamplesSeeder extends Seeder
@@ -15,54 +12,50 @@ class SamplesSeeder extends Seeder
      */
     public function run(): void
     {
-        // Pega o primeiro paciente que encontrar no banco de dados.
-        $patient = Patient::first();
+        $samples = [];
+        $rawSamples = [
+            [1, 3, 1, now()->subDays(5), 'Geladeira 1', 'stored', true],
+            [1, 1, 2, now()->subDays(5), 'Geladeira 2', 'stored', true],
+            [1, 2, 4, now()->subDays(2), 'Geladeira 1', 'stored', true],
+            [2, 3, 1, now()->subDays(1), 'Geladeira 2', 'under review', false],
+            [2, 1, 3, now()->subDays(1), 'Geladeira 1', 'under review', false],
+            [2, 2, 5, now()->subDays(1), 'Geladeira 2', 'under review', false],
+            [2, 3, 4, now()->subDays(1), 'Geladeira 1', 'stored', true],
+            [3, 1, 1, now()->subDays(3), 'Geladeira 2', 'stored', true],
+            [3, 2, 2, now()->subDays(3), 'Geladeira 1', 'stored', true],
+            [4, 3, 1, now()->subDays(4), 'Geladeira 2', 'stored', true],
+            [4, 1, 2, now()->subDays(4), 'Geladeira 1', 'stored', true],
+            [4, 2, 4, now()->subDays(4), 'Geladeira 2', 'stored', true],
+            [5, 3, 1, now()->subDays(6), 'Geladeira 1', 'stored', true],
+            [5, 1, 2, now()->subDays(6), 'Geladeira 2', 'stored', true],
+            [5, 2, 4, now()->subDays(6), 'Geladeira 1', 'stored', true],
+            [3, 1, 1, now()->subDays(3), 'Geladeira 2', 'stored', true],
+            [4, 2, 4, now()->subDays(4), 'Geladeira 1', 'stored', true],
+        ];
 
-        // Pega o primeiro usuário (apenas como exemplo para o user_id)
-        $user = User::first();
-
-        // CORRIGIDO: Agora verifica se existe PELO MENOS UM paciente.
-        if (! $patient || ! $user) {
-            $this->command->warn('Não foram encontrados pacientes ou usuários suficientes. Pulando o SamplesSeeder.');
-
-            return;
+        $dateCount = [];
+        foreach ($rawSamples as $raw) {
+            $date = $raw[3]->format('dmY');
+            if (! isset($dateCount[$date])) {
+                $dateCount[$date] = 1;
+            } else {
+                $dateCount[$date]++;
+            }
+            $seq = str_pad($dateCount[$date], 3, '0', STR_PAD_LEFT);
+            $samples[] = [
+                'patient_id' => $raw[0],
+                'user_id' => $raw[1],
+                'sample_type_id' => $raw[2],
+                'code' => $date.'-'.$seq,
+                'date' => $raw[3],
+                'location' => $raw[4],
+                'status' => $raw[5],
+                'notified' => $raw[6],
+            ];
         }
 
-        Sample::create([
-            'patient_id' => 1,
-            'user_id' => 2,
-            'code' => '14092025-001',
-            'type' => SampleType::WHOLE_BLOOD->value,
-            'patient_id' => $patient->id,
-            'user_id' => $user->id,
-            'code' => 'SMP000001',
-            'type' => 'Sangue',
-            'date' => now()->subDays(3),
-            'location' => 'Laboratório Central',
-            'status' => 'under_review',
-            'notified' => false,
-        ]);
-
-        Sample::create([
-            'patient_id' => 1,
-            'user_id' => 3,
-            'code' => '14092025-002',
-            'type' => SampleType::URINE->value,
-            'date' => now()->subDays(1),
-            'location' => 'Laboratório Norte',
-            'status' => 'stored',
-            'notified' => true,
-        ]);
-
-        Sample::create([
-            'patient_id' => 1,
-            'user_id' => 2,
-            'code' => '14092025-003',
-            'type' => SampleType::SERUM->value,
-            'date' => now(),
-            'location' => 'Laboratório Central',
-            'status' => 'under_review',
-            'notified' => false,
-        ]);
+        foreach ($samples as $sample) {
+            Sample::create($sample);
+        }
     }
 }

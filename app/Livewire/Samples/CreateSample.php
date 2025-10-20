@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Samples;
 
-use App\Models\Patient;
-use App\Models\Sample;
-use Carbon\Carbon;
+use App\Service\SampleService;
+use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -14,66 +14,54 @@ class CreateSample extends Component
 {
     public ?int $patient_id = null;
 
-    public string $type = '';
+    public ?int $sample_type_id = null;
 
     public string $date = '';
 
-    public string $status = 'under_review';
+    public string $status = 'under review';
 
     public string $location = '';
 
     public $patients = [];
 
-    protected function rules()
-    {
-        return [
-            'patient_id' => ['required', 'integer', 'exists:patients,id'],
-            'type' => ['required', 'string', 'max:100'],
-            'date' => ['required', 'date'],
-            'status' => ['required', 'in:under_review,stored,discarded'],
-            'location' => ['nullable', 'string', 'max:255'],
-        ];
-    }
+    public $sampleTypes = [];
 
     public function mount()
     {
-        $this->patients = Patient::with('user')->get()->sortBy('user.name');
+        $sampleService = app(SampleService::class);
+        $this->patients = $sampleService->getPatients();
+        $this->sampleTypes = $sampleService->getSampleTypes();
         $this->date = now()->format('Y-m-d');
     }
 
     public function save()
     {
-        $validatedData = $this->validate();
-        $date = Carbon::parse($this->date);
+        try {
+            $sampleService = app(SampleService::class);
 
-        $datePrefix = $date->format('dmY');
+            $sampleData = [
+                'patient_id' => $this->patient_id,
+                'sample_type_id' => $this->sample_type_id,
+                'date' => $this->date,
+                'status' => $this->status,
+                'location' => $this->location,
+            ];
 
-        $lastSample = Sample::where('code', 'like', $datePrefix.'-%')
-            ->latest('code')
-            ->first();
+            $validatedData = $sampleService->validateSampleData($sampleData);
+            $sampleService->createSample($validatedData, Auth::id());
 
-        $sequentialNumber = 1;
-        if ($lastSample) {
-            $parts = explode('-', $lastSample->code);
-            $lastSequentialNumber = (int) end($parts);
-            $sequentialNumber = $lastSequentialNumber + 1;
+            session()->flash('success', 'Amostra criada com sucesso!');
+
+            return redirect()->route('samples.index');
+        } catch (ValidationException $e) {
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $this->addError($field, $message);
+                }
+            }
+        } catch (Exception $e) {
+            $this->addError('form', 'Erro ao criar amostra: '.$e->getMessage());
         }
-
-        $code = $datePrefix.'-'.str_pad((string) $sequentialNumber, 3, '0', STR_PAD_LEFT);
-
-        Sample::create([
-            'patient_id' => $validatedData['patient_id'],
-            'user_id' => Auth::id(),
-            'type' => $validatedData['type'],
-            'date' => $validatedData['date'],
-            'status' => $validatedData['status'],
-            'location' => $validatedData['location'],
-            'code' => $code,
-        ]);
-
-        session()->flash('success', 'Amostra criada com sucesso!');
-
-        return redirect()->route('samples.index');
     }
 
     public function render()

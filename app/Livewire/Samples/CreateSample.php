@@ -66,6 +66,6 @@ class CreateSample extends Component
 
     public function render()
     {
-        return view('livewire.samples.create-samples');
+        return view('livewire.samples.create-sample');
     }
 }

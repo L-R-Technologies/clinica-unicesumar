@@ -55,10 +55,10 @@
             <div class="register-step">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="birth_date">Data de nascimento</label>
-                        <input type="date" wire:model.defer="birth_date" id="birth_date"
-                            class="form-control @error('birth_date') is-invalid @enderror">
-                        @error('birth_date')
+                        <label for="birthday">Data de nascimento</label>
+                        <input type="date" wire:model.defer="birthday" id="birthday"
+                            class="form-control @error('birthday') is-invalid @enderror">
+                        @error('birthday')
                             <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>

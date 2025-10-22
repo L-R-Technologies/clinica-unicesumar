@@ -15,7 +15,7 @@ return new class() extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('address_id')->nullable()->constrained()->onDelete('set null');
-            $table->date('birth_date');
+            $table->date('birthday');
             $table->string('ethnicity', 50);
             $table->enum('sex', ['male', 'female', 'other', 'prefer_not_say']);
             $table->string('cpf', 11);

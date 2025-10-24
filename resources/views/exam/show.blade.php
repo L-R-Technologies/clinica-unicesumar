@@ -80,7 +80,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <strong>Anamnese:</strong><br>
-                                <span>{{ $exam->patientHistory->date->format('d/m/Y') }}</span><br>
+                                <span>{{ $exam->patientHistory->recorded_at->format('d/m/Y') }}</span><br>
                                 <small class="text-muted">{{ Str::limit($exam->patientHistory->description, 100) }}</small>
                             </div>
                         </div>
@@ -112,6 +112,10 @@
                         <h5 class="mb-3 mt-4"><i class="fas fa-chart-bar"></i> Resultados do Exame</h5>
                         <div class="mb-3">
                             @if(is_array($exam->results))
+                                @php
+                                    // Criar um mapa de name => field para ter acesso a label e unit
+                                    $fieldsMap = $exam->examType->fields->keyBy('name');
+                                @endphp
                                 <div class="table-responsive">
                                     <table class="table table-striped">
                                         <thead>
@@ -122,8 +126,18 @@
                                         </thead>
                                         <tbody>
                                             @foreach($exam->results as $key => $value)
+                                                @php
+                                                    $field = $fieldsMap->get($key);
+                                                    $label = $field ? $field->label : ucfirst($key);
+                                                    $unit = $field ? $field->unit : null;
+                                                @endphp
                                                 <tr>
-                                                    <td><strong>{{ ucfirst($key) }}</strong></td>
+                                                    <td>
+                                                        <strong>{{ $label }}</strong>
+                                                        @if($unit)
+                                                            <small class="text-muted">({{ $unit }})</small>
+                                                        @endif
+                                                    </td>
                                                     <td>{{ $value }}</td>
                                                 </tr>
                                             @endforeach

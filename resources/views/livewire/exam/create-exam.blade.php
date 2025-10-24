@@ -62,7 +62,7 @@
                                         </option>
                                         @foreach($patientHistories as $history)
                                             <option value="{{ $history->id }}">
-                                                {{ $history->date->format('d/m/Y') }}
+                                                {{ $history->recorded_at->format('d/m/Y') }}
                                             </option>
                                         @endforeach
                                     </select>

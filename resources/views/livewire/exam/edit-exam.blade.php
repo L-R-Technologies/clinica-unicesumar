@@ -62,7 +62,7 @@
                                         </option>
                                         @foreach($patientHistories as $history)
                                             <option value="{{ $history->id }}">
-                                                {{ $history->date->format('d/m/Y') }}
+                                                {{ $history->recorded_at->format('d/m/Y') }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -154,75 +154,67 @@
                             <h5 class="mb-3 mt-4">Resultados do Exame</h5>
 
                             @php
-                                $resultsLabels = $this->getResultsLabels();
+                                $resultsFields = $this->getResultsFields();
                             @endphp
-                            @if(!empty($resultsLabels))
-                                <!-- Campos específicos para o tipo de exame -->
+                            @if($resultsFields->isNotEmpty())
                                 <div class="row">
-                                    @foreach($resultsLabels as $key => $label)
+                                    @foreach($resultsFields as $field)
                                         <div class="col-md-6 mb-3">
-                                            <label for="resultsData.{{ $key }}" class="form-label">{{ $label }}</label>
+                                            <label for="resultsData.{{ $field->name }}" class="form-label">
+                                                {{ $field->label }}
+                                                @if($field->unit)
+                                                    <small class="text-muted">({{ $field->unit }})</small>
+                                                @endif
+                                            </label>
 
-                                            @if(in_array($key, ['hcg', 'vdrl', 'rapid_test_syphilis', 'nitrite', 'protein', 'ketones', 'glucose', 'bilirubin', 'hemoglobin', 'leukocytes', 'mucus', 'blood', 'mucus_filaments', 'casts', 'crystals', 'helminth_eggs', 'protozoa']))
-                                                <!-- Campos de seleção para resultados qualitativos -->
-                                                <select class="form-select @error('resultsData.' . $key) is-invalid @enderror"
-                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}">
-                                                    <option value="">Selecionar</option>
-                                                    @if($key === 'hcg')
-                                                        <option value="Positivo">Positivo</option>
-                                                        <option value="Negativo">Negativo</option>
-                                                    @elseif(in_array($key, ['vdrl', 'rapid_test_syphilis']))
-                                                        <option value="Reagente">Reagente</option>
-                                                        <option value="Não reagente">Não reagente</option>
-                                                    @elseif(in_array($key, ['nitrite', 'protein', 'ketones', 'glucose', 'bilirubin', 'hemoglobin', 'leukocytes']))
-                                                        <option value="Positivo">Positivo</option>
-                                                        <option value="Negativo">Negativo</option>
-                                                        <option value="Traços">Traços</option>
-                                                    @elseif(in_array($key, ['mucus', 'blood']))
-                                                        <option value="Presente">Presente</option>
-                                                        <option value="Ausente">Ausente</option>
-                                                    @elseif(in_array($key, ['mucus_filaments', 'casts', 'crystals', 'helminth_eggs', 'protozoa']))
-                                                        <option value="Presentes">Presentes</option>
-                                                        <option value="Ausentes">Ausentes</option>
-                                                        <option value="Não encontrados">Não encontrados</option>
-                                                    @endif
-                                                </select>
-                                            @elseif($key === 'abo_group')
-                                                <!-- Campo específico para grupo ABO -->
-                                                <select class="form-select @error('resultsData.' . $key) is-invalid @enderror"
-                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}">
-                                                    <option value="">Selecionar</option>
-                                                    <option value="A">A</option>
-                                                    <option value="B">B</option>
-                                                    <option value="AB">AB</option>
-                                                    <option value="O">O</option>
-                                                </select>
-                                            @elseif($key === 'rh_factor')
-                                                <!-- Campo específico para fator Rh -->
-                                                <select class="form-select @error('resultsData.' . $key) is-invalid @enderror"
-                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}">
-                                                    <option value="">Selecionar</option>
-                                                    <option value="Positivo">Positivo</option>
-                                                    <option value="Negativo">Negativo</option>
-                                                </select>
-                                            @elseif(in_array($key, ['color', 'aspect', 'consistency', 'urobilinogen']))
-                                                <!-- Campos de texto com sugestões -->
-                                                <input type="text" class="form-control @error('resultsData.' . $key) is-invalid @enderror"
-                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}"
-                                                    placeholder="@if($key === 'color') Ex: Amarelo claro, Amarelo escuro @elseif($key === 'aspect') Ex: Límpido, Turvo @elseif($key === 'consistency') Ex: Pastosa, Líquida, Endurecida @elseif($key === 'urobilinogen') Ex: Normal, Aumentado @endif">
-                                            @elseif(in_array($key, ['observations', 'gram_stain_result', 'growth_result', 'final_result']))
-                                                <!-- Campos de texto longo -->
-                                                <textarea class="form-control @error('resultsData.' . $key) is-invalid @enderror"
-                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}" rows="3"
-                                                    placeholder="{{ $label }}"></textarea>
-                                            @else
-                                                <!-- Campos de texto padrão -->
-                                                <input type="text" class="form-control @error('resultsData.' . $key) is-invalid @enderror"
-                                                    id="resultsData.{{ $key }}" wire:model="resultsData.{{ $key }}"
-                                                    placeholder="{{ $label }}">
-                                            @endif
+                                            @switch($field->field_type)
+                                                @case('select')
+                                                    <select class="form-select @error('resultsData.' . $field->name) is-invalid @enderror"
+                                                        id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}">
+                                                        <option value="">Selecionar</option>
+                                                        @if(str_contains(strtolower($field->name), 'hcg'))
+                                                            <option value="Positivo">Positivo</option>
+                                                            <option value="Negativo">Negativo</option>
+                                                        @elseif(str_contains(strtolower($field->name), 'vdrl') || str_contains(strtolower($field->name), 'syphilis'))
+                                                            <option value="Reagente">Reagente</option>
+                                                            <option value="Não reagente">Não reagente</option>
+                                                        @elseif(str_contains(strtolower($field->name), 'abo'))
+                                                            <option value="A">A</option>
+                                                            <option value="B">B</option>
+                                                            <option value="AB">AB</option>
+                                                            <option value="O">O</option>
+                                                        @elseif(str_contains(strtolower($field->name), 'rh'))
+                                                            <option value="Positivo">Positivo</option>
+                                                            <option value="Negativo">Negativo</option>
+                                                        @else
+                                                            <option value="Positivo">Positivo</option>
+                                                            <option value="Negativo">Negativo</option>
+                                                            <option value="Presente">Presente</option>
+                                                            <option value="Ausente">Ausente</option>
+                                                        @endif
+                                                    </select>
+                                                    @break
 
-                                            @error('resultsData.' . $key)
+                                                @case('textarea')
+                                                    <textarea class="form-control @error('resultsData.' . $field->name) is-invalid @enderror"
+                                                        id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}" rows="3"
+                                                        placeholder="{{ $field->label }}"></textarea>
+                                                    @break
+
+                                                @case('number')
+                                                    <input type="number" step="0.01" class="form-control @error('resultsData.' . $field->name) is-invalid @enderror"
+                                                        id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}"
+                                                        placeholder="{{ $field->label }}">
+                                                    @break
+
+                                                @default
+                                                    <!-- Campo de texto padrão -->
+                                                    <input type="text" class="form-control @error('resultsData.' . $field->name) is-invalid @enderror"
+                                                        id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}"
+                                                        placeholder="{{ $field->label }}">
+                                            @endswitch
+
+                                            @error('resultsData.' . $field->name)
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
@@ -234,7 +226,7 @@
                                 @endif
                             @endif
                         @endforeach
-                    @if(count($resultsLabels) % 2 !== 0)
+                    @if($resultsFields->count() % 2 !== 0)
                         </div>
                     @endif
                             @else

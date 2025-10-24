@@ -18,7 +18,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
-                
+
                 <div class="card mx-auto" style="max-width: 500px;">
                     <div class="card-body">
                         <form wire:submit.prevent="save">
@@ -32,7 +32,7 @@
 
                             <div class="mb-3">
                                 <label for="sample_type_id" class="form-label">Tipo de Amostra</label>
-                                <select id="sample_type_id" class="form-select @error('sample_type_id') is-invalid @enderror" 
+                                <select id="sample_type_id" class="form-select @error('sample_type_id') is-invalid @enderror"
                                         wire:model.defer="sample_type_id">
                                     <option value="">Selecione o tipo de amostra</option>
                                     @foreach ($sampleTypes as $sampleType)
@@ -51,7 +51,7 @@
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select id="status" class="form-select" wire:model.defer="status">
-                                    <option value="under_review">Em Análise</option>
+                                    <option value="under review">Em Análise</option>
                                     <option value="stored">Armazenada</option>
                                     <option value="discarded">Descartada</option>
                                 </select>
@@ -63,7 +63,7 @@
                                 <input type="text" id="location" class="form-control" wire:model.defer="location" placeholder="Ex: Geladeira 1, Gaveta B">
                                 @error('location') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
-                            
+
                             <div class="d-flex justify-content-center mt-4">
                                 <button type="submit" class="btn btn-success">
                                     <div wire:loading wire:target="save" class="spinner-border spinner-border-sm me-2" role="status">

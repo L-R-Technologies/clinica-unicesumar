@@ -81,7 +81,7 @@
                             <div class="col-md-1" data-label="Status">
                                 <span
                                     class="badge {{ match ($sample->status) {'stored' => 'text-bg-success','under_review' => 'text-bg-warning','discarded' => 'text-bg-danger',default => 'text-bg-secondary'} }}">
-                                    {{ match ($sample->status) {'under_review' => 'Em Análise','stored' => 'Armazenada','discardada' => 'Descartada',default => ucfirst($sample->status)} }}
+                                    {{ match ($sample->status) {'under review' => 'Em Análise','stored' => 'Armazenada','discarded' => 'Descartada',default => ucfirst($sample->status)} }}
                                 </span>
                             </div>
                             <div class="col-md-2 text-end">

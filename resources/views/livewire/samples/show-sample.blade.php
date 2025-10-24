@@ -38,8 +38,8 @@
                     </li>
                     <li class="mb-3">
                         <strong class="text-secondary d-block">Status</strong>
-                        <span class="badge {{ match($sample->status) { 'stored' => 'text-bg-success', 'under_review' => 'text-bg-warning', 'discarded' => 'text-bg-danger', default => 'text-bg-secondary' } }}">
-                            {{ match($sample->status) { 'under_review' => 'Em Análise', 'stored' => 'Armazenada', 'discarded' => 'Descartada', default => ucfirst($sample->status) } }}
+                        <span class="badge {{ match($sample->status) { 'stored' => 'text-bg-success', 'under review' => 'text-bg-warning', 'discarded' => 'text-bg-danger', default => 'text-bg-secondary' } }}">
+                            {{ match($sample->status) { 'under review' => 'Em Análise', 'stored' => 'Armazenada', 'discarded' => 'Descartada', default => ucfirst($sample->status) } }}
                         </span>
                     </li>
                     <li class="mb-3">

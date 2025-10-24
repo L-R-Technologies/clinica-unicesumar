@@ -45,7 +45,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             }
 
             $rules = array_merge($rules, [
-                'birth_date' => ['required', 'date'],
+                'birthday' => ['required', 'date'],
                 'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'sex' => ['required', 'in:male,female,other'],
                 'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique('patients')->ignore(optional($user->patient)->id)],
@@ -101,7 +101,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             }
             $patient->update([
                 'address_id' => $address ? $address->id : null,
-                'birth_date' => $input['birth_date'],
+                'birthday' => $input['birthday'],
                 'ethnicity' => $input['ethnicity'],
                 'sex' => $input['sex'],
                 'cpf' => $input['cpf'],

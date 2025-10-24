@@ -114,7 +114,7 @@
                                             } }}">
                                             {{ match ($exam->status) {
                                                 'pending' => 'Pendente',
-                                                'pending_approval' => 'Pendente Aprovação',
+                                                'pending_approval' => 'Pendente de Aprovação',
                                                 'approved' => 'Aprovado',
                                                 'rejected' => 'Rejeitado',
                                                 default => ucfirst($exam->status)

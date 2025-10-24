@@ -70,7 +70,7 @@ class EditPatientHistory extends Component
         $this->patientHistory = $patientHistory;
 
         $this->patient_id = $patientHistory->patient_id;
-        $this->recorded_at = $patientHistory->recorded_at->format('Y-m-d\TH:i');
+        $this->recorded_at = $patientHistory->recorded_at->format('Y-m-d');
         $this->fasting = $patientHistory->fasting;
         $this->fasting_hours = $patientHistory->fasting_hours;
         $this->alcohol_last_24h = $patientHistory->alcohol_last_24h;
@@ -97,7 +97,63 @@ class EditPatientHistory extends Component
         $this->patients = Patient::with('user')->get()->sortBy('user.name');
     }
 
-    public function save()
+    public function updatedFasting($value)
+    {
+        if (! $value) {
+            $this->fasting_hours = null;
+        }
+    }
+
+    public function updatedOnMedication($value)
+    {
+        if (! $value) {
+            $this->medications = '';
+        }
+    }
+
+    public function updatedOnSupplements($value)
+    {
+        if (! $value) {
+            $this->supplements = '';
+        }
+    }
+
+    public function updatedChronicDisease($value)
+    {
+        if (! $value) {
+            $this->chronic_disease_details = '';
+        }
+    }
+
+    public function updatedInfectiousDiseaseHistory($value)
+    {
+        if (! $value) {
+            $this->infectious_disease_details = '';
+        }
+    }
+
+    public function updatedRecentSurgery($value)
+    {
+        if (! $value) {
+            $this->surgery_details = '';
+        }
+    }
+
+    public function updatedAllergies($value)
+    {
+        if (! $value) {
+            $this->allergy_details = '';
+        }
+    }
+
+    public function updatedSmokes($value)
+    {
+        if (! $value) {
+            $this->cigarettes_per_day = null;
+        }
+    }
+
+    public function update()
     {
         try {
             $patientHistoryService = app(PatientHistoryService::class);

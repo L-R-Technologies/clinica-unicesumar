@@ -34,35 +34,28 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <strong>Status:</strong><br>
-                                @switch($exam->status)
-                                    @case('pending')
-                                        <span class="badge bg-warning text-dark fs-6">
-                                            <i class="fas fa-clock"></i> Pendente
-                                        </span>
-                                        @break
-                                    @case('pending_approval')
-                                        <span class="badge bg-info fs-6">
-                                            <i class="fas fa-hourglass-half"></i> Pendente de Aprovação
-                                        </span>
-                                        @break
-                                    @case('approved')
-                                        <span class="badge bg-success fs-6">
-                                            <i class="fas fa-check-circle"></i> Aprovado
-                                        </span>
-                                        @break
-                                    @case('rejected')
-                                        <span class="badge bg-danger fs-6">
-                                            <i class="fas fa-times-circle"></i> Rejeitado
-                                        </span>
-                                        @break
-                                    @default
-                                        <span class="badge bg-secondary fs-6">{{ ucfirst($exam->status) }}</span>
-                                @endswitch
+                                <span
+                                    class="badge
+                                        {{ match ($exam->status) {
+                                            'approved' => 'text-bg-success text-white fs-7',
+                                            'pending' => 'bg-warning text-black fs-7',
+                                            'pending_approval' => 'text-bg-info fs-7',
+                                            'rejected' => 'text-bg-danger text-white fs-7',
+                                            default => 'text-bg-secondary text-white fs-7',
+                                        } }}">
+                                    {{ match ($exam->status) {
+                                        'pending' => 'Pendente',
+                                        'pending_approval' => 'Pendente de Aprovação',
+                                        'approved' => 'Aprovado',
+                                        'rejected' => 'Rejeitado',
+                                        default => ucfirst($exam->status),
+                                    } }}
+                                </span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <strong>Responsável:</strong><br>
                                 <span>{{ $exam->user->name }}</span>
-                                @if($exam->user->role === 'teacher')
+                                @if ($exam->user->role === 'teacher')
                                     <small class="badge bg-primary ms-2">Professor</small>
                                 @elseif($exam->user->role === 'student')
                                     <small class="badge bg-success ms-2">Estudante</small>
@@ -80,7 +73,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <strong>Anamnese:</strong><br>
-                                <span>{{ $exam->patientHistory->date->format('d/m/Y') }}</span><br>
+                                <span>{{ $exam->patientHistory->recorded_at->format('d/m/Y') }}</span><br>
                                 <small class="text-muted">{{ Str::limit($exam->patientHistory->description, 100) }}</small>
                             </div>
                         </div>
@@ -100,55 +93,70 @@
                         </div>
 
                         <!-- Observações -->
-                        @if($exam->observation)
-                        <h5 class="mb-3 mt-4"><i class="fas fa-sticky-note"></i> Observações</h5>
-                        <div class="mb-3">
-                            <p class="mb-0">{{ $exam->observation }}</p>
-                        </div>
+                        @if ($exam->observation)
+                            <h5 class="mb-3 mt-4"><i class="fas fa-sticky-note"></i> Observações</h5>
+                            <div class="mb-3">
+                                <p class="mb-0">{{ $exam->observation }}</p>
+                            </div>
                         @endif
 
                         <!-- Resultados do Exame -->
-                        @if($exam->results)
-                        <h5 class="mb-3 mt-4"><i class="fas fa-chart-bar"></i> Resultados do Exame</h5>
-                        <div class="mb-3">
-                            @if(is_array($exam->results))
-                                <div class="table-responsive">
-                                    <table class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Parâmetro</th>
-                                                <th>Resultado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($exam->results as $key => $value)
+                        @if ($exam->results)
+                            <h5 class="mb-3 mt-4"><i class="fas fa-chart-bar"></i> Resultados do Exame</h5>
+                            <div class="mb-3">
+                                @if (is_array($exam->results))
+                                    @php
+                                        // Criar um mapa de name => field para ter acesso a label e unit
+                                        $fieldsMap = $exam->examType->fields->keyBy('name');
+                                    @endphp
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
                                                 <tr>
-                                                    <td><strong>{{ ucfirst($key) }}</strong></td>
-                                                    <td>{{ $value }}</td>
+                                                    <th>Parâmetro</th>
+                                                    <th>Resultado</th>
                                                 </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @else
-                                <div class="alert alert-info">
-                                    <pre>{{ $exam->results }}</pre>
-                                </div>
-                            @endif
-                        </div>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($exam->results as $key => $value)
+                                                    @php
+                                                        $field = $fieldsMap->get($key);
+                                                        $label = $field ? $field->label : ucfirst($key);
+                                                        $unit = $field ? $field->unit : null;
+                                                    @endphp
+                                                    <tr>
+                                                        <td>
+                                                            <strong>{{ $label }}</strong>
+                                                            @if ($unit)
+                                                                <small class="text-muted">({{ $unit }})</small>
+                                                            @endif
+                                                        </td>
+                                                        <td>{{ $value }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <div class="alert alert-info">
+                                        <pre>{{ $exam->results }}</pre>
+                                    </div>
+                                @endif
+                            </div>
                         @else
-                        <div class="alert alert-warning mt-4">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <strong>Atenção:</strong> Este exame ainda não possui resultados cadastrados.
-                        </div>
+                            <div class="alert alert-warning mt-4">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <strong>Atenção:</strong> Este exame ainda não possui resultados cadastrados.
+                            </div>
                         @endif
 
                         <!-- Justificativa de Rejeição -->
-                        @if($exam->status === 'rejected' && $exam->justification_rejection)
-                        <h5 class="mb-3 mt-4"><i class="fas fa-times-circle text-danger"></i> Justificativa da Rejeição</h5>
-                        <div class="alert alert-danger">
-                            {{ $exam->justification_rejection }}
-                        </div>
+                        @if ($exam->status === 'rejected' && $exam->justification_rejection)
+                            <h5 class="mb-3 mt-4"><i class="fas fa-times-circle text-danger"></i> Justificativa da Rejeição
+                            </h5>
+                            <div class="alert alert-danger">
+                                {{ $exam->justification_rejection }}
+                            </div>
                         @endif
 
                         <!-- Informações do Sistema -->
@@ -169,7 +177,8 @@
                             <a href="{{ route('exam.edit', $exam->id) }}" class="btn btn-success">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $exam->id }}, '{{ $exam->examType->name }}')">
+                            <button type="button" class="btn btn-danger"
+                                onclick="confirmDelete({{ $exam->id }}, '{{ $exam->examType->name }}')">
                                 <i class="fas fa-trash"></i> Excluir
                             </button>
                         </div>

@@ -52,14 +52,14 @@ class ExamController extends Controller
 
     public function show($id)
     {
-        $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample'])->findOrFail($id);
+        $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample', 'examType.fields'])->findOrFail($id);
 
         return view('exam.show', compact('exam'));
     }
 
     public function edit($id)
     {
-        $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample'])->findOrFail($id);
+        $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample', 'examType.fields'])->findOrFail($id);
 
         return view('exam.edit', compact('exam'));
     }

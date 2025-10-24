@@ -32,7 +32,7 @@ class CreateNewUser implements CreatesNewUsers
             ],
             'password' => $this->passwordRules(),
             // Campos do paciente
-            'birth_date' => ['required', 'date'],
+            'birthday' => ['required', 'date'],
             'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'sex' => ['required', 'in:male,female,other'],
             'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique(Patient::class)],
@@ -83,7 +83,7 @@ class CreateNewUser implements CreatesNewUsers
 
         $user->patient()->create([
             'address_id' => $address->id,
-            'birth_date' => $input['birth_date'],
+            'birthday' => $input['birthday'],
             'ethnicity' => $input['ethnicity'],
             'sex' => $input['sex'],
             'cpf' => $input['cpf'],

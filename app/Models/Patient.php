@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Address|null $address
  * @property int $user_id
  * @property int|null $address_id
- * @property string $birth_date
+ * @property string $birthday
  * @property string $ethnicity
  * @property string $sex
  * @property string $cpf

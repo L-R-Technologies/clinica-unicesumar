@@ -19,7 +19,7 @@ class RegisterWizard extends Component
 
     public $password_confirmation;
 
-    public $birth_date;
+    public $birthday;
 
     public $sex;
 
@@ -55,7 +55,7 @@ class RegisterWizard extends Component
         'email' => 'required|email|unique:users,email',
         'password' => 'required|min:8|confirmed',
         // Step 2
-        'birth_date' => 'required|date|before:today',
+        'birthday' => 'required|date|before:today',
         'sex' => 'required|in:male,female,other',
         'cpf' => 'required|cpf|string|min:14|max:14|unique:patients,cpf',
         'rg' => 'required|string|max:20',
@@ -78,7 +78,7 @@ class RegisterWizard extends Component
         'cpf.unique' => 'Este CPF já está cadastrado no sistema.',
         'email.unique' => 'Este e-mail já está cadastrado no sistema.',
         'password.min' => 'A senha deve ter pelo menos 8 caracteres.',
-        'birth_date.before' => 'A data de nascimento deve ser anterior a hoje.',
+        'birthday.before' => 'A data de nascimento deve ser anterior a hoje.',
         'zip_code.max' => 'O CEP deve ter no máximo 9 caracteres.',
         'cpf.max' => 'O CPF deve ter no máximo 14 caracteres.',
         'phone.max' => 'O telefone deve ter no máximo 15 caracteres.',
@@ -151,7 +151,7 @@ class RegisterWizard extends Component
             'email' => $this->email,
             'password' => $this->password,
             'password_confirmation' => $this->password_confirmation,
-            'birth_date' => $this->birth_date,
+            'birthday' => $this->birthday,
             'sex' => $this->sex,
             'cpf' => $this->cleanCpf($this->cpf),
             'rg' => $this->rg,
@@ -205,7 +205,7 @@ class RegisterWizard extends Component
     private function validateOnlyStep2()
     {
         $this->validate([
-            'birth_date' => $this->rules['birth_date'],
+            'birthday' => $this->rules['birthday'],
             'sex' => $this->rules['sex'],
             'cpf' => $this->rules['cpf'],
             'rg' => $this->rules['rg'],

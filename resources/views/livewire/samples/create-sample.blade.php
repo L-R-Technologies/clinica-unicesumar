@@ -59,7 +59,7 @@
                                 <label for="status" class="form-label">Status</label>
                                 <select id="status" class="form-select @error('status') is-invalid @enderror"
                                         wire:model.defer="status">
-                                    <option value="under_review">Em Análise</option>
+                                    <option value="under review">Em Análise</option>
                                     <option value="stored">Armazenada</option>
                                     <option value="discarded">Descartada</option>
                                 </select>

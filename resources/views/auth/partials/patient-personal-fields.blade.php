@@ -1,11 +1,11 @@
 @include('auth.partials.profile-basic-fields')
 
 <div class="mb-3">
-    <label for="birth_date" class="form-label">Data de Nascimento</label>
-    <input id="birth_date" type="date" class="form-control @if ($errors->updateProfileInformation->has('birth_date')) is-invalid @endif"
-        name="birth_date" value="{{ old('birth_date', optional($user->patient)->birth_date ?? '') }}">
-    @if ($errors->updateProfileInformation->has('birth_date'))
-        <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('birth_date') }}</div>
+    <label for="birthday" class="form-label">Data de Nascimento</label>
+    <input id="birthday" type="date" class="form-control @if ($errors->updateProfileInformation->has('birthday')) is-invalid @endif"
+        name="birthday" value="{{ old('birthday', optional($user->patient)->birthday ? \Carbon\Carbon::parse($user->patient->birthday)->format('Y-m-d') : '') }}">
+    @if ($errors->updateProfileInformation->has('birthday'))
+        <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('birthday') }}</div>
     @endif
 </div>
 

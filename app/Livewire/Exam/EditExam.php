@@ -38,7 +38,7 @@ class EditExam extends Component
 
     public function mount(Exam $exam)
     {
-        $this->exam = $exam;
+        $this->exam = $exam->load('examType.fields');
 
         $this->patient_id = $exam->patient_id;
         $this->patient_history_id = $exam->patient_history_id;
@@ -61,6 +61,13 @@ class EditExam extends Component
         $this->results = is_array($this->exam->results) ?
             json_encode($this->exam->results, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) :
             ($this->exam->results ?? '');
+
+        if ($this->exam->results) {
+            $existingResults = is_array($this->exam->results) ? $this->exam->results : json_decode($this->exam->results, true);
+            if (is_array($existingResults)) {
+                $this->resultsData = $existingResults;
+            }
+        }
     }
 
     public function updatedPatientId()
@@ -113,11 +120,44 @@ class EditExam extends Component
 
     private function prepareResults()
     {
+        if (! empty($this->resultsData) && is_array($this->resultsData)) {
+            return array_filter($this->resultsData, function ($value) {
+                return ! is_null($value) && $value !== '';
+            });
+        }
+
         if (! empty($this->results)) {
             $decoded = json_decode($this->results, true);
 
             return json_last_error() === JSON_ERROR_NONE ? $decoded : null;
         }
+
+    }
+
+    public function getResultsLabels()
+    {
+        if (! $this->exam || ! $this->exam->examType) {
+            return [];
+        }
+
+        $fields = $this->exam->examType->fields;
+
+        if ($fields->isEmpty()) {
+            return [
+                'observations' => 'Observações',
+            ];
+        }
+
+        return $fields->pluck('label', 'name')->toArray();
+    }
+
+    public function getResultsFields()
+    {
+        if (! $this->exam || ! $this->exam->examType) {
+            return collect();
+        }
+
+        return $this->exam->examType->fields;
     }
 
     public function render()

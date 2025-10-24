@@ -63,7 +63,7 @@ class PatientsSeeder extends Seeder
         Patient::create([
             'user_id' => $patient1->id,
             'address_id' => $address1->id,
-            'birth_date' => '1990-01-01',
+            'birthday' => '1990-01-01',
             'ethnicity' => 'Branca',
             'sex' => 'female',
             'cpf' => '12345678901',
@@ -75,7 +75,7 @@ class PatientsSeeder extends Seeder
         Patient::create([
             'user_id' => $patient2->id,
             'address_id' => $address1->id,
-            'birth_date' => '1985-05-15',
+            'birthday' => '1985-05-15',
             'ethnicity' => 'Parda',
             'sex' => 'male',
             'cpf' => '98765432100',
@@ -87,7 +87,7 @@ class PatientsSeeder extends Seeder
         Patient::create([
             'user_id' => $patient3->id,
             'address_id' => $address2->id,
-            'birth_date' => '1992-03-22',
+            'birthday' => '1992-03-22',
             'ethnicity' => 'Negra',
             'sex' => 'female',
             'cpf' => '11122233344',
@@ -99,7 +99,7 @@ class PatientsSeeder extends Seeder
         Patient::create([
             'user_id' => $patient4->id,
             'address_id' => $address3->id,
-            'birth_date' => '1978-11-08',
+            'birthday' => '1978-11-08',
             'ethnicity' => 'Parda',
             'sex' => 'male',
             'cpf' => '55566677788',
@@ -111,7 +111,7 @@ class PatientsSeeder extends Seeder
         Patient::create([
             'user_id' => $patient5->id,
             'address_id' => $address2->id,
-            'birth_date' => '1988-07-14',
+            'birthday' => '1988-07-14',
             'ethnicity' => 'Branca',
             'sex' => 'female',
             'cpf' => '99988877766',

@@ -138,7 +138,16 @@
             <div class="card shadow-sm p-4 mb-4">
                 <h5 class="mb-3">Informações Específicas</h5>
                 <div class="mb-2">
-                    <strong>Período menstrual:</strong> {{ $patientHistory->menstrual_period ?? '-' }}
+                    <strong>Período menstrual:</strong>
+                    @if($patientHistory->menstrual_period === 'yes')
+                        Sim
+                    @elseif($patientHistory->menstrual_period === 'no')
+                        Não
+                    @elseif($patientHistory->menstrual_period === 'n/a')
+                        Não se aplica
+                    @else
+                        {{ $patientHistory->menstrual_period ?? '-' }}
+                    @endif
                 </div>
                 <div class="mb-2">
                     <strong>Febre/sintomas gripais recentes:</strong> {{ $patientHistory->recent_fever_or_flu ? 'Sim' : 'Não' }}

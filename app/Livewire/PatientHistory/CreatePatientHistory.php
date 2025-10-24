@@ -69,6 +69,62 @@ class CreatePatientHistory extends Component
         $this->recorded_at = now()->format('Y-m-d\TH:i');
     }
 
+    public function updatedFasting($value)
+    {
+        if (! $value) {
+            $this->fasting_hours = null;
+        }
+    }
+
+    public function updatedOnMedication($value)
+    {
+        if (! $value) {
+            $this->medications = '';
+        }
+    }
+
+    public function updatedOnSupplements($value)
+    {
+        if (! $value) {
+            $this->supplements = '';
+        }
+    }
+
+    public function updatedChronicDisease($value)
+    {
+        if (! $value) {
+            $this->chronic_disease_details = '';
+        }
+    }
+
+    public function updatedInfectiousDiseaseHistory($value)
+    {
+        if (! $value) {
+            $this->infectious_disease_details = '';
+        }
+    }
+
+    public function updatedRecentSurgery($value)
+    {
+        if (! $value) {
+            $this->surgery_details = '';
+        }
+    }
+
+    public function updatedAllergies($value)
+    {
+        if (! $value) {
+            $this->allergy_details = '';
+        }
+    }
+
+    public function updatedSmokes($value)
+    {
+        if (! $value) {
+            $this->cigarettes_per_day = null;
+        }
+    }
+
     public function save()
     {
         try {

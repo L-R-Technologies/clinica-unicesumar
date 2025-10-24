@@ -16,6 +16,18 @@ class ShowPatientHistory extends Component
         $this->patientHistory = $patientHistory->load(['patient.user', 'user']);
     }
 
+    public function delete()
+    {
+        try {
+            $this->patientHistory->delete();
+            session()->flash('success', 'Anamnese removida com sucesso!');
+
+            return redirect()->route('patient-histories.index');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao remover anamnese: '.$e->getMessage());
+        }
+    }
+
     public function render()
     {
         return view('livewire.patient-history.show-patient-history');

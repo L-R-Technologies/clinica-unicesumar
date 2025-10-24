@@ -23,7 +23,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Paciente *</label>
-                            <select wire:model="patient_id" class="form-select @error('patient_id') is-invalid @enderror" required>
+                            <select wire:model="patient_id" class="form-select @error('patient_id') is-invalid @enderror">
                                 <option value="">Selecione o paciente</option>
                                 @foreach($patients as $patient)
                                     <option value="{{ $patient->id }}">{{ $patient->user->name }}</option>
@@ -45,114 +45,233 @@
                     <h5 class="mt-4 mb-3">Dados Clínicos</h5>
 
                     {{-- Jejum --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="fasting" wire:model.live="fasting">
-                        <label class="form-check-label" for="fasting">Você está em jejum?</label>
-                    </div>
-                    @if($fasting)
-                        <div class="ms-4 mb-3">
-                            <input type="number" wire:model="fasting_hours" class="form-control" placeholder="Há quantas horas?">
+                    <div class="mb-3">
+                        <label class="form-label">Você está em jejum?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('fasting') is-invalid @enderror" type="radio" wire:model.live="fasting" id="fasting_yes" value="1">
+                                <label class="form-check-label" for="fasting_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('fasting') is-invalid @enderror" type="radio" wire:model.live="fasting" id="fasting_no" value="0">
+                                <label class="form-check-label" for="fasting_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('fasting')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="number" wire:model="fasting_hours" class="form-control @error('fasting_hours') is-invalid @enderror" placeholder="Há quantas horas? *" {{ $fasting ? '' : 'disabled' }}>
+                            @error('fasting_hours')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Álcool nas últimas 24h --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="alcohol_last_24h" wire:model="alcohol_last_24h">
-                        <label class="form-check-label" for="alcohol_last_24h">Consumiu álcool nas últimas 24 horas?</label>
+                    <div class="mb-3">
+                        <label class="form-label">Consumiu álcool nas últimas 24 horas?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('alcohol_last_24h') is-invalid @enderror" type="radio" wire:model="alcohol_last_24h" id="alcohol_yes" value="1">
+                                <label class="form-check-label" for="alcohol_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('alcohol_last_24h') is-invalid @enderror" type="radio" wire:model="alcohol_last_24h" id="alcohol_no" value="0">
+                                <label class="form-check-label" for="alcohol_no">Não</label>
+                            </div>
+                        </div>
+                        @error('alcohol_last_24h')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     {{-- Medicação --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="on_medication" wire:model.live="on_medication">
-                        <label class="form-check-label" for="on_medication">Faz uso de medicamentos?</label>
-                    </div>
-                    @if($on_medication)
-                        <div class="ms-4 mb-3">
-                            <input type="text" wire:model="medications" class="form-control" placeholder="Quais medicamentos?">
+                    <div class="mb-3">
+                        <label class="form-label">Faz uso de medicamentos?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('on_medication') is-invalid @enderror" type="radio" wire:model.live="on_medication" id="medication_yes" value="1">
+                                <label class="form-check-label" for="medication_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('on_medication') is-invalid @enderror" type="radio" wire:model.live="on_medication" id="medication_no" value="0">
+                                <label class="form-check-label" for="medication_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('on_medication')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="text" wire:model="medications" class="form-control @error('medications') is-invalid @enderror" placeholder="Quais medicamentos? *" {{ $on_medication ? '' : 'disabled' }}>
+                            @error('medications')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Suplementos --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="on_supplements" wire:model.live="on_supplements">
-                        <label class="form-check-label" for="on_supplements">Faz uso de suplementos alimentares?</label>
-                    </div>
-                    @if($on_supplements)
-                        <div class="ms-4 mb-3">
-                            <input type="text" wire:model="supplements" class="form-control" placeholder="Quais suplementos?">
+                    <div class="mb-3">
+                        <label class="form-label">Faz uso de suplementos alimentares?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('on_supplements') is-invalid @enderror" type="radio" wire:model.live="on_supplements" id="supplements_yes" value="1">
+                                <label class="form-check-label" for="supplements_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('on_supplements') is-invalid @enderror" type="radio" wire:model.live="on_supplements" id="supplements_no" value="0">
+                                <label class="form-check-label" for="supplements_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('on_supplements')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="text" wire:model="supplements" class="form-control @error('supplements') is-invalid @enderror" placeholder="Quais suplementos? *" {{ $on_supplements ? '' : 'disabled' }}>
+                            @error('supplements')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Doença crônica --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="chronic_disease" wire:model.live="chronic_disease">
-                        <label class="form-check-label" for="chronic_disease">Possui alguma doença crônica?</label>
-                    </div>
-                    @if($chronic_disease)
-                        <div class="ms-4 mb-3">
-                            <input type="text" wire:model="chronic_disease_details" class="form-control" placeholder="Detalhes">
+                    <div class="mb-3">
+                        <label class="form-label">Possui alguma doença crônica?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('chronic_disease') is-invalid @enderror" type="radio" wire:model.live="chronic_disease" id="chronic_yes" value="1">
+                                <label class="form-check-label" for="chronic_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('chronic_disease') is-invalid @enderror" type="radio" wire:model.live="chronic_disease" id="chronic_no" value="0">
+                                <label class="form-check-label" for="chronic_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('chronic_disease')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="text" wire:model="chronic_disease_details" class="form-control @error('chronic_disease_details') is-invalid @enderror" placeholder="Detalhes *" {{ $chronic_disease ? '' : 'disabled' }}>
+                            @error('chronic_disease_details')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Infecções recentes --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="infectious_disease_history" wire:model.live="infectious_disease_history">
-                        <label class="form-check-label" for="infectious_disease_history">Possui histórico de doenças infecciosas recentes?</label>
-                    </div>
-                    @if($infectious_disease_history)
-                        <div class="ms-4 mb-3">
-                            <input type="text" wire:model="infectious_disease_details" class="form-control" placeholder="Detalhes">
+                    <div class="mb-3">
+                        <label class="form-label">Possui histórico de doenças infecciosas recentes?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('infectious_disease_history') is-invalid @enderror" type="radio" wire:model.live="infectious_disease_history" id="infectious_yes" value="1">
+                                <label class="form-check-label" for="infectious_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('infectious_disease_history') is-invalid @enderror" type="radio" wire:model.live="infectious_disease_history" id="infectious_no" value="0">
+                                <label class="form-check-label" for="infectious_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('infectious_disease_history')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="text" wire:model="infectious_disease_details" class="form-control @error('infectious_disease_details') is-invalid @enderror" placeholder="Detalhes *" {{ $infectious_disease_history ? '' : 'disabled' }}>
+                            @error('infectious_disease_details')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Cirurgia recente --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="recent_surgery" wire:model.live="recent_surgery">
-                        <label class="form-check-label" for="recent_surgery">Realizou algum procedimento cirúrgico recentemente?</label>
-                    </div>
-                    @if($recent_surgery)
-                        <div class="ms-4 mb-3">
-                            <input type="text" wire:model="surgery_details" class="form-control" placeholder="Detalhes">
+                    <div class="mb-3">
+                        <label class="form-label">Realizou algum procedimento cirúrgico recentemente?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('recent_surgery') is-invalid @enderror" type="radio" wire:model.live="recent_surgery" id="surgery_yes" value="1">
+                                <label class="form-check-label" for="surgery_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('recent_surgery') is-invalid @enderror" type="radio" wire:model.live="recent_surgery" id="surgery_no" value="0">
+                                <label class="form-check-label" for="surgery_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('recent_surgery')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="text" wire:model="surgery_details" class="form-control @error('surgery_details') is-invalid @enderror" placeholder="Detalhes *" {{ $recent_surgery ? '' : 'disabled' }}>
+                            @error('surgery_details')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Alergias --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="allergies" wire:model.live="allergies">
-                        <label class="form-check-label" for="allergies">Possui histórico de alergias?</label>
-                    </div>
-                    @if($allergies)
-                        <div class="ms-4 mb-3">
-                            <input type="text" wire:model="allergy_details" class="form-control" placeholder="Detalhes">
+                    <div class="mb-3">
+                        <label class="form-label">Possui histórico de alergias?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('allergies') is-invalid @enderror" type="radio" wire:model.live="allergies" id="allergies_yes" value="1">
+                                <label class="form-check-label" for="allergies_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('allergies') is-invalid @enderror" type="radio" wire:model.live="allergies" id="allergies_no" value="0">
+                                <label class="form-check-label" for="allergies_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('allergies')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="text" wire:model="allergy_details" class="form-control @error('allergy_details') is-invalid @enderror" placeholder="Detalhes *" {{ $allergies ? '' : 'disabled' }}>
+                            @error('allergy_details')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     <h5 class="mt-4 mb-3">Dados Adicionais</h5>
 
                     {{-- Tabagismo --}}
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="smokes" wire:model.live="smokes">
-                        <label class="form-check-label" for="smokes">Você fuma?</label>
-                    </div>
-                    @if($smokes)
-                        <div class="ms-4 mb-3">
-                            <input type="number" wire:model="cigarettes_per_day" class="form-control" placeholder="Quantos cigarros por dia?">
+                    <div class="mb-3">
+                        <label class="form-label">Você fuma?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('smokes') is-invalid @enderror" type="radio" wire:model.live="smokes" id="smokes_yes" value="1">
+                                <label class="form-check-label" for="smokes_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('smokes') is-invalid @enderror" type="radio" wire:model.live="smokes" id="smokes_no" value="0">
+                                <label class="form-check-label" for="smokes_no">Não</label>
+                            </div>
                         </div>
-                    @endif
+                        @error('smokes')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="mt-2">
+                            <input type="number" wire:model="cigarettes_per_day" class="form-control @error('cigarettes_per_day') is-invalid @enderror" placeholder="Quantos cigarros por dia? *" {{ $smokes ? '' : 'disabled' }}>
+                            @error('cigarettes_per_day')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
 
                     {{-- Atividade física --}}
                     <div class="mb-3">
                         <label class="form-label">Pratica atividades físicas regularmente?</label>
                         <div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" wire:model="physically_active" id="physically_active_yes" value="1">
+                                <input class="form-check-input @error('physically_active') is-invalid @enderror" type="radio" wire:model="physically_active" id="physically_active_yes" value="1">
                                 <label class="form-check-label" for="physically_active_yes">Sim</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" wire:model="physically_active" id="physically_active_no" value="0">
+                                <input class="form-check-input @error('physically_active') is-invalid @enderror" type="radio" wire:model="physically_active" id="physically_active_no" value="0">
                                 <label class="form-check-label" for="physically_active_no">Não</label>
                             </div>
                         </div>
+                        @error('physically_active')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     {{-- Período menstrual --}}
@@ -160,18 +279,39 @@
                         <label class="form-label">Está em período menstrual?</label>
                         <div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" wire:model="menstrual_period" id="menstrual_yes" value="Sim">
+                                <input class="form-check-input @error('menstrual_period') is-invalid @enderror" type="radio" wire:model="menstrual_period" id="menstrual_yes" value="yes">
                                 <label class="form-check-label" for="menstrual_yes">Sim</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" wire:model="menstrual_period" id="menstrual_no" value="Não">
+                                <input class="form-check-input @error('menstrual_period') is-invalid @enderror" type="radio" wire:model="menstrual_period" id="menstrual_no" value="no">
                                 <label class="form-check-label" for="menstrual_no">Não</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" wire:model="menstrual_period" id="menstrual_na" value="Não se aplica">
+                                <input class="form-check-input @error('menstrual_period') is-invalid @enderror" type="radio" wire:model="menstrual_period" id="menstrual_na" value="n/a">
                                 <label class="form-check-label" for="menstrual_na">Não se aplica</label>
                             </div>
                         </div>
+                        @error('menstrual_period')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Gestante  --}}
+                    <div class="mb-3">
+                        <label class="form-label">Está grávida ou amamentando?</label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('pregnant_or_lactating') is-invalid @enderror" type="radio" wire:model="pregnant_or_lactating" id="pregnant_yes" value="1">
+                                <label class="form-check-label" for="pregnant_yes">Sim</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input @error('pregnant_or_lactating') is-invalid @enderror" type="radio" wire:model="pregnant_or_lactating" id="pregnant_no" value="0">
+                                <label class="form-check-label" for="pregnant_no">Não</label>
+                            </div>
+                        </div>
+                        @error('pregnant_or_lactating')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     {{-- Febre / sintomas gripais --}}
@@ -179,20 +319,26 @@
                         <label class="form-label">Teve episódios de febre ou sintomas gripais nos últimos dias?</label>
                         <div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" wire:model="recent_fever_or_flu" id="fever_yes" value="1">
+                                <input class="form-check-input @error('recent_fever_or_flu') is-invalid @enderror" type="radio" wire:model="recent_fever_or_flu" id="fever_yes" value="1">
                                 <label class="form-check-label" for="fever_yes">Sim</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" wire:model="recent_fever_or_flu" id="fever_no" value="0">
+                                <input class="form-check-input @error('recent_fever_or_flu') is-invalid @enderror" type="radio" wire:model="recent_fever_or_flu" id="fever_no" value="0">
                                 <label class="form-check-label" for="fever_no">Não</label>
                             </div>
                         </div>
+                        @error('recent_fever_or_flu')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     {{-- Observação --}}
                     <div class="mb-3">
                         <label class="form-label">Observação</label>
-                        <textarea wire:model="observation" class="form-control" rows="3"></textarea>
+                        <textarea wire:model="observation" class="form-control @error('observation') is-invalid @enderror" rows="3"></textarea>
+                        @error('observation')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     {{-- Botões --}}

@@ -3,7 +3,7 @@
 <div class="mb-3">
     <label for="birthday" class="form-label">Data de Nascimento</label>
     <input id="birthday" type="date" class="form-control @if ($errors->updateProfileInformation->has('birthday')) is-invalid @endif"
-        name="birthday" value="{{ old('birthday', optional($user->patient)->birthday ?? '') }}">
+        name="birthday" value="{{ old('birthday', optional($user->patient)->birthday ? \Carbon\Carbon::parse($user->patient->birthday)->format('Y-m-d') : '') }}">
     @if ($errors->updateProfileInformation->has('birthday'))
         <div class="invalid-feedback">{{ $errors->updateProfileInformation->first('birthday') }}</div>
     @endif

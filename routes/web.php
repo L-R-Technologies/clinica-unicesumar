@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\SampleController;
@@ -53,5 +54,13 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
+
+        Route::get('/exam-type', [ExamTypeController::class, 'index'])->name('exam-type.index');
+        Route::get('/exam-type/create', [ExamTypeController::class, 'create'])->name('exam-type.create');
+        Route::post('/exam-type', [ExamTypeController::class, 'store'])->name('exam-type.store');
+        Route::get('/exam-type/{examType}', [ExamTypeController::class, 'show'])->name('exam-type.show');
+        Route::get('/exam-type/{examType}/edit', [ExamTypeController::class, 'edit'])->name('exam-type.edit');
+        Route::put('/exam-type/{examType}', [ExamTypeController::class, 'update'])->name('exam-type.update');
+        Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
     });
 });

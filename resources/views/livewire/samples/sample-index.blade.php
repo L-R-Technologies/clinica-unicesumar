@@ -2,44 +2,49 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
-
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="mb-0">Tipos de Amostra</h2>
-                    
-                    @if($isTeacher)
-                        <div>
-                            <a href="{{ route('sample-type.create') }}" class="btn btn-primary">
-                                <i class="fas fa-plus"></i> Novo Tipo de Amostra
-                            </a>
-                        </div>
-                    @endif
+                    <h2 class="mb-0">Amostras</h2>
+                    <div>
+                        <a href="{{ route('sample-type.index-view') }}" class="btn btn-secondary me-2">
+    <i class="fas fa-plus"></i> Novo Tipo de Amostra
+</a>
+                        <a href="{{ route('samples.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Nova Amostra
+                        </a>
+                    </div>
                 </div>
 
-                @if (session('success'))
+                @if (session()->has('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-9">
-                                <label for="search" class="form-label">Buscar</label>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label for="search" class="form-label">Buscar por código ou tipo</label>
                                 <input type="text" id="search" class="form-control"
-                                       wire:model.live.debounce.300ms="search"
-                                       placeholder="Nome ou descrição...">
+                                    placeholder="Digite o código ou tipo..." wire:model.live.debounce.300ms="search">
                             </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <button type="button" class="btn btn-outline-secondary w-100" wire:click="clearFilters">
-                                    <i class="fas fa-times"></i> Limpar
+                            <div class="col-md-3">
+                                <label for="filterStatus" class="form-label">Status</label>
+                                <select id="filterStatus" class="form-select" wire:model.live="statusFilter">
+                                    <option value="">Todos</option>
+                                    <option value="under review">Em Análise</option>
+                                    <option value="stored">Armazenada</option>
+                                    <option value="discarded">Descartada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="filterDate" class="form-label">Data da Coleta</label>
+                                <input type="date" id="filterDate" class="form-control" wire:model.live="dateFilter">
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-secondary w-100" wire:click="clearFilters">
+                                    <i class="fa-solid fa-times"></i> Limpar
                                 </button>
                             </div>
                         </div>
@@ -49,62 +54,71 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <div class="row g-3 px-3 py-2 text-muted fw-bold d-none d-md-flex">
-                            <div class="col-md-4">Nome</div>
-                            <div class="col-md-6">Descrição</div>
-                            @if($isTeacher)
-                                <div class="col-md-2 text-end">Ações</div>
-                            @endif
+                            <div class="col-md-2">Código Único</div>
+                            <div class="col-md-2">Paciente</div>
+                            <div class="col-md-2">Registrado por</div>
+                            <div class="col-md-1">Tipo</div>
+                            <div class="col-md-2">Data</div>
+                            <div class="col-md-1">Status</div>
+                            <div class="col-md-2 text-end">Ações</div>
                         </div>
 
-                        @forelse ($sampleTypes as $type)
+                        @forelse ($samples as $sample)
                             <div class="border rounded mb-2">
                                 <div class="row g-3 px-3 py-2 align-items-center">
-                                    <div class="col-md-4" data-label="Nome">{{ $type->name }}</div>
-                                    <div class="col-md-6" data-label="Descrição">{{ $type->description ?? 'N/A' }}</div>
-                                    
-                                    @if($isTeacher)
-                                        <div class="col-md-2 text-end">
-                                            <div class="btn-group" role="group">
-                                                <a href="{{ route('sample-type.edit', $type->id) }}"
-                                                   class="btn btn-sm btn-outline-secondary" title="Editar">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-danger"
-                                                        onclick="confirmDelete({{ $type->id }})"
-                                                        wire:loading.attr="disabled"
-                                                        title="Excluir">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </button>
-                                            </div>
+                                    <div class="col-md-2" data-label="Código Único">
+                                        <span class="font-monospace">{{ $sample->code }}</span>
+                                    </div>
+                                    <div class="col-md-2" data-label="Paciente">
+                                        {{ $sample->patient->user->name ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-2" data-label="Registrado por">
+                                        {{ $sample->user->name ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-1" data-label="Tipo">
+                                        {{ $sample->sampleType->name ?? 'N/A' }}
+                                    </div>
+                                    <div class="col-md-2" data-label="Data da Coleta">
+                                        {{ \Carbon\Carbon::parse($sample->date)->format('d/m/Y') }}
+                                    </div>
+                                    <div class="col-md-1" data-label="Status">
+                                        <span
+                                            class="badge {{ match ($sample->status) {'stored' => 'text-bg-success','under review' => 'text-bg-warning','discarded' => 'text-bg-danger',default => 'text-bg-secondary'} }}">
+                                            {{ match ($sample->status) {'under review' => 'Em Análise','stored' => 'Armazenada','discarded' => 'Descartada',default => ucfirst($sample->status)} }}
+                                        </span>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('samples.show', $sample->id) }}"
+                                                class="btn btn-sm btn-outline-primary" title="Visualizar">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('samples.edit', $sample->id) }}"
+                                                class="btn btn-sm btn-outline-secondary" title="Editar">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" title="Deletar"
+                                                wire:click="delete({{ $sample->id }})"
+                                                wire:confirm="Tem certeza que deseja deletar esta amostra?">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
                                         </div>
-                                    @endif
+                                    </div>
                                 </div>
                             </div>
                         @empty
                             <div class="text-center text-muted py-4">
-                                Nenhum tipo de amostra encontrado.
+                                Nenhuma amostra encontrada com os filtros aplicados.
                             </div>
                         @endforelse
                     </div>
 
-                    @if ($sampleTypes->hasPages())
+                    @if ($samples->hasPages())
                         <div class="card-footer bg-transparent border-0">
-                            {{ $sampleTypes->links() }}
+                            {{ $samples->links() }}
                         </div>
                     @endif
                 </div>
-
             </div>
         </div>
     </div>
-</div>
-
-@if($isTeacher)
-<script>
-    function confirmDelete(typeId) {
-        if (confirm('Tem certeza de que deseja excluir este tipo de amostra?')) {
-            @this.call('deleteSampleType', typeId);
-        }
-    }
-</script>
-@endif

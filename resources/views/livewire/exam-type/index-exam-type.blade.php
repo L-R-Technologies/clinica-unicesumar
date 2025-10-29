@@ -3,6 +3,7 @@
         <div class="row">
             <div class="col-12">
 
+                {{-- Cabeçalho --}}
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="mb-0">Tipos de Exame</h2>
                     <div>
@@ -12,7 +13,7 @@
                     </div>
                 </div>
 
-                {{-- Mensagens de sucesso e erro --}}
+                {{-- Mensagens --}}
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
@@ -49,20 +50,28 @@
                 {{-- Listagem --}}
                 <div class="card shadow-sm">
                     <div class="card-body">
+                        {{-- Cabeçalho desktop --}}
                         <div class="row g-3 px-3 py-2 text-muted fw-bold d-none d-md-flex">
-                            <div class="col-md-5">Nome</div>
-                            <div class="col-md-5">Descrição</div>
+                            <div class="col-md-3">Nome</div>
+                            <div class="col-md-4">Descrição</div>
+                            <div class="col-md-3">Campos</div>
                             <div class="col-md-2 text-end">Ações</div>
                         </div>
 
+                        {{-- Linhas --}}
                         @forelse ($examTypes as $type)
                             <div class="border rounded mb-2">
                                 <div class="row g-3 px-3 py-2 align-items-center">
-                                    <div class="col-md-3" data-label="Nome">
-                                        {{ $type->name }}
-                                    </div>
-                                    <div class="col-md-7" data-label="Descrição">
-                                        {{ $type->description ?? 'N/A' }}
+                                    <div class="col-md-3" data-label="Nome">{{ $type->name }}</div>
+                                    <div class="col-md-4" data-label="Descrição">{{ $type->description ?? 'N/A' }}</div>
+                                    <div class="col-md-3 text-truncate" data-label="Campos">
+                                        @if($type->fields->isNotEmpty())
+                                            <a href="#" class="toggle-fields" data-id="{{ $type->id }}">
+                                                Ver Campos ({{ $type->fields->count() }})
+                                            </a>
+                                        @else
+                                            Nenhum
+                                        @endif
                                     </div>
                                     <div class="col-md-2 text-end">
                                         <div class="btn-group" role="group">
@@ -83,6 +92,21 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- Div oculta com campos adicionais --}}
+                                @if($type->fields->isNotEmpty())
+                                    <div class="px-3 py-2 bg-light fields-list d-none" id="fields-{{ $type->id }}">
+                                        <ul class="mb-0">
+                                            @foreach($type->fields as $field)
+                                                <li>
+                                                    <strong>{{ $field->label }}</strong> ({{ $field->name }}) -
+                                                    Tipo: {{ $field->field_type }}
+                                                    {{ $field->unit ? '- Unidade: '.$field->unit : '' }}
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                             </div>
                         @empty
                             <div class="text-center text-muted py-4">
@@ -91,6 +115,7 @@
                         @endforelse
                     </div>
 
+                    {{-- Paginação --}}
                     @if ($examTypes->hasPages())
                         <div class="card-footer bg-transparent border-0">
                             {{ $examTypes->links() }}
@@ -109,4 +134,15 @@ function confirmDelete(typeId) {
         @this.call('deleteExamType', typeId);
     }
 }
+
+// Delegação de evento para funcionar após atualizações do Livewire
+document.addEventListener('click', function(e) {
+    const toggle = e.target.closest('.toggle-fields');
+    if (!toggle) return;
+
+    e.preventDefault();
+    const id = toggle.dataset.id;
+    const el = document.getElementById(`fields-${id}`);
+    if (el) el.classList.toggle('d-none');
+});
 </script>

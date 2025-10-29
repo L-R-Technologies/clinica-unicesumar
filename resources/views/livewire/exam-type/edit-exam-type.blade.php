@@ -24,7 +24,7 @@
                     </div>
                 @endif
 
-                <div class="card mx-auto" style="max-width: 600px;">
+                <div class="card mx-auto" style="max-width: 700px;">
                     <div class="card-body">
                         <form wire:submit.prevent="save">
 
@@ -32,48 +32,87 @@
 
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nome *</label>
-                                <input type="text"
-                                       class="form-control @error('name') is-invalid @enderror"
-                                       id="name"
-                                       wire:model="name"
-                                       placeholder="Digite o nome do tipo de exame"
-                                       required>
-                                @error('name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                       wire:model="name" placeholder="Digite o nome do tipo de exame" required>
+                                @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="description" class="form-label">Descrição</label>
                                 <textarea class="form-control @error('description') is-invalid @enderror"
-                                          id="description"
-                                          wire:model="description"
-                                          rows="3"
+                                          wire:model="description" rows="3"
                                           placeholder="Descreva o tipo de exame (opcional)"></textarea>
-                                @error('description')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
-                            {{-- Informações de status --}}
+                            {{-- Campos Personalizados --}}
+                            <h5 class="mb-3">Campos Personalizados</h5>
+
+                            @foreach ($fields as $index => $field)
+                                @if (empty($field['_delete']))
+                                    <div class="border rounded p-3 mb-3">
+                                        <div class="row g-2">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Nome *</label>
+                                                <input type="text" class="form-control"
+                                                       wire:model="fields.{{ $index }}.name"
+                                                       placeholder="nome_interno">
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label class="form-label">Rótulo *</label>
+                                                <input type="text" class="form-control"
+                                                       wire:model="fields.{{ $index }}.label"
+                                                       placeholder="Nome visível">
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label class="form-label">Tipo</label>
+                                                <select class="form-select"
+                                                        wire:model="fields.{{ $index }}.field_type">
+                                                    <option value="text">Texto</option>
+                                                    <option value="number">Número</option>
+                                                    <option value="date">Data</option>
+                                                    <option value="select">Lista</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="form-label">Unidade</label>
+                                                <input type="text" class="form-control"
+                                                       wire:model="fields.{{ $index }}.unit"
+                                                       placeholder="ex: mg/dL">
+                                            </div>
+
+                                            <div class="col-md-1 d-flex align-items-end">
+                                                <button type="button" class="btn btn-danger btn-sm"
+                                                        wire:click="removeField({{ $index }})">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+
+                            <div class="mb-4 text-center">
+                                <button type="button" class="btn btn-outline-primary btn-sm" wire:click="addField">
+                                    <i class="fas fa-plus"></i> Adicionar Campo
+                                </button>
+                            </div>
+
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <small class="text-muted">
-                                        <strong>Criado em:</strong> {{ $examType->created_at->format('d/m/Y H:i') }}
-                                    </small>
+                                    <small class="text-muted"><strong>Criado em:</strong> {{ $examType->created_at->format('d/m/Y H:i') }}</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="text-muted">
-                                        <strong>Atualizado em:</strong> {{ $examType->updated_at->format('d/m/Y H:i') }}
-                                    </small>
+                                    <small class="text-muted"><strong>Atualizado em:</strong> {{ $examType->updated_at->format('d/m/Y H:i') }}</small>
                                 </div>
                             </div>
 
                             <div class="d-flex justify-content-center mt-4">
                                 <button type="submit" class="btn btn-success">
-                                    <div wire:loading wire:target="save" class="spinner-border spinner-border-sm me-2" role="status">
-                                        <span class="visually-hidden">Carregando...</span>
-                                    </div>
+                                    <div wire:loading wire:target="save" class="spinner-border spinner-border-sm me-2"></div>
                                     <i class="fas fa-save"></i> Salvar Alterações
                                 </button>
                             </div>

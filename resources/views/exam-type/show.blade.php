@@ -21,7 +21,6 @@
 
                     <!-- Informações do Tipo de Exame -->
                     <h5 class="mb-4"><i class="fas fa-flask"></i> Informações</h5>
-
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <strong>Nome:</strong><br>
@@ -34,17 +33,32 @@
                     </div>
 
                     @if($examType->exam_type_id)
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
                                 <strong>Tipo Pai:</strong><br>
                                 <span>{{ $examType->exam_type_id }}</span>
                             </div>
                         </div>
                     @endif
 
+                    <!-- Campos Personalizados -->
+                    @if($examType->fields->isNotEmpty())
+                        <h5 class="mb-3 mt-4"><i class="fas fa-list"></i> Campos Personalizados</h5>
+                        <ul class="list-group mb-4">
+                            @foreach($examType->fields as $field)
+                                <li class="list-group-item">
+                                    <strong>{{ $field->label }}</strong> ({{ $field->name }})<br>
+                                    Tipo: {{ $field->field_type }}
+                                    @if($field->unit)
+                                        - Unidade: {{ $field->unit }}
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+
                     <!-- Informações do Sistema -->
                     <h5 class="mb-3 mt-4"><i class="fas fa-info-circle"></i> Informações do Sistema</h5>
-
                     <div class="row">
                         <div class="col-md-6 mb-2">
                             <strong>Criado em:</strong><br>

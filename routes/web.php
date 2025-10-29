@@ -5,6 +5,7 @@ use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\SampleController;
+use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::put('/user/management/{id}', [UserManagementController::class, 'update'])->name('user-management.update');
         Route::delete('/user/management/{id}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
         Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
+        Route::get('sample-type/create', [SampleTypeController::class, 'create'])->name('sample-type.create');
+        Route::get('sample-type/edit/{sampleType}', [SampleTypeController::class, 'edit'])->name('sample-type.edit');
     });
 
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
@@ -62,5 +65,8 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam-type/{examType}/edit', [ExamTypeController::class, 'edit'])->name('exam-type.edit');
         Route::put('/exam-type/{examType}', [ExamTypeController::class, 'update'])->name('exam-type.update');
         Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
+        Route::get('sample-type/index', function () {
+            return view('sample-type.index-livewire');
+        })->name('sample-type.index-view');
     });
 });

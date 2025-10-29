@@ -40,7 +40,7 @@ class ExamTypeController extends Controller
             // --- Criação dos campos personalizados ---
             if ($request->has('fields') && is_array($request->fields)) {
                 foreach ($request->fields as $fieldData) {
-                    if (!empty($fieldData['name']) && !empty($fieldData['label'])) {
+                    if (! empty($fieldData['name']) && ! empty($fieldData['label'])) {
                         $examType->fields()->create([
                             'name' => $fieldData['name'],
                             'label' => $fieldData['label'],
@@ -60,7 +60,7 @@ class ExamTypeController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao criar tipo de exame: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Erro ao criar tipo de exame: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -94,7 +94,7 @@ class ExamTypeController extends Controller
 
                 // Exclui campos removidos
                 $toDelete = array_diff($existingIds, $incomingIds);
-                if (!empty($toDelete)) {
+                if (! empty($toDelete)) {
                     ExamTypeField::whereIn('id', $toDelete)->delete();
                 }
 
@@ -111,7 +111,7 @@ class ExamTypeController extends Controller
                             ]);
                         }
                     } else {
-                        if (!empty($fieldData['name']) && !empty($fieldData['label'])) {
+                        if (! empty($fieldData['name']) && ! empty($fieldData['label'])) {
                             $examType->fields()->create([
                                 'name' => $fieldData['name'],
                                 'label' => $fieldData['label'],
@@ -132,7 +132,7 @@ class ExamTypeController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar tipo de exame: ' . $e->getMessage()])
+                ->withErrors(['error' => 'Erro ao atualizar tipo de exame: '.$e->getMessage()])
                 ->withInput();
         }
     }
@@ -148,7 +148,7 @@ class ExamTypeController extends Controller
                 ->with('success', 'Tipo de exame removido com sucesso!');
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao remover tipo de exame: ' . $e->getMessage()]);
+                ->withErrors(['error' => 'Erro ao remover tipo de exame: '.$e->getMessage()]);
         }
     }
 }

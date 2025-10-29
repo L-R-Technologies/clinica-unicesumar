@@ -37,7 +37,7 @@ class ExamTypeIndex extends Component
 
             session()->flash('success', 'Tipo de exame removido com sucesso!');
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao remover tipo de exame: ' . $e->getMessage());
+            session()->flash('error', 'Erro ao remover tipo de exame: '.$e->getMessage());
         }
     }
 

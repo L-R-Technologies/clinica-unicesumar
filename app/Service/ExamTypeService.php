@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Models\ExamType;
-use App\Models\ExamTypeField;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -36,10 +35,10 @@ class ExamTypeService
     public function validateFieldsData(array $fields)
     {
         $rules = [
-            '*.name'       => 'required|string|max:255',
-            '*.label'      => 'required|string|max:255',
+            '*.name' => 'required|string|max:255',
+            '*.label' => 'required|string|max:255',
             '*.field_type' => 'required|string|in:text,number,date,select',
-            '*.unit'       => 'nullable|string|max:50',
+            '*.unit' => 'nullable|string|max:50',
         ];
 
         $validator = Validator::make($fields, $rules);
@@ -63,7 +62,7 @@ class ExamTypeService
             $examType = ExamType::create($validated);
 
             // Se houver campos personalizados
-            if (!empty($data['fields'])) {
+            if (! empty($data['fields'])) {
                 $validatedFields = $this->validateFieldsData($data['fields']);
 
                 foreach ($validatedFields as $fieldData) {
@@ -139,21 +138,20 @@ class ExamTypeService
         // Carrega os campos junto com os tipos de exame
         $query = ExamType::with('fields');
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
-        if (!empty($filters['exam_type_id'])) {
+        if (! empty($filters['exam_type_id'])) {
             $query->where('id', $filters['exam_type_id']);
         }
 
         return $query->orderBy('name')->paginate(10);
     }
-
 
     /**
      * Retorna todos os tipos de exame (sem paginação)

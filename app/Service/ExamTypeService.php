@@ -37,7 +37,7 @@ class ExamTypeService
         $rules = [
             '*.name' => 'required|string|max:255',
             '*.label' => 'required|string|max:255',
-            '*.field_type' => 'required|string|in:text,number,date,select',
+            '*.field_type' => 'required|string|in:int,float,string,boolean',
             '*.unit' => 'nullable|string|max:50',
         ];
 

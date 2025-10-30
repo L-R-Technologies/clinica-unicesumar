@@ -17,6 +17,7 @@ class EditExamType extends Component
 
     public $description;
 
+    // Campos personalizados existentes e novos
     public $fields = [];
 
     public function mount(ExamType $examType)
@@ -25,7 +26,7 @@ class EditExamType extends Component
         $this->name = $examType->name;
         $this->description = $examType->description;
 
-        // @phpstan-ignore-next-line
+        // Carrega os campos existentes
         $this->fields = $examType->fields->map(function (ExamTypeField $field) {
             return [
                 'id' => $field->id,
@@ -37,27 +38,36 @@ class EditExamType extends Component
         })->toArray();
     }
 
+    /**
+     * Adiciona um novo campo dinâmico
+     */
     public function addField()
     {
         $this->fields[] = [
             'id' => null,
             'name' => '',
             'label' => '',
-            'field_type' => 'string',
+            'field_type' => 'string', // Ajustado para ENUM
             'unit' => '',
         ];
     }
 
+    /**
+     * Remove um campo — se tiver ID, será removido do banco ao salvar
+     */
     public function removeField($index)
     {
         if (isset($this->fields[$index]['id'])) {
-            $this->fields[$index]['_delete'] = true;
+            $this->fields[$index]['_delete'] = true; // marca para exclusão
         } else {
             unset($this->fields[$index]);
             $this->fields = array_values($this->fields);
         }
     }
 
+    /**
+     * Atualiza o tipo de exame e seus campos
+     */
     public function save()
     {
         try {
@@ -71,22 +81,27 @@ class EditExamType extends Component
             $validatedData = $examTypeService->validateExamTypeData($data, $this->examType->id);
             $examTypeService->updateExamType($this->examType, $validatedData);
 
+            // Atualiza ou cria/exclui campos
             foreach ($this->fields as $fieldData) {
+                // Se marcado para exclusão
                 if (! empty($fieldData['_delete']) && isset($fieldData['id'])) {
                     ExamTypeField::find($fieldData['id'])?->delete();
 
                     continue;
                 }
 
+                // Ignora campos vazios
                 if (empty($fieldData['name']) || empty($fieldData['label'])) {
                     continue;
                 }
 
+                // Garante que field_type esteja dentro do ENUM permitido
                 $fieldType = $fieldData['field_type'] ?? 'string';
                 if (! in_array($fieldType, ['int', 'float', 'string', 'boolean'])) {
                     $fieldType = 'string';
                 }
 
+                // Atualiza ou cria
                 if (isset($fieldData['id']) && $fieldData['id']) {
                     $field = ExamTypeField::find($fieldData['id']);
                     if ($field) {

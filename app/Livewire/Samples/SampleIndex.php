@@ -16,7 +16,9 @@ class SampleIndex extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $statusFilter = '';
+
     public string $dateFilter = '';
 
     protected $paginationTheme = 'bootstrap';

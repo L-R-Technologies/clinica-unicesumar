@@ -52,28 +52,18 @@
                     <div class="card-body">
                         {{-- Cabeçalho desktop --}}
                         <div class="row g-3 px-3 py-2 text-muted fw-bold d-none d-md-flex">
-                            <div class="col-md-3">Nome</div>
+                            <div class="col-md-4">Nome</div>
                             <div class="col-md-4">Descrição</div>
-                            <div class="col-md-3">Campos</div>
-                            <div class="col-md-2 text-end">Ações</div>
+                            <div class="col-md-4 text-end">Ações</div>
                         </div>
 
                         {{-- Linhas --}}
                         @forelse ($examTypes as $type)
                             <div class="border rounded mb-2">
                                 <div class="row g-3 px-3 py-2 align-items-center">
-                                    <div class="col-md-3" data-label="Nome">{{ $type->name }}</div>
+                                    <div class="col-md-4" data-label="Nome">{{ $type->name }}</div>
                                     <div class="col-md-4" data-label="Descrição">{{ $type->description ?? 'N/A' }}</div>
-                                    <div class="col-md-3 text-truncate" data-label="Campos">
-                                        @if($type->fields->isNotEmpty())
-                                            <a href="#" class="toggle-fields" data-id="{{ $type->id }}">
-                                                Ver Campos ({{ $type->fields->count() }})
-                                            </a>
-                                        @else
-                                            Nenhum
-                                        @endif
-                                    </div>
-                                    <div class="col-md-2 text-end">
+                                    <div class="col-md-4 text-end">
                                         <div class="btn-group" role="group">
                                             <a href="{{ route('exam-type.show', $type->id) }}"
                                                class="btn btn-sm btn-outline-primary" title="Visualizar">
@@ -92,21 +82,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                {{-- Div oculta com campos adicionais --}}
-                                @if($type->fields->isNotEmpty())
-                                    <div class="px-3 py-2 bg-light fields-list d-none" id="fields-{{ $type->id }}">
-                                        <ul class="mb-0">
-                                            @foreach($type->fields as $field)
-                                                <li>
-                                                    <strong>{{ $field->label }}</strong> ({{ $field->name }}) -
-                                                    Tipo: {{ $field->field_type }}
-                                                    {{ $field->unit ? '- Unidade: '.$field->unit : '' }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
                             </div>
                         @empty
                             <div class="text-center text-muted py-4">

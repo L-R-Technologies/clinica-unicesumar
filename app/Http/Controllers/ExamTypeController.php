@@ -17,7 +17,7 @@ class ExamTypeController extends Controller
     public function __construct(ExamTypeService $examTypeService)
     {
         $this->middleware('auth');
-        $this->middleware('role:teacher,student');
+        $this->middleware('role:teacher');
         $this->examTypeService = $examTypeService;
     }
 
@@ -44,7 +44,7 @@ class ExamTypeController extends Controller
                         $examType->fields()->create([
                             'name' => $fieldData['name'],
                             'label' => $fieldData['label'],
-                            'field_type' => $fieldData['field_type'] ?? 'text',
+                            'field_type' => $fieldData['field_type'] ?? 'string',
                             'unit' => $fieldData['unit'] ?? null,
                         ]);
                     }
@@ -106,7 +106,7 @@ class ExamTypeController extends Controller
                             $field->update([
                                 'name' => $fieldData['name'],
                                 'label' => $fieldData['label'],
-                                'field_type' => $fieldData['field_type'] ?? 'text',
+                                'field_type' => $fieldData['field_type'] ?? 'string',
                                 'unit' => $fieldData['unit'] ?? null,
                             ]);
                         }
@@ -115,7 +115,7 @@ class ExamTypeController extends Controller
                             $examType->fields()->create([
                                 'name' => $fieldData['name'],
                                 'label' => $fieldData['label'],
-                                'field_type' => $fieldData['field_type'] ?? 'text',
+                                'field_type' => $fieldData['field_type'] ?? 'string',
                                 'unit' => $fieldData['unit'] ?? null,
                             ]);
                         }

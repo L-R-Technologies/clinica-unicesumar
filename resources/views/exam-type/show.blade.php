@@ -46,13 +46,18 @@
                         <h5 class="mb-3 mt-4"><i class="fas fa-list"></i> Campos Personalizados</h5>
                         <ul class="list-group mb-4">
                             @foreach($examType->fields as $field)
-                                <li class="list-group-item">
-                                    <strong>{{ $field->label }}</strong> ({{ $field->name }})<br>
-                                    Tipo: {{ $field->field_type }}
-                                    @if($field->unit)
-                                        - Unidade: {{ $field->unit }}
-                                    @endif
-                                </li>
+                                    <li class="list-group-item">
+                                        <strong>{{ $field->label }}</strong> ({{ $field->name }})<br>
+                                        Tipo: {{ [
+                                            'string' => 'Texto',
+                                            'int' => 'Inteiro',
+                                            'float' => 'Decimal',
+                                            'boolean' => 'Booleano',
+                                        ][$field->field_type] ?? $field->field_type }}
+                                        @if($field->unit)
+                                            - Unidade: {{ $field->unit }}
+                                        @endif
+                                    </li>
                             @endforeach
                         </ul>
                     @endif

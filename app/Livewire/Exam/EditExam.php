@@ -131,7 +131,6 @@ class EditExam extends Component
 
             return json_last_error() === JSON_ERROR_NONE ? $decoded : null;
         }
-
     }
 
     public function getResultsLabels()

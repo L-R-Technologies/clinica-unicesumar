@@ -51,12 +51,12 @@
                             @foreach ($fields as $index => $field)
                                 @if (empty($field['_delete']))
                                     <div class="border rounded p-3 mb-3">
-                                        <div class="row g-2">
+                                        <div class="row g-2 align-items-stretch">
                                             <div class="col-md-3">
                                                 <label class="form-label">Nome *</label>
                                                 <input type="text" class="form-control"
                                                        wire:model="fields.{{ $index }}.name"
-                                                       placeholder="nome_interno">
+                                                       placeholder="Nome interno">
                                             </div>
 
                                             <div class="col-md-3">
@@ -70,21 +70,21 @@
                                                 <label class="form-label">Tipo</label>
                                                 <select class="form-select"
                                                         wire:model="fields.{{ $index }}.field_type">
-                                                    <option value="text">Texto</option>
-                                                    <option value="number">Número</option>
-                                                    <option value="date">Data</option>
-                                                    <option value="select">Lista</option>
+                                                    <option value="string">Texto</option>
+                                                    <option value="int">Inteiro</option>
+                                                    <option value="float">Decimal</option>
+                                                    <option value="boolean">Booleano</option>
                                                 </select>
                                             </div>
 
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 <label class="form-label">Unidade</label>
                                                 <input type="text" class="form-control"
                                                        wire:model="fields.{{ $index }}.unit"
                                                        placeholder="ex: mg/dL">
                                             </div>
 
-                                            <div class="col-md-1 d-flex align-items-end">
+                                            <div class="col-md-3">
                                                 <button type="button" class="btn btn-danger btn-sm"
                                                         wire:click="removeField({{ $index }})">
                                                     <i class="fas fa-trash"></i>

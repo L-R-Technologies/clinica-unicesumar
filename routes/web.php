@@ -25,6 +25,14 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::put('/user/management/{id}', [UserManagementController::class, 'update'])->name('user-management.update');
         Route::delete('/user/management/{id}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
         Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
+
+        Route::get('/exam-type', [ExamTypeController::class, 'index'])->name('exam-type.index');
+        Route::get('/exam-type/create', [ExamTypeController::class, 'create'])->name('exam-type.create');
+        Route::post('/exam-type', [ExamTypeController::class, 'store'])->name('exam-type.store');
+        Route::get('/exam-type/{examType}', [ExamTypeController::class, 'show'])->name('exam-type.show');
+        Route::get('/exam-type/{examType}/edit', [ExamTypeController::class, 'edit'])->name('exam-type.edit');
+        Route::put('/exam-type/{examType}', [ExamTypeController::class, 'update'])->name('exam-type.update');
+        Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
     });
 
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
@@ -54,13 +62,5 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
-
-        Route::get('/exam-type', [ExamTypeController::class, 'index'])->name('exam-type.index');
-        Route::get('/exam-type/create', [ExamTypeController::class, 'create'])->name('exam-type.create');
-        Route::post('/exam-type', [ExamTypeController::class, 'store'])->name('exam-type.store');
-        Route::get('/exam-type/{examType}', [ExamTypeController::class, 'show'])->name('exam-type.show');
-        Route::get('/exam-type/{examType}/edit', [ExamTypeController::class, 'edit'])->name('exam-type.edit');
-        Route::put('/exam-type/{examType}', [ExamTypeController::class, 'update'])->name('exam-type.update');
-        Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
     });
 });

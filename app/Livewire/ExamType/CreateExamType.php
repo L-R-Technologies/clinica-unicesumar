@@ -2,7 +2,6 @@
 
 namespace App\Livewire\ExamType;
 
-use App\Models\ExamTypeField;
 use App\Service\ExamTypeService;
 use Exception;
 use Illuminate\Validation\ValidationException;
@@ -11,6 +10,7 @@ use Livewire\Component;
 class CreateExamType extends Component
 {
     public $name = '';
+
     public $description = '';
 
     // Campos personalizados
@@ -53,26 +53,25 @@ class CreateExamType extends Component
 
             // Cria os campos associados
             foreach ($this->fields as $field) {
-                if (!empty($field['name']) && !empty($field['label'])) {
-
+                if (! empty($field['name']) && ! empty($field['label'])) {
                     // Garante que o field_type esteja dentro do ENUM permitido
                     $fieldType = $field['field_type'] ?? 'string';
-                    if (!in_array($fieldType, ['int', 'float', 'string', 'boolean'])) {
+                    if (! in_array($fieldType, ['int', 'float', 'string', 'boolean'])) {
                         $fieldType = 'string';
                     }
 
                     $examType->fields()->create([
-                        'name'       => $field['name'],
-                        'label'      => $field['label'],
+                        'name' => $field['name'],
+                        'label' => $field['label'],
                         'field_type' => $fieldType,
-                        'unit'       => $field['unit'] ?? null,
+                        'unit' => $field['unit'] ?? null,
                     ]);
                 }
             }
 
             session()->flash('success', 'Tipo de exame criado com sucesso!');
-            return redirect()->route('exam-type.index');
 
+            return redirect()->route('exam-type.index');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $messages) {
                 foreach ($messages as $message) {
@@ -80,7 +79,7 @@ class CreateExamType extends Component
                 }
             }
         } catch (Exception $e) {
-            $this->addError('form', 'Erro ao criar tipo de exame: ' . $e->getMessage());
+            $this->addError('form', 'Erro ao criar tipo de exame: '.$e->getMessage());
         }
     }
 

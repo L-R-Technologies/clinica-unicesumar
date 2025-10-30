@@ -17,6 +17,9 @@ class ExamType extends Model
         'updated_at' => 'datetime',
     ];
 
+    /**
+     * @return HasMany<ExamTypeField, $this>
+     */
     public function fields(): HasMany
     {
         return $this->hasMany(ExamTypeField::class);

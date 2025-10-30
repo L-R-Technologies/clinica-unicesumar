@@ -168,7 +168,7 @@
                                             </label>
 
                                             @switch($field->field_type)
-                                                @case('select')
+                                                @case('boolean')
                                                     <select class="form-select @error('resultsData.' . $field->name) is-invalid @enderror"
                                                         id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}">
                                                         <option value="">Selecionar</option>
@@ -195,20 +195,20 @@
                                                     </select>
                                                     @break
 
-                                                @case('textarea')
-                                                    <textarea class="form-control @error('resultsData.' . $field->name) is-invalid @enderror"
-                                                        id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}" rows="3"
-                                                        placeholder="{{ $field->label }}"></textarea>
+                                                @case('int')
+                                                    <input type="number" class="form-control @error('resultsData.' . $field->name) is-invalid @enderror"
+                                                        id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}"
+                                                        placeholder="{{ $field->label }}">
                                                     @break
 
-                                                @case('number')
+                                                @case('float')
                                                     <input type="number" step="0.01" class="form-control @error('resultsData.' . $field->name) is-invalid @enderror"
                                                         id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}"
                                                         placeholder="{{ $field->label }}">
                                                     @break
 
                                                 @default
-                                                    <!-- Campo de texto padrão -->
+                                                    <!-- Campo de texto padrão para 'string' e outros -->
                                                     <input type="text" class="form-control @error('resultsData.' . $field->name) is-invalid @enderror"
                                                         id="resultsData.{{ $field->name }}" wire:model="resultsData.{{ $field->name }}"
                                                         placeholder="{{ $field->label }}">

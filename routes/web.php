@@ -5,6 +5,7 @@ use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\SampleController;
+use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,14 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam-type/{examType}/edit', [ExamTypeController::class, 'edit'])->name('exam-type.edit');
         Route::put('/exam-type/{examType}', [ExamTypeController::class, 'update'])->name('exam-type.update');
         Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
+
+        Route::get('/sample-type', [SampleTypeController::class, 'index'])->name('sample-type.index');
+        Route::get('/sample-type/create', [SampleTypeController::class, 'create'])->name('sample-type.create');
+        Route::post('/sample-type', [SampleTypeController::class, 'store'])->name('sample-type.store');
+        Route::get('/sample-type/{sampleType}', [SampleTypeController::class, 'show'])->name('sample-type.show');
+        Route::get('/sample-type/{sampleType}/edit', [SampleTypeController::class, 'edit'])->name('sample-type.edit');
+        Route::put('/sample-type/{sampleType}', [SampleTypeController::class, 'update'])->name('sample-type.update');
+        Route::delete('/sample-type/{sampleType}', [SampleTypeController::class, 'destroy'])->name('sample-type.destroy');
     });
 
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Samples;
 
-use App\Models\Sample;
+use App\Models\Sample; // Modelo de Amostras
 use App\Service\SampleService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -69,7 +69,7 @@ class SampleIndex extends Component
         ]);
 
         return view('livewire.samples.sample-index', [
-            'samples' => $samples,
+            'samples' => $samples, // Agora são AMOSTRAS, não tipos
             'statusOptions' => $sampleService->getStatusOptions(),
         ]);
     }

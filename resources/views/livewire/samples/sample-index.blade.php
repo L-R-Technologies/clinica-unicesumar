@@ -5,6 +5,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="mb-0">Amostras</h2>
                     <div>
+                        @if(auth()->user()->hasRole('teacher'))
+                            <a href="{{ route('sample-type.index') }}" class="btn btn-secondary me-2">
+                                Tipos de Amostra
+                            </a>
+                        @endif
                         <a href="{{ route('samples.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Nova Amostra
                         </a>

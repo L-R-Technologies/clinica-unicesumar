@@ -5,6 +5,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="mb-0">Exames</h2>
                     <div>
+                        @if(auth()->user()->hasRole('teacher'))
+                            <a href="{{ route('exam-type.index') }}" class="btn btn-secondary me-2">
+                                Tipos de Exame
+                            </a>
+                        @endif
                         <a href="{{ route('exam.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus"></i> Novo Exame
                         </a>

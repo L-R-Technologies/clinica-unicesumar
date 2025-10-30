@@ -50,21 +50,22 @@
                     <div class="card-body">
                         <div class="row g-3 px-3 py-2 text-muted fw-bold d-none d-md-flex">
                             <div class="col-md-4">Nome</div>
-                            <div class="col-md-6">Descrição</div>
-                            @if($isTeacher)
-                                <div class="col-md-2 text-end">Ações</div>
-                            @endif
+                            <div class="col-md-4">Descrição</div>
+                            <div class="col-md-4 text-end">Ações</div>
                         </div>
 
                         @forelse ($sampleTypes as $type)
                             <div class="border rounded mb-2">
                                 <div class="row g-3 px-3 py-2 align-items-center">
                                     <div class="col-md-4" data-label="Nome">{{ $type->name }}</div>
-                                    <div class="col-md-6" data-label="Descrição">{{ $type->description ?? 'N/A' }}</div>
-                                    
-                                    @if($isTeacher)
-                                        <div class="col-md-2 text-end">
-                                            <div class="btn-group" role="group">
+                                    <div class="col-md-4" data-label="Descrição">{{ $type->description ?? 'N/A' }}</div>
+                                    <div class="col-md-4 text-end">
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ route('sample-type.show', $type->id) }}"
+                                               class="btn btn-sm btn-outline-primary" title="Visualizar">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                            @if($isTeacher)
                                                 <a href="{{ route('sample-type.edit', $type->id) }}"
                                                    class="btn btn-sm btn-outline-secondary" title="Editar">
                                                     <i class="fa-solid fa-pen-to-square"></i>
@@ -75,9 +76,9 @@
                                                         title="Excluir">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
-                                            </div>
+                                            @endif
                                         </div>
-                                    @endif
+                                    </div>
                                 </div>
                             </div>
                         @empty

@@ -35,7 +35,7 @@ class EditSampleType extends Component
 
             session()->flash('success', 'Tipo de amostra atualizado com sucesso!');
 
-            return redirect()->route('sample-type.index-view');
+            return redirect()->route('sample-type.index');
         } catch (ValidationException $e) {
             foreach ($e->errors() as $field => $messages) {
                 foreach ($messages as $message) {

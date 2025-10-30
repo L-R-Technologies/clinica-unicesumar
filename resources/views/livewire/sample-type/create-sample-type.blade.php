@@ -5,7 +5,7 @@
 
                 <div class="d-flex align-items-center mb-4">
                     <div>
-                        <a href="{{ route('sample-type.index-view') }}" class="btn btn-primary">
+                        <a href="{{ route('sample-type.index') }}" class="btn btn-primary">
                             <i class="fas fa-arrow-left"></i> Voltar
                         </a>
                     </div>

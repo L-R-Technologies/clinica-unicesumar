@@ -19,6 +19,24 @@
                     </div>
                 @endif
 
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @endif
+
+                @error('form')
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ $message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                @enderror
+
                 <div class="card mx-auto" style="max-width: 500px;">
                     <div class="card-body">
                         <form wire:submit.prevent="save">
@@ -44,13 +62,13 @@
 
                             <div class="mb-3">
                                 <label for="date" class="form-label">Data da Coleta</label>
-                                <input type="date" id="date" class="form-control" wire:model.defer="date">
+                                <input type="date" id="date" class="form-control @error('date') is-invalid @enderror" wire:model.defer="date">
                                 @error('date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select id="status" class="form-select" wire:model.defer="status">
+                                <select id="status" class="form-select @error('status') is-invalid @enderror" wire:model.defer="status">
                                     <option value="under review">Em Análise</option>
                                     <option value="stored">Armazenada</option>
                                     <option value="discarded">Descartada</option>
@@ -60,7 +78,7 @@
 
                             <div class="mb-3">
                                 <label for="location" class="form-label">Localização (Opcional)</label>
-                                <input type="text" id="location" class="form-control" wire:model.defer="location" placeholder="Ex: Geladeira 1, Gaveta B">
+                                <input type="text" id="location" class="form-control @error('location') is-invalid @enderror" wire:model.defer="location" placeholder="Ex: Geladeira 1, Gaveta B">
                                 @error('location') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 

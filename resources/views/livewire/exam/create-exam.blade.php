@@ -108,8 +108,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="date" class="form-label">Data e Hora do Exame *</label>
-                                <input type="datetime-local" class="form-control @error('date') is-invalid @enderror"
+                                <label for="date" class="form-label">Data do Exame *</label>
+                                <input type="date" class="form-control @error('date') is-invalid @enderror"
                                     id="date" wire:model="date" required>
                                 @error('date')
                                     <div class="invalid-feedback">{{ $message }}</div>

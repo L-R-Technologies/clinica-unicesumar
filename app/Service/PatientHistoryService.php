@@ -17,7 +17,7 @@ class PatientHistoryService
         $validator = Validator::make($data, [
             'patient_id' => 'required|exists:patients,id',
             'user_id' => 'required|exists:users,id',
-            'recorded_at' => 'required|date',
+            'recorded_at' => 'required|date|before_or_equal:today',
 
             'fasting' => 'required|boolean',
             'fasting_hours' => 'required_if:fasting,true|nullable|integer|min:0',

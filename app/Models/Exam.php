@@ -22,7 +22,7 @@ class Exam extends Model
     ];
 
     protected $casts = [
-        'date' => 'datetime',
+        'date' => 'date',
         'results' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

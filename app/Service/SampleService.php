@@ -18,7 +18,7 @@ class SampleService
         $rules = [
             'patient_id' => 'required|exists:patients,id',
             'sample_type_id' => 'required|exists:sample_types,id',
-            'date' => 'required|date',
+            'date' => 'required|date|before_or_equal:today',
             'status' => 'required|in:under review,stored,discarded',
             'location' => 'nullable|string|max:255',
         ];

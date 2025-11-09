@@ -35,9 +35,25 @@ class ExamTypeIndex extends Component
             $examTypeService = app(ExamTypeService::class);
             $examTypeService->deleteExamType($examType);
 
-            session()->flash('success', 'Tipo de exame removido com sucesso!');
+            $status = $examType->fresh()->is_active ? 'ativado' : 'desativado';
+            session()->flash('success', "Tipo de exame {$status} com sucesso!");
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao remover tipo de exame: '.$e->getMessage());
+            session()->flash('error', 'Erro ao desativar tipo de exame: '.$e->getMessage());
+        }
+    }
+
+    public function toggleStatus($id)
+    {
+        try {
+            $examType = ExamType::findOrFail($id);
+
+            $examTypeService = app(ExamTypeService::class);
+            $examTypeService->toggleStatus($examType);
+
+            $status = $examType->fresh()->is_active ? 'ativado' : 'desativado';
+            session()->flash('success', "Tipo de exame {$status} com sucesso!");
+        } catch (Exception $e) {
+            session()->flash('error', 'Erro ao alterar status: '.$e->getMessage());
         }
     }
 

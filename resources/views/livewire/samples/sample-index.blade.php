@@ -23,6 +23,13 @@
                     </div>
                 @endif
 
+                @if (session()->has('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row g-3 align-items-end">

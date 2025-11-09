@@ -69,6 +69,10 @@ class SampleService
 
     public function deleteSample(Sample $sample)
     {
+        if ($sample->exams()->count() > 0) {
+            throw new Exception('Não é possível excluir esta amostra pois ela está vinculada a '.$sample->exams()->count().' exame(s).');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -136,7 +140,7 @@ class SampleService
 
     public function getSampleTypes()
     {
-        return SampleType::orderBy('name')->get();
+        return SampleType::where('is_active', true)->orderBy('name')->get();
     }
 
     public function getStatusOptions()

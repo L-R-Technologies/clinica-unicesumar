@@ -46,7 +46,7 @@ class SampleIndex extends Component
 
             session()->flash('success', 'Amostra deletada com sucesso!');
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao deletar amostra: '.$e->getMessage());
+            session()->flash('error', $e->getMessage());
         }
     }
 

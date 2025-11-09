@@ -24,7 +24,7 @@ class ShowPatientHistory extends Component
 
             return redirect()->route('patient-histories.index');
         } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao remover anamnese: '.$e->getMessage());
+            session()->flash('error', $e->getMessage());
         }
     }
 

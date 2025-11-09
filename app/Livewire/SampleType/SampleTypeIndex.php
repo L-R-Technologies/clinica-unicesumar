@@ -38,7 +38,7 @@ class SampleTypeIndex extends Component
     public function deleteSampleType($id)
     {
         if (! $this->isTeacher) {
-            session()->flash('error', 'Você não tem permissão para excluir.');
+            session()->flash('error', 'Você não tem permissão para desativar.');
 
             return;
         }
@@ -48,9 +48,30 @@ class SampleTypeIndex extends Component
             $sampleTypeService = app(SampleTypeService::class);
             $sampleTypeService->deleteSampleType($sampleType);
 
-            session()->flash('success', 'Tipo de amostra removido com sucesso!');
+            $status = $sampleType->fresh()->is_active ? 'ativado' : 'desativado';
+            session()->flash('success', "Tipo de amostra {$status} com sucesso!");
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao remover tipo de amostra: '.$e->getMessage());
+            session()->flash('error', 'Erro ao desativar tipo de amostra: '.$e->getMessage());
+        }
+    }
+
+    public function toggleStatus($id)
+    {
+        if (! $this->isTeacher) {
+            session()->flash('error', 'Você não tem permissão para alterar o status.');
+
+            return;
+        }
+
+        try {
+            $sampleType = SampleType::findOrFail($id);
+            $sampleTypeService = app(SampleTypeService::class);
+            $sampleTypeService->toggleStatus($sampleType);
+
+            $status = $sampleType->fresh()->is_active ? 'ativado' : 'desativado';
+            session()->flash('success', "Tipo de amostra {$status} com sucesso!");
+        } catch (Exception $e) {
+            session()->flash('error', 'Erro ao alterar status: '.$e->getMessage());
         }
     }
 

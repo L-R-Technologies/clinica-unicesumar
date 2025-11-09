@@ -52,7 +52,7 @@ class PatientHistoryIndex extends Component
 
             session()->flash('success', 'Anamnese removida com sucesso!');
         } catch (Exception $e) {
-            session()->flash('error', 'Erro ao remover anamnese: '.$e->getMessage());
+            session()->flash('error', $e->getMessage());
         }
     }
 

@@ -174,6 +174,6 @@ class ExamService
 
     public function getExamTypes()
     {
-        return ExamType::orderBy('name')->get();
+        return ExamType::where('is_active', true)->orderBy('name')->get();
     }
 }

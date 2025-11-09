@@ -80,6 +80,11 @@ class PatientHistoryService
      */
     public function delete(PatientHistory $anamnesis): bool
     {
+        // Verifica se a anamnese está vinculada a algum exame
+        if ($anamnesis->exams()->count() > 0) {
+            throw new \Exception('Não é possível excluir esta anamnese pois ela está vinculada a '.$anamnesis->exams()->count().' exame(s).');
+        }
+
         return $anamnesis->delete();
     }
 

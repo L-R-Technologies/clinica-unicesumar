@@ -98,7 +98,7 @@ class PatientHistoryController extends Controller
                 ->with('success', 'Anamnese removida com sucesso!');
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao remover anamnese: '.$e->getMessage()]);
+                ->withErrors(['error' => $e->getMessage()]);
         }
     }
 }

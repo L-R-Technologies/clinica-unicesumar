@@ -2,6 +2,8 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
+
+                <!-- Cabeçalho -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="mb-0">Amostras</h2>
                     <div>
@@ -16,54 +18,66 @@
                     </div>
                 </div>
 
-                @if (session()->has('success'))
+                <!-- Alerts -->
+                @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
 
-                @if (session()->has('error'))
+                @if (session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 @endif
 
+                <!-- Filtros -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="row g-3 align-items-end">
+                        <div class="row g-3">
+
                             <div class="col-md-3">
-                                <label for="search" class="form-label">Buscar por código ou tipo</label>
+                                <label for="search" class="form-label">Buscar</label>
                                 <input type="text" id="search" class="form-control"
-                                    placeholder="Digite o código ou tipo..." wire:model.live.debounce.300ms="search">
+                                    placeholder="Código, paciente ou tipo..."
+                                    wire:model.live.debounce.300ms="search">
                             </div>
+
                             <div class="col-md-3">
-                                <label for="filterStatus" class="form-label">Status</label>
-                                <select id="filterStatus" class="form-select" wire:model.live="statusFilter">
+                                <label for="statusFilter" class="form-label">Status</label>
+                                <select id="statusFilter" class="form-select" wire:model.live="statusFilter">
                                     <option value="">Todos</option>
                                     <option value="under review">Em Análise</option>
                                     <option value="stored">Armazenada</option>
                                     <option value="discarded">Descartada</option>
                                 </select>
                             </div>
+
                             <div class="col-md-3">
-                                <label for="filterDate" class="form-label">Data da Coleta</label>
-                                <input type="date" id="filterDate" class="form-control" wire:model.live="dateFilter">
+                                <label for="dateFilter" class="form-label">Data da Coleta</label>
+                                <input type="date" id="dateFilter"
+                                    class="form-control"
+                                    wire:model.live="dateFilter">
                             </div>
-                            <div class="col-md-3">
+
+                            <div class="col-md-3 d-flex align-items-end">
                                 <button class="btn btn-outline-secondary w-100" wire:click="clearFilters">
-                                    <i class="fa-solid fa-times"></i> Limpar
+                                    <i class="fas fa-times"></i> Limpar
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Lista -->
                 <div class="card shadow-sm">
                     <div class="card-body">
+
+                        <!-- Header -->
                         <div class="row g-3 px-3 py-2 text-muted fw-bold d-none d-md-flex">
-                            <div class="col-md-2">Código Único</div>
+                            <div class="col-md-2">Código</div>
                             <div class="col-md-2">Paciente</div>
                             <div class="col-md-2">Registrado por</div>
                             <div class="col-md-1">Tipo</div>
@@ -75,44 +89,64 @@
                         @forelse ($samples as $sample)
                             <div class="border rounded mb-2">
                                 <div class="row g-3 px-3 py-2 align-items-center">
-                                    <div class="col-md-2" data-label="Código Único">
+
+                                    <div class="col-md-2" data-label="Código">
                                         <span class="font-monospace">{{ $sample->code }}</span>
                                     </div>
+
                                     <div class="col-md-2" data-label="Paciente">
                                         {{ $sample->patient->user->name ?? 'N/A' }}
                                     </div>
+
                                     <div class="col-md-2" data-label="Registrado por">
                                         {{ $sample->user->name ?? 'N/A' }}
                                     </div>
+
                                     <div class="col-md-1" data-label="Tipo">
                                         {{ $sample->sampleType->name ?? 'N/A' }}
                                     </div>
-                                    <div class="col-md-2" data-label="Data da Coleta">
+
+                                    <div class="col-md-2" data-label="Data">
                                         {{ \Carbon\Carbon::parse($sample->date)->format('d/m/Y') }}
                                     </div>
+
                                     <div class="col-md-1" data-label="Status">
-                                        <span
-                                            class="badge {{ match ($sample->status) {'stored' => 'text-bg-success','under review' => 'text-bg-warning','discarded' => 'text-bg-danger',default => 'text-bg-secondary'} }}">
-                                            {{ match ($sample->status) {'under review' => 'Em Análise','stored' => 'Armazenada','discarded' => 'Descartada',default => ucfirst($sample->status)} }}
+                                        <span class="badge
+                                            {{ match ($sample->status) {
+                                                'stored' => 'text-bg-success',
+                                                'under review' => 'text-bg-warning',
+                                                'discarded' => 'text-bg-danger',
+                                                default => 'text-bg-secondary'
+                                            } }}">
+                                            {{ match ($sample->status) {
+                                                'under review' => 'Em Análise',
+                                                'stored' => 'Armazenada',
+                                                'discarded' => 'Descartada',
+                                                default => ucfirst($sample->status)
+                                            } }}
                                         </span>
                                     </div>
+
                                     <div class="col-md-2 text-end">
                                         <div class="btn-group" role="group">
                                             <a href="{{ route('samples.show', $sample->id) }}"
                                                 class="btn btn-sm btn-outline-primary" title="Visualizar">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
+
                                             <a href="{{ route('samples.edit', $sample->id) }}"
                                                 class="btn btn-sm btn-outline-secondary" title="Editar">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
-                                            <button class="btn btn-sm btn-outline-danger" title="Deletar"
-                                                wire:click="delete({{ $sample->id }})"
-                                                wire:confirm="Tem certeza que deseja deletar esta amostra?">
+
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                title="Excluir"
+                                                onclick="confirmDelete({{ $sample->id }})">
                                                 <i class="fa-solid fa-trash-can"></i>
                                             </button>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         @empty
@@ -131,3 +165,12 @@
             </div>
         </div>
     </div>
+</div>
+
+<script>
+function confirmDelete(sampleId) {
+    if (confirm('Tem certeza de que deseja excluir esta amostra? Esta ação não pode ser desfeita.')) {
+        @this.call('delete', sampleId);
+    }
+}
+</script>

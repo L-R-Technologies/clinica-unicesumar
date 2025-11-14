@@ -176,4 +176,20 @@ class ExamService
     {
         return ExamType::where('is_active', true)->orderBy('name')->get();
     }
+
+    public function getExamTypesForEdit($currentExamTypeId = null)
+    {
+        $query = ExamType::query();
+
+        if ($currentExamTypeId) {
+            $query->where(function ($q) use ($currentExamTypeId) {
+                $q->where('is_active', true)
+                    ->orWhere('id', $currentExamTypeId);
+            });
+        } else {
+            $query->where('is_active', true);
+        }
+
+        return $query->orderBy('name')->get();
+    }
 }

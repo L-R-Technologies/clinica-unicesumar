@@ -15,25 +15,27 @@ class SampleIndex extends Component
 {
     use WithPagination;
 
-    public string $search = '';
+    public $search = '';
 
-    public string $statusFilter = '';
+    public $statusFilter = '';
 
-    public string $dateFilter = '';
+    public $dateFilter = '';
 
     protected $paginationTheme = 'bootstrap';
 
-    public function updatedSearch()
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
+    public function updatedSearch($value)
     {
         $this->resetPage();
     }
 
-    public function updatedStatusFilter()
+    public function updatedStatusFilter($value)
     {
         $this->resetPage();
     }
 
-    public function updatedDateFilter()
+    public function updatedDateFilter($value)
     {
         $this->resetPage();
     }
@@ -54,6 +56,7 @@ class SampleIndex extends Component
     {
         $this->reset(['search', 'statusFilter', 'dateFilter']);
         $this->resetPage();
+        $this->dispatch('refreshComponent');
     }
 
     public function render()
@@ -69,7 +72,7 @@ class SampleIndex extends Component
         ]);
 
         return view('livewire.samples.sample-index', [
-            'samples' => $samples, // Agora são AMOSTRAS, não tipos
+            'samples' => $samples,
             'statusOptions' => $sampleService->getStatusOptions(),
         ]);
     }

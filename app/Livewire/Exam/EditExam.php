@@ -44,7 +44,7 @@ class EditExam extends Component
         $this->patient_history_id = $exam->patient_history_id;
         $this->sample_id = $exam->sample_id;
         $this->exam_type_id = $exam->exam_type_id;
-        $this->date = $exam->date->format('Y-m-d\TH:i');
+        $this->date = $exam->date->format('Y-m-d');
         $this->observation = $exam->observation;
 
         $this->initializeResultsFields();

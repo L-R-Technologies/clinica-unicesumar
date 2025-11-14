@@ -21,7 +21,7 @@ class ExamService
             'patient_history_id' => 'required|exists:patient_histories,id',
             'sample_id' => 'nullable|exists:samples,id',
             'exam_type_id' => 'required|exists:exam_types,id',
-            'date' => 'required|date',
+            'date' => 'required|date|before_or_equal:today',
             'observation' => 'nullable|string',
             'results' => 'nullable|array',
             'status' => 'nullable|in:pending,pending_approval,rejected,approved',
@@ -174,6 +174,6 @@ class ExamService
 
     public function getExamTypes()
     {
-        return ExamType::orderBy('name')->get();
+        return ExamType::where('is_active', true)->orderBy('name')->get();
     }
 }

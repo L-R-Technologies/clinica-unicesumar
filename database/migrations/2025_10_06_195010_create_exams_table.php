@@ -18,7 +18,7 @@ return new class() extends Migration
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('exam_type_id')->constrained()->onDelete('cascade');
             $table->foreignId('sample_id')->nullable()->constrained()->onDelete('set null');
-            $table->timestamp('date');
+            $table->date('date');
             $table->json('results')->nullable();
             $table->enum('status', ['pending', 'pending_approval', 'rejected', 'approved'])->default('pending');
             $table->text('observation')->nullable();

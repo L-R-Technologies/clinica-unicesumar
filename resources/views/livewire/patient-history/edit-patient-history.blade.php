@@ -22,16 +22,8 @@
                     {{-- Paciente e Data --}}
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="form-label">Paciente *</label>
-                            <select wire:model="patient_id" class="form-select @error('patient_id') is-invalid @enderror">
-                                <option value="">Selecione o paciente</option>
-                                @foreach($patients as $patient)
-                                    <option value="{{ $patient->id }}">{{ $patient->user->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('patient_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label">Paciente</label>
+                            <input type="text" class="form-control" value="{{ $patientHistory->patient->user->name }}" disabled>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Data da coleta *</label>

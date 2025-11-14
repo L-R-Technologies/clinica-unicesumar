@@ -112,22 +112,21 @@ class ExamTypeService
     }
 
     /**
-     * Deleta um tipo de exame e seus campos
+     * Desativa um tipo de exame e seus campos
      */
     public function deleteExamType(ExamType $examType)
     {
-        try {
-            DB::beginTransaction();
+        $examType->update(['is_active' => false]);
+    }
 
-            // Remove primeiro os campos relacionados
-            $examType->fields()->delete();
-            $examType->delete();
+    /**
+     * Alterna o status ativo/inativo
+     */
+    public function toggleStatus(ExamType $examType)
+    {
+        $examType->update(['is_active' => ! $examType->is_active]);
 
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        return $examType;
     }
 
     /**
@@ -154,10 +153,10 @@ class ExamTypeService
     }
 
     /**
-     * Retorna todos os tipos de exame (sem paginação)
+     * Retorna todos os tipos de exame ativos (sem paginação)
      */
     public function getAllExamTypes()
     {
-        return ExamType::orderBy('name')->get();
+        return ExamType::where('is_active', true)->orderBy('name')->get();
     }
 }

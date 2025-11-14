@@ -17,7 +17,7 @@ class PatientHistoryService
         $validator = Validator::make($data, [
             'patient_id' => 'required|exists:patients,id',
             'user_id' => 'required|exists:users,id',
-            'recorded_at' => 'required|date',
+            'recorded_at' => 'required|date|before_or_equal:today',
 
             'fasting' => 'required|boolean',
             'fasting_hours' => 'required_if:fasting,true|nullable|integer|min:0',
@@ -80,6 +80,11 @@ class PatientHistoryService
      */
     public function delete(PatientHistory $anamnesis): bool
     {
+        // Verifica se a anamnese está vinculada a algum exame
+        if ($anamnesis->exams()->count() > 0) {
+            throw new \Exception('Não é possível excluir esta anamnese pois ela está vinculada a '.$anamnesis->exams()->count().' exame(s).');
+        }
+
         return $anamnesis->delete();
     }
 

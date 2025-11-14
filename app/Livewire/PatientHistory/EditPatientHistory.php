@@ -2,7 +2,6 @@
 
 namespace App\Livewire\PatientHistory;
 
-use App\Models\Patient;
 use App\Models\PatientHistory;
 use App\Service\PatientHistoryService;
 use Exception;
@@ -63,8 +62,6 @@ class EditPatientHistory extends Component
 
     public string $observation = '';
 
-    public $patients = [];
-
     public function mount(PatientHistory $patientHistory)
     {
         $this->patientHistory = $patientHistory;
@@ -93,8 +90,6 @@ class EditPatientHistory extends Component
         $this->physically_active = $patientHistory->physically_active;
         $this->recent_fever_or_flu = $patientHistory->recent_fever_or_flu;
         $this->observation = $patientHistory->observation ?? '';
-
-        $this->patients = Patient::with('user')->get()->sortBy('user.name');
     }
 
     public function updatedFasting($value)
@@ -159,7 +154,7 @@ class EditPatientHistory extends Component
             $patientHistoryService = app(PatientHistoryService::class);
 
             $data = [
-                'patient_id' => $this->patient_id,
+                'patient_id' => $this->patientHistory->patient_id,
                 'user_id' => $this->patientHistory->user_id,
                 'recorded_at' => $this->recorded_at,
                 'fasting' => $this->fasting,

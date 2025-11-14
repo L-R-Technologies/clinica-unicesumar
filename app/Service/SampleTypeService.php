@@ -41,7 +41,14 @@ class SampleTypeService
 
     public function deleteSampleType(SampleType $sampleType)
     {
-        $sampleType->delete();
+        $sampleType->update(['is_active' => false]);
+    }
+
+    public function toggleStatus(SampleType $sampleType)
+    {
+        $sampleType->update(['is_active' => ! $sampleType->is_active]);
+
+        return $sampleType;
     }
 
     public function getFilteredSampleTypes(array $filters = [])
@@ -57,5 +64,10 @@ class SampleTypeService
         }
 
         return $query->orderBy('name')->paginate(10);
+    }
+
+    public function getActiveSampleTypes()
+    {
+        return SampleType::where('is_active', true)->orderBy('name')->get();
     }
 }

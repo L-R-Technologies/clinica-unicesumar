@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HomeController;
@@ -42,6 +43,9 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/sample-type/{sampleType}/edit', [SampleTypeController::class, 'edit'])->name('sample-type.edit');
         Route::put('/sample-type/{sampleType}', [SampleTypeController::class, 'update'])->name('sample-type.update');
         Route::delete('/sample-type/{sampleType}', [SampleTypeController::class, 'destroy'])->name('sample-type.destroy');
+
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('/activity-logs/{id}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
     });
 
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');

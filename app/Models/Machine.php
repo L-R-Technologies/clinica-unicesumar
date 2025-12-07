@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Machine extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'name',
         'model',
@@ -27,5 +31,14 @@ class Machine extends Model
     public function calibrations(): HasMany
     {
         return $this->hasMany(Calibration::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('machine');
     }
 }

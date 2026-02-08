@@ -32,7 +32,7 @@
                             <div class="col-md-4 mb-3">
                                 <strong>Tipo de Registro:</strong><br>
                                 <span class="badge bg-secondary fs-6">
-                                    {{ ucfirst(str_replace('_', ' ', $log->log_name)) }}
+                                    {{ \App\Helpers\ActivityLogTranslator::translateLogName($log->log_name) }}
                                 </span>
                             </div>
                             <div class="col-md-4 mb-3">
@@ -45,12 +45,7 @@
                                         'deleted' => 'bg-danger',
                                         default => 'bg-secondary',
                                     } }}">
-                                    {{ match ($log->event) {
-                                        'created' => 'Criado',
-                                        'updated' => 'Atualizado',
-                                        'deleted' => 'Excluído',
-                                        default => ucfirst($log->event),
-                                    } }}
+                                    {{ \App\Helpers\ActivityLogTranslator::translateEvent($log->event) }}
                                 </span>
                             </div>
                         </div>
@@ -67,7 +62,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <strong>Objeto:</strong><br>
-                                <span class="badge bg-info">{{ class_basename($log->subject_type) }}</span>
+                                <span class="badge bg-info">{{ \App\Helpers\ActivityLogTranslator::translateModelName($log->subject_type) }}</span>
                                 <span class="text-muted">#{{ $log->subject_id }}</span>
                             </div>
                         </div>
@@ -91,31 +86,15 @@
                                         @foreach ($log->properties['attributes'] as $key => $newValue)
                                             @if (isset($log->properties['old'][$key]) && $log->properties['old'][$key] != $newValue)
                                                 <tr>
-                                                    <td><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}</strong></td>
+                                                    <td><strong>{{ \App\Helpers\ActivityLogTranslator::translateFieldName($key) }}</strong></td>
                                                     <td>
                                                         <span class="text-danger">
-                                                            @if (is_bool($log->properties['old'][$key]))
-                                                                {{ $log->properties['old'][$key] ? 'Sim' : 'Não' }}
-                                                            @elseif (is_array($log->properties['old'][$key]))
-                                                                <pre class="mb-0 small">{{ json_encode($log->properties['old'][$key], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
-                                                            @elseif ($log->properties['old'][$key] === null)
-                                                                <em>(vazio)</em>
-                                                            @else
-                                                                {{ $log->properties['old'][$key] }}
-                                                            @endif
+                                                            {{ \App\Helpers\ActivityLogTranslator::translateFieldValue($key, $log->properties['old'][$key]) }}
                                                         </span>
                                                     </td>
                                                     <td>
                                                         <span class="text-success">
-                                                            @if (is_bool($newValue))
-                                                                {{ $newValue ? 'Sim' : 'Não' }}
-                                                            @elseif (is_array($newValue))
-                                                                <pre class="mb-0 small">{{ json_encode($newValue, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
-                                                            @elseif ($newValue === null)
-                                                                <em>(vazio)</em>
-                                                            @else
-                                                                {{ $newValue }}
-                                                            @endif
+                                                            {{ \App\Helpers\ActivityLogTranslator::translateFieldValue($key, $newValue) }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -139,17 +118,9 @@
                                         @foreach ($log->properties['attributes'] as $key => $value)
                                             @if (!in_array($key, ['password', 'remember_token']))
                                                 <tr>
-                                                    <td><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}</strong></td>
+                                                    <td><strong>{{ \App\Helpers\ActivityLogTranslator::translateFieldName($key) }}</strong></td>
                                                     <td>
-                                                        @if (is_bool($value))
-                                                            {{ $value ? 'Sim' : 'Não' }}
-                                                        @elseif (is_array($value))
-                                                            <pre class="mb-0 small">{{ json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
-                                                        @elseif ($value === null)
-                                                            <em>(vazio)</em>
-                                                        @else
-                                                            {{ $value }}
-                                                        @endif
+                                                        {{ \App\Helpers\ActivityLogTranslator::translateFieldValue($key, $value) }}
                                                     </td>
                                                 </tr>
                                             @endif
@@ -172,17 +143,9 @@
                                         @foreach ($log->properties['old'] as $key => $value)
                                             @if (!in_array($key, ['password', 'remember_token']))
                                                 <tr>
-                                                    <td><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}</strong></td>
+                                                    <td><strong>{{ \App\Helpers\ActivityLogTranslator::translateFieldName($key) }}</strong></td>
                                                     <td>
-                                                        @if (is_bool($value))
-                                                            {{ $value ? 'Sim' : 'Não' }}
-                                                        @elseif (is_array($value))
-                                                            <pre class="mb-0 small">{{ json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
-                                                        @elseif ($value === null)
-                                                            <em>(vazio)</em>
-                                                        @else
-                                                            {{ $value }}
-                                                        @endif
+                                                        {{ \App\Helpers\ActivityLogTranslator::translateFieldValue($key, $value) }}
                                                     </td>
                                                 </tr>
                                             @endif

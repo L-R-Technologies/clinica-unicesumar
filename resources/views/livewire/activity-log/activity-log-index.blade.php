@@ -27,7 +27,7 @@
                             <div class="col-md-3">
                                 <label for="search" class="form-label">Buscar</label>
                                 <input type="text" class="form-control" id="search"
-                                    wire:model.live.debounce.300ms="search" placeholder="Descrição, usuário...">
+                                    wire:model.live.debounce.300ms="search" placeholder="Usuário">
                             </div>
                             <div class="col-md-2">
                                 <label for="logName" class="form-label">Tipo</label>
@@ -35,7 +35,7 @@
                                     <option value="">Todos</option>
                                     @foreach ($logNames as $logName)
                                         <option value="{{ $logName }}">
-                                            {{ ucfirst(str_replace('_', ' ', $logName)) }}
+                                            {{ \App\Helpers\ActivityLogTranslator::translateLogName($logName) }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -45,7 +45,7 @@
                                 <select class="form-select" id="event" wire:model.live="eventFilter">
                                     <option value="">Todos</option>
                                     @foreach ($events as $event)
-                                        <option value="{{ $event }}">{{ ucfirst($event) }}</option>
+                                        <option value="{{ $event }}">{{ \App\Helpers\ActivityLogTranslator::translateEvent($event) }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -60,7 +60,7 @@
                             <div class="col-md-1 d-flex align-items-end">
                                 <button type="button" class="btn btn-outline-secondary w-100" wire:click="clearFilters"
                                     title="Limpar filtros">
-                                    <i class="fas fa-times"></i>
+                                    Limpar
                                 </button>
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                                                         style="min-width: 100px;">
                                                         <span class="fw-semibold small text-secondary">Tipo</span>
                                                         <span class="badge bg-secondary">
-                                                            {{ ucfirst(str_replace('_', ' ', $log->log_name)) }}
+                                                            {{ \App\Helpers\ActivityLogTranslator::translateLogName($log->log_name) }}
                                                         </span>
                                                     </div>
                                                     <div class="d-flex flex-column align-items-start"
@@ -109,36 +109,20 @@
                                                                 'deleted' => 'bg-danger',
                                                                 default => 'bg-secondary',
                                                             } }}">
-                                                            {{ match ($log->event) {
-                                                                'created' => 'Criado',
-                                                                'updated' => 'Atualizado',
-                                                                'deleted' => 'Excluído',
-                                                                default => ucfirst($log->event),
-                                                            } }}
+                                                            {{ \App\Helpers\ActivityLogTranslator::translateEvent($log->event) }}
                                                         </span>
                                                     </div>
                                                     <div class="d-flex flex-column align-items-start"
                                                         style="min-width: 150px;">
                                                         <span class="fw-semibold small text-secondary">Usuário</span>
                                                         @if ($log->causer)
-                                                            <span class="mb-0 text-truncate" style="max-width: 150px;"
+                                                            <span class="mb-0 text-truncate" style="max-width: 300px;"
                                                                 title="{{ $log->causer->name }}">{{ $log->causer->name }}</span>
                                                             <span class="text-muted small text-truncate"
-                                                                style="max-width: 150px;"
+                                                                style="max-width: 300px;"
                                                                 title="{{ $log->causer->email }}">{{ $log->causer->email }}</span>
                                                         @else
                                                             <span class="text-muted">Sistema</span>
-                                                        @endif
-                                                    </div>
-                                                    <div class="d-flex flex-column align-items-start flex-grow-1"
-                                                        style="min-width: 150px;">
-                                                        <span class="fw-semibold small text-secondary">Descrição</span>
-                                                        @if ($log->description)
-                                                            <span class="text-truncate" style="max-width: 250px;"
-                                                                title="{{ $log->description }}">{{ $log->description }}</span>
-                                                        @else
-                                                            <span class="text-muted">{{ class_basename($log->subject_type) }}
-                                                                #{{ $log->subject_id }}</span>
                                                         @endif
                                                     </div>
                                                 </div>

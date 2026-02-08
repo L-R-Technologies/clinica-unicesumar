@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property-read User $user
+ * @property-read User|null $supervisor
+ */
 class Student extends Model
 {
     use LogsActivity;

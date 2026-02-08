@@ -15,6 +15,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property-read Student|null $student
  * @property-read Teacher|null $teacher
  * @property-read Patient|null $patient
+ * @property string $name
+ * @property string $email
  * @property string $role
  * @property string|null $remember_token
  */

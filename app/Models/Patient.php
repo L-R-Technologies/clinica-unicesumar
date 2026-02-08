@@ -10,6 +10,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read Address|null $address
+ * @property-read User|null $user
  * @property int $user_id
  * @property int|null $address_id
  * @property string $birthday

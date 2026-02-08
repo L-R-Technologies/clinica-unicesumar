@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property-read Patient|null $patient
+ * @property-read User|null $user
+ * @property-read SampleType|null $sampleType
+ */
 class Sample extends Model
 {
     use LogsActivity;
@@ -20,11 +25,13 @@ class Sample extends Model
         'date',
         'location',
         'status',
+        'stored_at',
         'notified',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'stored_at' => 'date',
         'notified' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

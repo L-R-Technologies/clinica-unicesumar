@@ -16,6 +16,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property-read Teacher|null $teacher
  * @property-read Patient|null $patient
  * @property string $role
+ * @property string|null $remember_token
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -126,5 +127,44 @@ class User extends Authenticatable implements MustVerifyEmail
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('user');
+    }
+
+    public function anonymizePersonalData(): void
+    {
+        $timestamp = now()->timestamp;
+        $anonymizedId = 'anonymous_'.$this->id.'_'.$timestamp;
+
+        $this->name = 'Usuário Anonimizado';
+        $this->email = $anonymizedId.'@email.com';
+        $this->password = bcrypt(str()->random(60));
+        $this->active = false;
+        $this->email_verified_at = null;
+        $this->remember_token = null;
+        $this->saveQuietly();
+
+        $this->patient->cpf = '00000000000';
+        $this->patient->rg = '000000000';
+        $this->patient->phone = '00000000000';
+        $this->patient->birthday = '1900-01-01';
+        $this->patient->ethnicity = 'Não informado';
+        $this->patient->sex = 'prefer_not_say';
+        $this->patient->saveQuietly();
+
+        if ($this->patient->address) {
+            $this->patient->address->street = 'Rua Anonimizada';
+            $this->patient->address->number = '0';
+            $this->patient->address->complement = null;
+            $this->patient->address->neighborhood = 'Bairro Anonimizado';
+            $this->patient->address->city = 'Cidade Anonimizada';
+            $this->patient->address->state = 'XX';
+            $this->patient->address->country = 'Brasil';
+            $this->patient->address->zip_code = '00000-000';
+            $this->patient->address->saveQuietly();
+        }
+
+        activity('user')
+            ->performedOn($this)
+            ->withProperties(['anonymized_at' => now()])
+            ->log('Dados pessoais anonimizados (LGPD)');
     }
 }

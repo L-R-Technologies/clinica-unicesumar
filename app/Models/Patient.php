@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property-read Address|null $address
@@ -19,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Patient extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'user_id',
         'address_id',
@@ -61,5 +65,14 @@ class Patient extends Model
     public function samples(): HasMany
     {
         return $this->hasMany(Sample::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('patient');
     }
 }

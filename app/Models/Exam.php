@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property-read User|null $user
+ * @property-read Patient|null $patient
+ * @property-read PatientHistory|null $patientHistory
+ * @property-read Sample|null $sample
+ * @property-read ExamType|null $examType
+ */
 class Exam extends Model
 {
     use LogsActivity;
@@ -66,6 +73,11 @@ class Exam extends Model
     public function feedback(): HasOne
     {
         return $this->hasOne(ExamFeedback::class);
+    }
+
+    public function latestRejection()
+    {
+        return $this->hasOne(ExamRejection::class)->latestOfMany();
     }
 
     public function getActivitylogOptions(): LogOptions

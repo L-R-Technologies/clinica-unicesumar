@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "⚙️ Configurando git hooks..."
+cp scripts/pre-commit .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+echo "✅ Git hooks configurados com sucesso!"

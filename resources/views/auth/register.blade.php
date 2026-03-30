@@ -1,47 +1,41 @@
 @extends('layouts.base')
 
 @section('content')
-<div class="container">
-    <h2>Register</h2>
-    <form method="POST" action="{{ route('register.store') }}">
-        @csrf
-
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
-                   name="name" value="{{ old('name') }}" autofocus>
-            @error('name')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
+    <div class="container position-relative" style="min-height: 90vh;">
+        <a href="{{ route('welcome') }}"
+            class="btn btn-primary position-absolute top-0 start-0 mt-3 ms-2 d-flex align-items-center gap-1 shadow"
+            style="z-index:10;">
+            <i class="fa fa-arrow-left"></i> <span>Voltar</span>
+        </a>
+        <div class="d-flex align-items-center justify-content-center" style="min-height: 90vh;">
+            <div class="card shadow-lg p-4 w-100" style="max-width: 500px;">
+                <h2 class="fw-bold text-center mb-4">Registro</h2>
+                @livewire('Auth.RegisterWizard')
+            </div>
         </div>
+    </div>
 
-        <div class="mb-3">
-            <label for="email" class="form-label">Email Address</label>
-            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                   name="email" value="{{ old('email') }}">
-            @error('email')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
-        </div>
+    <style>
+        .step-indicator {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e0e7ef;
+            border: 2px solid #a3b8d8;
+            display: inline-block;
+            transition: background 0.2s, border 0.2s;
+        }
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                   name="password">
-            @error('password')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
-        </div>
+        .step-indicator.active {
+            background: #1976d2;
+            border-color: #1976d2;
+        }
 
-        <div class="mb-3">
-            <label for="password_confirmation" class="form-label">Confirm Password</label>
-            <input id="password_confirmation" type="password" class="form-control"
-                   name="password_confirmation">
-        </div>
-
-        <button type="submit" class="btn btn-primary">
-            Register
-        </button>
-    </form>
-</div>
+        .step-line {
+            width: 32px;
+            height: 2px;
+            background: #a3b8d8;
+            display: inline-block;
+        }
+    </style>
 @endsection

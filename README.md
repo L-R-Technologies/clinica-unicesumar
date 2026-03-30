@@ -1,4 +1,3 @@
-
 # Clínica Unicesumar
 
 Sistema web para gestão de exames laboratoriais realizados por alunos, com rastreabilidade de amostras, controle de calibração de equipamentos e conformidade LGPD.
@@ -11,7 +10,9 @@ Sistema web para gestão de exames laboratoriais realizados por alunos, com rast
 - [4. Requisitos Específicos](#4-requisitos-específicos)
 - [5. Casos de Uso](#5-casos-de-uso)
 - [6. Instalação e Execução](#6-instalação-e-execução)
-- [7. Tecnologias Utilizadas](#7-tecnologias-utilizadas)
+- [7. Comandos Úteis](#7-comandos-úteis)
+- [8. Tecnologias Utilizadas](#8-tecnologias-utilizadas)
+- [9. Troubleshooting](#9-troubleshooting)
 
 ---
 
@@ -145,39 +146,133 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 	composer install
 	```
 
-4. Suba os containers Docker:
+4. Configure o pre-commit:
+	```bash
+	composer run setup-hooks
+	```
+
+5. Suba os containers Docker:
 	```bash
 	./vendor/bin/sail up -d
 	```
 
-5. Entre no container do app para rodar comandos:
+6. Entre no container do app para rodar comandos:
 	```bash
-	docker exec -it clinica-unicesumar-app-1 bash
+	docker exec -u sail -it clinica-unicesumar-app-1 bash
 	```
 
-6. Instale/atualize dependências dentro do container:
+7. Instale/atualize dependências dentro do container:
 	```bash
 	composer install
 	```
 
-7. Gere a chave da aplicação:
+8. Gere a chave da aplicação:
 	```bash
 	php artisan key:generate
 	```
 
-8. Execute as migrations:
+9. Execute as migrations:
 	```bash
 	php artisan migrate
 	```
 
-9. Execute as seeds:
+10. Execute as seeds:
 	```bash
 	php artisan db:seed
 	```
 
+10. Dar permissão de escrita:
+    ```bash
+    chown -R sail:sail storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache
+    ```
 ---
 
-## 7. Tecnologias Utilizadas
+## 7. Comandos Úteis
+
+### Docker e Sail
+
+```bash
+# Subir containers em segundo plano
+./vendor/bin/sail up -d
+
+# Parar containers
+./vendor/bin/sail down
+
+# Acessar o container da aplicação
+docker exec -u sail -it clinica-unicesumar-app-1 bash
+
+# Ver logs dos containers
+./vendor/bin/sail logs
+
+# Rebuild containers após mudanças no Dockerfile
+./vendor/bin/sail build --no-cache
+```
+
+### Laravel Artisan
+
+```bash
+# Cachear config, rotas e views para produção
+php artisan optimize
+
+# Limpar todos os caches (config, rotas, views)
+php artisan optimize:clear
+
+# Executar migrations
+php artisan migrate
+
+# Executar migrations com seed
+php artisan migrate --seed
+
+# Rollback da última migration
+php artisan migrate:rollback
+
+# Criar migration, model, controller
+php artisan make:migration create_nome_table
+php artisan make:model NomeModel
+php artisan make:controller NomeController
+
+# Listar rotas
+php artisan route:list
+
+# Reset completo do banco (CUIDADO!)
+php artisan migrate:fresh --seed
+```
+
+### Qualidade de Código
+
+```bash
+# Verificar problemas de formatação e análise estática
+composer run check
+
+# Corrigir formatação automaticamente
+composer run lint
+
+# Apenas verificar formatação (sem corrigir)
+composer run lint:test
+
+# Executar análise estática (PHPStan)
+composer run analyse
+```
+
+### Testes
+
+```bash
+# Executar todos os testes
+php artisan test
+
+# Executar testes com coverage
+php artisan test --coverage
+
+# Executar teste específico
+php artisan test tests/Feature/ExampleTest.php
+
+# Criar teste
+php artisan make:test NomeTest
+```
+---
+
+## 8. Tecnologias Utilizadas
 
 - **Backend:** Laravel
 - **Frontend:** Blade, Livewire
@@ -185,7 +280,9 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 - **Containerização:** Docker, Laravel Sail
 - **Testes:** PHPUnit
 
-## 8. Troubleshooting
+---
+
+## 9. Troubleshooting
 
 ### Container do MySQL não sobe
 

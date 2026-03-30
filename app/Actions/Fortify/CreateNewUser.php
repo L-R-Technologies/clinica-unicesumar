@@ -2,6 +2,8 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\Address;
+use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -19,8 +21,8 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
+        $rules = [
+            'name' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -29,12 +31,67 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
-        ])->validate();
+            // Campos do paciente
+            'birthday' => ['required', 'date'],
+            'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'sex' => ['required', 'in:male,female,other'],
+            'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique(Patient::class)],
+            'rg' => ['required', 'string', 'max:20'],
+            'phone' => ['required', 'string', 'min:11', 'max:11'],
+            'lgpd_consent' => ['required', 'accepted'],
+            // Campos do endereço
+            'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
+            'number' => ['required', 'string', 'max:20'],
+            'complement' => ['nullable', 'string', 'max:100'],
+            'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'zip_code' => ['required', 'string', 'min:8', 'max:8'],
+        ];
 
-        return User::create([
+        if (isset($input['cpf'])) {
+            $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
+        }
+        if (isset($input['phone'])) {
+            $input['phone'] = preg_replace('/\D/', '', $input['phone']);
+        }
+        if (isset($input['zip_code'])) {
+            $input['zip_code'] = preg_replace('/\D/', '', $input['zip_code']);
+        }
+
+        $validator = Validator::make($input, $rules);
+        $validator->validate();
+
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
+            'role' => 'patient',
             'password' => Hash::make($input['password']),
         ]);
+
+        $address = Address::create([
+            'street' => $input['street'],
+            'number' => $input['number'],
+            'complement' => $input['complement'] ?? null,
+            'neighborhood' => $input['neighborhood'],
+            'city' => $input['city'],
+            'state' => $input['state'],
+            'country' => $input['country'],
+            'zip_code' => $input['zip_code'],
+        ]);
+
+        $user->patient()->create([
+            'address_id' => $address->id,
+            'birthday' => $input['birthday'],
+            'ethnicity' => $input['ethnicity'],
+            'sex' => $input['sex'],
+            'cpf' => $input['cpf'],
+            'rg' => $input['rg'],
+            'phone' => $input['phone'],
+            'lgpd_consent_at' => now(),
+        ]);
+
+        return $user;
     }
 }

@@ -21,7 +21,7 @@ class UpdateUserPassword implements UpdatesUserPasswords
         Validator::make($input, [
             'current_password' => ['required', 'string', 'current_password:web'],
             'password' => array_merge($this->passwordRules(), [
-                'different:current_password'
+                'different:current_password',
             ]),
         ], [
             'current_password.current_password' => __('A senha atual fornecida não corresponde à sua senha atual.'),

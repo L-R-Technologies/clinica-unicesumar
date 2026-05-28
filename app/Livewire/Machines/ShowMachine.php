@@ -17,11 +17,6 @@ class ShowMachine extends Component
         $this->machine = $machine->load(['calibrations.user']);
     }
 
-    public function exportCsv()
-    {
-        return app(CalibrationService::class)->exportToCsv(['machine_id' => $this->machine->id]);
-    }
-
     public function exportPdf()
     {
         return app(CalibrationService::class)->exportToPdf(['machine_id' => $this->machine->id]);

@@ -4,6 +4,7 @@ namespace App\Livewire\Calibrations;
 
 use App\Models\Calibration;
 use App\Models\Machine;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Response;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -42,14 +43,16 @@ class CalibrationIndex extends Component
             fputcsv($file, ['ID', 'Equipamento', 'Série', 'Data', 'Valor', 'Status', 'Responsável']);
 
             foreach ($query->get() as $row) {
+                $date = Carbon::parse($row->calibration_date);
+
                 fputcsv($file, [
                     $row->id,
-                    $row->machine->name,
-                    $row->machine->serial_number,
-                    $row->calibration_date->format('d/m/Y'),
+                    $row->machine->getAttribute('name'),
+                    $row->machine->getAttribute('serial_number'),
+                    $date->format('d/m/Y'),
                     $row->value,
                     $row->status === 'approved' ? 'Aprovada' : 'Rejeitada',
-                    $row->user->name,
+                    $row->user->getAttribute('name'),
                 ]);
             }
             fclose($file);
@@ -69,7 +72,7 @@ class CalibrationIndex extends Component
 
         return view('livewire.calibrations.calibration-index', [
             'calibrations' => $query->latest('calibration_date')->paginate(10),
-            'machines' => Machine::active()->get(),
+            'machines' => Machine::where('status', 'active')->get(),
         ]);
     }
 }

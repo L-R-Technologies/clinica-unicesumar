@@ -36,6 +36,7 @@ class Machine extends Model
     {
         return LogOptions::defaults()
             ->logAll()
+            ->useLogName('Máquina')
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }

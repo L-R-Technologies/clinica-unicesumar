@@ -67,6 +67,8 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/calibrations/create/{machine}', CreateCalibration::class)->name('calibrations.create');
         Route::get('/calibrations/{calibration}', ShowCalibration::class)->name('calibrations.show');
         Route::get('/calibrations/{calibration}/edit', EditCalibration::class)->name('calibrations.edit');
+
+        Route::resource('activity-logs', ActivityLogController::class);
     });
 
     // Perfil do Usuário

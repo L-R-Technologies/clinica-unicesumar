@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class CalibrationService
 {
-    /**
-     * UC026: Valida e registra uma nova calibração.
-     */
     public function validateAndCreate(array $data)
     {
         $machine = Machine::findOrFail($data['machine_id']);
@@ -21,7 +18,6 @@ class CalibrationService
             throw new Exception('Máquinas inativas não podem receber novas calibrações.');
         }
 
-        // Cálculo automático de aprovação
         $data['status'] = ($data['value'] >= $machine->calibration_range_min &&
                           $data['value'] <= $machine->calibration_range_max)
                           ? 'approved' : 'rejected';
@@ -29,13 +25,10 @@ class CalibrationService
         return Calibration::create($this->validateData($data));
     }
 
-    /**
-     * UC029: Atualiza um registro existente (Corrige o seu erro atual).
-     */
     public function updateCalibration(Calibration $calibration, array $data)
     {
-        // Ao editar, também revalida o status baseado no novo valor
-        $machine = $calibration->machine;
+        $machine = Machine::findOrFail($calibration->machine_id);
+
         $data['status'] = ($data['value'] >= $machine->calibration_range_min &&
                           $data['value'] <= $machine->calibration_range_max)
                           ? 'approved' : 'rejected';
@@ -43,17 +36,11 @@ class CalibrationService
         return $calibration->update($this->validateData($data));
     }
 
-    /**
-     * UC030: Exclui um registro.
-     */
     public function deleteCalibration(Calibration $calibration)
     {
         return $calibration->delete();
     }
 
-    /**
-     * UC027: Exportação PDF (Corrigida para evitar erro de codificação binária).
-     */
     public function exportToPdf(array $filters = [])
     {
         $calibrations = Calibration::with(['machine', 'user'])

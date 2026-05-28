@@ -20,7 +20,7 @@
                     </div>
                 @endif
 
-                <!-- Filtros e Busca -->
+
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="row g-3">
@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <!-- Lista de Logs -->
+                
                 <div class="card">
                     <div class="card-body">
                         <div wire:loading class="text-center py-3">
@@ -139,8 +139,24 @@
                                     @endforeach
                                 </div>
 
-                                <!-- Paginação -->
-                                <div class="d-flex justify-content-center mt-4">
+                                <div class="mt-4 px-2 custom-pagination-container">
+                                    <style>
+                                        .custom-pagination-container nav {
+                                            display: flex !important;
+                                            flex-direction: column;
+                                            gap: 1rem;
+                                        }
+                                        @media (min-width: 768px) {
+                                            .custom-pagination-container nav {
+                                                flex-direction: row !important;
+                                                justify-content: space-between !important;
+                                                align-items: center !important;
+                                            }
+                                        }
+                                        .custom-pagination-container nav > div:first-child {
+                                            color: #6c757d !important;
+                                        }
+                                    </style>
                                     {{ $logs->links() }}
                                 </div>
                             @else

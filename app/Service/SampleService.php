@@ -39,6 +39,11 @@ class SampleService
 
             $sampleData['user_id'] = $userId;
             $sampleData['code'] = $this->generateSampleCode($sampleData['date']);
+            $status = $sampleData['status'];
+
+            if ($status === 'stored') {
+                $sampleData['stored_at'] = Carbon::now();
+            }
 
             $sample = Sample::create($sampleData);
 
@@ -55,6 +60,12 @@ class SampleService
     {
         try {
             DB::beginTransaction();
+
+            $status = $sampleData['status'];
+
+            if ($status === 'stored') {
+                $sampleData['stored_at'] = Carbon::now();
+            }
 
             $sample->update($sampleData);
 

@@ -5,9 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property-read Patient|null $patient
+ * @property-read User|null $user
+ * @property-read SampleType|null $sampleType
+ */
 class Sample extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'patient_id',
         'user_id',
@@ -16,11 +25,13 @@ class Sample extends Model
         'date',
         'location',
         'status',
+        'stored_at',
         'notified',
     ];
 
     protected $casts = [
         'date' => 'date',
+        'stored_at' => 'date',
         'notified' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -45,5 +56,14 @@ class Sample extends Model
     public function sampleType(): BelongsTo
     {
         return $this->belongsTo(SampleType::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('sample');
     }
 }

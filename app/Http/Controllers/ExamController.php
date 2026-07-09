@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
+use App\Models\ExamRejection;
+use App\Notifications\ExamApprovedNotification;
+use App\Notifications\ExamRejectedNotification;
 use App\Service\ExamService;
 use Exception;
 use Illuminate\Http\Request;
@@ -98,6 +101,68 @@ class ExamController extends Controller
         } catch (Exception $e) {
             return back()
                 ->withErrors(['error' => 'Erro ao remover exame: '.$e->getMessage()]);
+        }
+    }
+
+    public function approve($id)
+    {
+        try {
+            // Apenas professores podem aprovar exames
+            if (Auth::user()->role !== 'teacher') {
+                return back()->withErrors(['error' => 'Apenas professores podem aprovar exames.']);
+            }
+
+            $exam = Exam::with('user')->findOrFail($id);
+
+            // Atualizar status do exame
+            $exam->update(['status' => 'approved']);
+
+            // Enviar notificação ao aluno que cadastrou o exame
+            $exam->user->notify(new ExamApprovedNotification($exam));
+
+            return back()->with('success', 'Exame aprovado com sucesso! Email enviado ao aluno.');
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => 'Erro ao aprovar exame: '.$e->getMessage()]);
+        }
+    }
+
+    public function reject(Request $request, $id)
+    {
+        try {
+            // Apenas professores podem reprovar exames
+            if (Auth::user()->role !== 'teacher') {
+                return back()->withErrors(['error' => 'Apenas professores podem reprovar exames.']);
+            }
+
+            // Validar a justificativa
+            $validated = $request->validate([
+                'justification' => 'required|string|min:10|max:1000',
+            ], [
+                'justification.required' => 'A justificativa é obrigatória.',
+                'justification.min' => 'A justificativa deve ter pelo menos 10 caracteres.',
+                'justification.max' => 'A justificativa não pode exceder 1000 caracteres.',
+            ]);
+
+            $exam = Exam::with('user')->findOrFail($id);
+
+            // Atualizar status do exame
+            $exam->update(['status' => 'rejected']);
+
+            // Registrar a rejeição com justificativa
+            ExamRejection::create([
+                'exam_id' => $exam->id,
+                'user_id' => Auth::id(),
+                'justification' => $validated['justification'],
+            ]);
+
+            // Enviar notificação ao aluno que cadastrou o exame com a justificativa
+            $exam->user->notify(new ExamRejectedNotification($exam, $validated['justification']));
+
+            return back()->with('success', 'Exame rejeitado com sucesso! Email enviado ao aluno com a justificativa.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => 'Erro ao reprovar exame: '.$e->getMessage()]);
         }
     }
 }

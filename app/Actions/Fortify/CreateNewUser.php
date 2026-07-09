@@ -92,6 +92,8 @@ class CreateNewUser implements CreatesNewUsers
             'lgpd_consent_at' => now(),
         ]);
 
+        $user->sendEmailVerificationNotification();
+
         return $user;
     }
 }

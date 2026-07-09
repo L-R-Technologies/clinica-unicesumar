@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
-Route::middleware(['auth', 'verified', 'active'])->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
     // GRUPO: Apenas Professores (role: teacher)
@@ -102,6 +102,8 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam/{id}', [ExamController::class, 'show'])->name('exam.show');
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
+        Route::post('/exam/{id}/approve', [ExamController::class, 'approve'])->name('exam.approve');
+        Route::post('/exam/{id}/reject', [ExamController::class, 'reject'])->name('exam.reject');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
     });
 });

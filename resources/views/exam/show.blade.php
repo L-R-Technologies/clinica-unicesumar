@@ -15,6 +15,24 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-8 col-md-10">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
                 <div class="card">
                     <div class="card-body">
                         <!-- Informações Básicas do Exame -->
@@ -173,15 +191,29 @@
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-center align-items-center gap-2 mt-4">
+                        <div class="d-flex justify-content-center align-items-center gap-2 mt-4 flex-wrap">
+
                             <a href="{{ route('exam.edit', $exam->id) }}" class="btn btn-success">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
+
+                            @if (Auth::check() && Auth::user()->role === 'teacher')
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#approveModal">
+                                    <i class="fas fa-check"></i> Aprovar
+                                </button>
+
+                                <button type="button" class="btn btn-warning text-dark" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                                    <i class="fas fa-times"></i> Rejeitar
+                                </button>
+                            @endif
+
                             <button type="button" class="btn btn-danger"
                                 onclick="confirmDelete({{ $exam->id }}, '{{ $exam->examType->name }}')">
                                 <i class="fas fa-trash"></i> Excluir
                             </button>
+
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -208,6 +240,67 @@
                         <button type="submit" class="btn btn-danger">Excluir</button>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Aprovação -->
+    <div class="modal fade" id="approveModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Aprovação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja <strong>aprovar</strong> o exame <strong>{{ $exam->examType->name }}</strong>?</p>
+                    <p class="text-info">
+                        <i class="fas fa-info-circle"></i>
+                        Um email será enviado ao aluno notificando sobre a aprovação.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form method="POST" action="{{ route('exam.approve', $exam->id) }}" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Aprovar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Rejeição -->
+    <div class="modal fade" id="rejectModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmar Rejeição</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{{ route('exam.reject', $exam->id) }}" id="rejectForm">
+                    @csrf
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja <strong>reprovar</strong> o exame <strong>{{ $exam->examType->name }}</strong>?</p>
+                        <p class="text-warning">
+                            <i class="fas fa-exclamation-circle"></i>
+                            Uma justificativa é obrigatória. O aluno receberá um email com essa justificativa.
+                        </p>
+
+                        <div class="mb-3">
+                            <label for="justification" class="form-label">Justificativa da Rejeição <span class="text-danger">*</span></label>
+                            <textarea class="form-control @error('justification') is-invalid @enderror" id="justification" name="justification" rows="4" placeholder="Explique o motivo da rejeição do exame..." required></textarea>
+                            <small class="form-text text-muted">Mínimo 10 caracteres, máximo 1000 caracteres.</small>
+                            @error('justification')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Reprovar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

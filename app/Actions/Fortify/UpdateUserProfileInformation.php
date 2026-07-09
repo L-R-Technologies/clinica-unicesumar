@@ -23,16 +23,21 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'string',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($user->id),
+                Rule::unique('users', 'email')->ignore($user->id, 'id'),
             ],
+        ];
+
+        $messages = [
+            'email.unique' => 'Este e-mail já está cadastrado no sistema. Se é seu e-mail, deixe-o como está.',
         ];
 
         if ($user->role === 'teacher') {
             $rules['registration_number'] = ['required', 'string', 'max:10'];
             $rules['crbm'] = ['required', 'string', 'max:10'];
         } elseif ($user->role === 'student') {
-            $rules['ra'] = ['required', 'string', 'max:9', Rule::unique('students')->ignore(optional($user->student)->id)];
+            $rules['ra'] = ['required', 'string', 'max:9', Rule::unique('students', 'ra')->ignore(optional($user->student)->id, 'id')];
             $rules['course'] = ['required', 'string', 'max:100'];
+            $messages['ra.unique'] = 'Este RA já está cadastrado no sistema.';
         } elseif ($user->role === 'patient') {
             if (isset($input['cpf'])) {
                 $input['cpf'] = preg_replace('/\D/', '', $input['cpf']);
@@ -48,7 +53,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'birthday' => ['required', 'date'],
                 'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'sex' => ['required', 'in:male,female,other'],
-                'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique('patients')->ignore(optional($user->patient)->id)],
+                'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique('patients', 'cpf')->ignore(optional($user->patient)->id, 'id')],
                 'rg' => ['required', 'string', 'max:20'],
                 'phone' => ['required', 'string', 'min:11', 'max:11'],
                 'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
@@ -60,9 +65,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'zip_code' => ['required', 'string', 'min:8', 'max:8'],
             ]);
+            $messages['cpf.unique'] = 'Este CPF já está cadastrado no sistema.';
         }
 
-        $validator = Validator::make($input, $rules);
+        $validator = Validator::make($input, $rules, $messages);
         $validator->validateWithBag('updateProfileInformation');
 
         if ($input['email'] !== $user->email) {

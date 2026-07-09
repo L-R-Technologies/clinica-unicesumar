@@ -2,6 +2,10 @@
 
 namespace App\Service;
 
+use App\Mail\ExamApproved;
+use App\Mail\ExamPendingApproval;
+use App\Mail\ExamRejected;
+use App\Mail\ExamResultsAvailable;
 use App\Models\Exam;
 use App\Models\ExamType;
 use App\Models\Patient;
@@ -9,6 +13,7 @@ use App\Models\PatientHistory;
 use App\Models\Sample;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -73,10 +78,54 @@ class ExamService
 
             DB::commit();
 
+            $this->handleStatusChangeEmails($exam, $exam->status);
+
             return $exam->fresh();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    protected function handleStatusChangeEmails(Exam $exam, $status)
+    {
+        $exam->load(['patient.user', 'user.student.supervisor', 'examType']);
+
+        if ($status === 'pending_approval') {
+            $this->notifyTeachersForApproval($exam);
+        }
+
+        if ($status === 'approved') {
+            $user = $exam->user;
+            if ($user && $user->role === 'student' && isset($user->email)) {
+                Mail::to($user->email)->send(new ExamApproved($exam));
+            }
+            $patientUser = $exam->patient?->user;
+            if (isset($patientUser->email)) {
+                Mail::to($patientUser->email)->send(new ExamResultsAvailable($exam));
+            }
+        }
+
+        if ($status === 'rejected') {
+            $user = $exam->user;
+            if (isset($user->email)) {
+                Mail::to($user->email)->send(new ExamRejected($exam));
+            }
+        }
+    }
+
+    protected function notifyTeachersForApproval(Exam $exam)
+    {
+        $user = $exam->user;
+        if (! $user || $user->role === 'teacher') {
+            return;
+        }
+
+        $student = $user->student;
+        $teacher = $student?->supervisor;
+
+        if (isset($teacher->email)) {
+            Mail::to($teacher->email)->send(new ExamPendingApproval($exam));
         }
     }
 
@@ -175,5 +224,21 @@ class ExamService
     public function getExamTypes()
     {
         return ExamType::where('is_active', true)->orderBy('name')->get();
+    }
+
+    public function getExamTypesForEdit($currentExamTypeId = null)
+    {
+        $query = ExamType::query();
+
+        if ($currentExamTypeId) {
+            $query->where(function ($q) use ($currentExamTypeId) {
+                $q->where('is_active', true)
+                    ->orWhere('id', $currentExamTypeId);
+            });
+        } else {
+            $query->where('is_active', true);
+        }
+
+        return $query->orderBy('name')->get();
     }
 }

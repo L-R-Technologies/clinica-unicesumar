@@ -51,7 +51,7 @@ class EditExam extends Component
 
         $examService = app(ExamService::class);
         $this->patients = $examService->getPatients();
-        $this->examTypes = $examService->getExamTypes();
+        $this->examTypes = $examService->getExamTypesForEdit($exam->exam_type_id);
         $this->patientHistories = $examService->getPatientHistories($this->patient_id);
         $this->samples = $examService->getSamples($this->patient_id);
     }

@@ -119,18 +119,25 @@
                                 </li>
                             @endif
                             @if (auth()->user()->hasRole('teacher'))
-                                <li class="nav-item d-flex align-items-center">
-                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
-                                        href="#">
-                                        <i class="fa-solid fa-desktop fa-lg"></i>
-                                        <span>Máquinas</span>
-                                    </a>
-                                </li>
+                          <li class="nav-item d-flex align-items-center">
+                                <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100 {{ request()->routeIs('machines.*') ? 'active' : '' }}"
+                                    href="{{ route('machines.index') }}">
+                                    <i class="fa-solid fa-gears fa-lg"></i>
+                                    <span>Máquinas</span>
+                                </a>
+                         </li>
                                 <li class="nav-item d-flex align-items-center">
                                     <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
                                         href="{{ route('user-management.index') }}">
                                         <i class="fa-solid fa-users-gear fa-lg"></i>
                                         <span>Usuários</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item d-flex align-items-center">
+                                    <a class="nav-link text-light fw-bold px-3 me-2 d-flex align-items-center gap-2 h-100"
+                                        href="{{ route('activity-logs.index') }}">
+                                        <i class="fa-solid fa-history fa-lg"></i>
+                                        <span>Logs</span>
                                     </a>
                                 </li>
                             @endif

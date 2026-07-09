@@ -64,19 +64,22 @@
                             <div class="tab-pane fade show active" id="personal" role="tabpanel"
                                 aria-labelledby="personal-tab">
                                 @include('auth.partials.patient-personal-fields')
+                                <div class="d-grid gap-2 mb-2 mt-4">
+                                    <button type="submit" class="btn btn-success btn-lg w-50 mx-auto">Salvar</button>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
                                 @livewire('auth.patient-address-form', ['address' => optional($user->patient)->address])
+                                <div class="d-grid gap-2 mb-2 mt-4">
+                                    <button type="submit" class="btn btn-success btn-lg w-50 mx-auto">Salvar</button>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="revoke-access" role="tabpanel"
                                 aria-labelledby="revoke-access-tab">
-                                <p>Revogar acesso</p>
+                                @livewire('auth.anonymize-user-data')
                             </div>
                         </div>
                     @endif
-                    <div class="d-grid gap-2 mb-2">
-                        <button type="submit" class="btn btn-success btn-lg w-50 mx-auto">Salvar</button>
-                    </div>
                 </form>
             </div>
         </div>

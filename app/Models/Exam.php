@@ -6,9 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property-read User|null $user
+ * @property-read Patient|null $patient
+ * @property-read PatientHistory|null $patientHistory
+ * @property-read Sample|null $sample
+ * @property-read ExamType|null $examType
+ */
 class Exam extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'user_id',
         'patient_history_id',
@@ -62,5 +73,19 @@ class Exam extends Model
     public function feedback(): HasOne
     {
         return $this->hasOne(ExamFeedback::class);
+    }
+
+    public function latestRejection()
+    {
+        return $this->hasOne(ExamRejection::class)->latestOfMany();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('exam');
     }
 }

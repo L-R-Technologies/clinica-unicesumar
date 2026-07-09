@@ -41,13 +41,16 @@
                             <div class="col-md-3">
                                 <label for="search" class="form-label">Buscar</label>
                                 <input type="text" id="search" class="form-control"
-                                    placeholder="Código, paciente ou tipo..."
-                                    wire:model.live.debounce.300ms="search">
+                                    placeholder="Digite o código ou tipo..."
+                                    wire:model.live.debounce.300ms="search"
+                                    wire:key="search-input">
                             </div>
 
                             <div class="col-md-3">
                                 <label for="statusFilter" class="form-label">Status</label>
-                                <select id="statusFilter" class="form-select" wire:model.live="statusFilter">
+                                <select id="statusFilter" class="form-select"
+                                    wire:model.live="statusFilter"
+                                    wire:key="status-filter">
                                     <option value="">Todos</option>
                                     <option value="under review">Em Análise</option>
                                     <option value="stored">Armazenada</option>
@@ -57,9 +60,9 @@
 
                             <div class="col-md-3">
                                 <label for="dateFilter" class="form-label">Data da Coleta</label>
-                                <input type="date" id="dateFilter"
-                                    class="form-control"
-                                    wire:model.live="dateFilter">
+                                <input type="date" id="dateFilter" class="form-control"
+                                    wire:model.live="dateFilter"
+                                    wire:key="date-filter">
                             </div>
 
                             <div class="col-md-3 d-flex align-items-end">

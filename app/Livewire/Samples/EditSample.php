@@ -36,8 +36,7 @@ class EditSample extends Component
         $this->date = $sample->date->format('Y-m-d');
         $this->status = $sample->status;
         $this->location = $sample->location;
-
-        $this->sampleTypes = $sampleService->getSampleTypes();
+        $this->sampleTypes = $sampleService->getSampleTypesForEdit($sample->sample_type_id);
     }
 
     public function save()

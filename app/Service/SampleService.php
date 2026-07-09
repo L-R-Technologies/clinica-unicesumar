@@ -39,6 +39,11 @@ class SampleService
 
             $sampleData['user_id'] = $userId;
             $sampleData['code'] = $this->generateSampleCode($sampleData['date']);
+            $status = $sampleData['status'];
+
+            if ($status === 'stored') {
+                $sampleData['stored_at'] = Carbon::now();
+            }
 
             $sample = Sample::create($sampleData);
 
@@ -55,6 +60,12 @@ class SampleService
     {
         try {
             DB::beginTransaction();
+
+            $status = $sampleData['status'];
+
+            if ($status === 'stored') {
+                $sampleData['stored_at'] = Carbon::now();
+            }
 
             $sample->update($sampleData);
 
@@ -141,6 +152,22 @@ class SampleService
     public function getSampleTypes()
     {
         return SampleType::where('is_active', true)->orderBy('name')->get();
+    }
+
+    public function getSampleTypesForEdit($currentSampleTypeId = null)
+    {
+        $query = SampleType::query();
+
+        if ($currentSampleTypeId) {
+            $query->where(function ($q) use ($currentSampleTypeId) {
+                $q->where('is_active', true)
+                    ->orWhere('id', $currentSampleTypeId);
+            });
+        } else {
+            $query->where('is_active', true);
+        }
+
+        return $query->orderBy('name')->get();
     }
 
     public function getStatusOptions()

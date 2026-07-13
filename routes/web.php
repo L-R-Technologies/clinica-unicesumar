@@ -9,6 +9,7 @@ use App\Http\Controllers\SampleController;
 use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\PatientExamController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
@@ -75,5 +76,10 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
+    });
+
+    Route::middleware(['role:patient'])->group(function () {
+    Route::get('/my-exams', [PatientExamController::class, 'index'])->name('patient-exams.index');
+    Route::get('/my-exams/{id}/pdf', [PatientExamController::class, 'exportPdf'])->name('patient-exams.pdf');
     });
 });

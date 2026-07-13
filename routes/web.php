@@ -10,15 +10,25 @@ use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\PatientExamController;
+use App\Livewire\Calibrations\CalibrationIndex;
+use App\Livewire\Calibrations\CreateCalibration;
+use App\Livewire\Calibrations\EditCalibration;
+use App\Livewire\Calibrations\ShowCalibration;
+use App\Livewire\Machines\CreateMachine;
+use App\Livewire\Machines\EditMachine;
+use App\Livewire\Machines\MachineIndex;
+use App\Livewire\Machines\ShowMachine;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
-Route::middleware(['auth', 'verified', 'active'])->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
+    // GRUPO: Apenas Professores (role: teacher)
     Route::middleware(['role:teacher'])->group(function () {
+        // Gerenciamento de Usuários
         Route::get('/user/management', [UserManagementController::class, 'index'])->name('user-management.index');
         Route::get('/user/management/create', [UserManagementController::class, 'create'])->name('user-management.create');
         Route::post('/user/management', [UserManagementController::class, 'store'])->name('user-management.store');
@@ -29,6 +39,7 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::delete('/user/management/{id}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
         Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
 
+        // Tipos de Exame
         Route::get('/exam-type', [ExamTypeController::class, 'index'])->name('exam-type.index');
         Route::get('/exam-type/create', [ExamTypeController::class, 'create'])->name('exam-type.create');
         Route::post('/exam-type', [ExamTypeController::class, 'store'])->name('exam-type.store');
@@ -37,6 +48,7 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::put('/exam-type/{examType}', [ExamTypeController::class, 'update'])->name('exam-type.update');
         Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
 
+        // Tipos de Amostra
         Route::get('/sample-type', [SampleTypeController::class, 'index'])->name('sample-type.index');
         Route::get('/sample-type/create', [SampleTypeController::class, 'create'])->name('sample-type.create');
         Route::post('/sample-type', [SampleTypeController::class, 'store'])->name('sample-type.store');
@@ -45,14 +57,28 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::put('/sample-type/{sampleType}', [SampleTypeController::class, 'update'])->name('sample-type.update');
         Route::delete('/sample-type/{sampleType}', [SampleTypeController::class, 'destroy'])->name('sample-type.destroy');
 
-        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
-        Route::get('/activity-logs/{id}', [ActivityLogController::class, 'show'])->name('activity-logs.show');
+        // Gerenciamento de Máquinas
+        Route::get('/machines', MachineIndex::class)->name('machines.index');
+        Route::get('/machines/create', CreateMachine::class)->name('machines.create');
+        Route::get('/machines/{machine}', ShowMachine::class)->name('machines.show');
+        Route::get('/machines/{machine}/edit', EditMachine::class)->name('machines.edit');
+
+        // Gerenciamento de Calibrações
+        Route::get('/calibrations', CalibrationIndex::class)->name('calibrations.index');
+        Route::get('/calibrations/create/{machine}', CreateCalibration::class)->name('calibrations.create');
+        Route::get('/calibrations/{calibration}', ShowCalibration::class)->name('calibrations.show');
+        Route::get('/calibrations/{calibration}/edit', EditCalibration::class)->name('calibrations.edit');
+
+        Route::resource('activity-logs', ActivityLogController::class);
     });
 
+    // Perfil do Usuário
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
 
+    // GRUPO: Professores e Alunos (role: teacher, student)
     Route::middleware(['role:teacher,student'])->group(function () {
+        // Histórico de Pacientes
         Route::get('/patient-histories', [PatientHistoryController::class, 'index'])->name('patient-histories.index');
         Route::get('/patient-histories/create', [PatientHistoryController::class, 'create'])->name('patient-histories.create');
         Route::post('/patient-histories', [PatientHistoryController::class, 'store'])->name('patient-histories.store');
@@ -61,6 +87,7 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::put('/patient-histories/{id}', [PatientHistoryController::class, 'update'])->name('patient-histories.update');
         Route::delete('/patient-histories/{id}', [PatientHistoryController::class, 'destroy'])->name('patient-histories.destroy');
 
+        // Amostras
         Route::get('/samples', [SampleController::class, 'index'])->name('samples.index');
         Route::get('/samples/create', [SampleController::class, 'create'])->name('samples.create');
         Route::post('/samples', [SampleController::class, 'store'])->name('samples.store');
@@ -69,17 +96,20 @@ Route::middleware(['auth', 'verified', 'active'])->group(function () {
         Route::put('/samples/{id}', [SampleController::class, 'update'])->name('samples.update');
         Route::delete('/samples/{id}', [SampleController::class, 'destroy'])->name('samples.destroy');
 
+        // Exames
         Route::get('/exam', [ExamController::class, 'index'])->name('exam.index');
         Route::get('/exam/create', [ExamController::class, 'create'])->name('exam.create');
         Route::post('/exam', [ExamController::class, 'store'])->name('exam.store');
         Route::get('/exam/{id}', [ExamController::class, 'show'])->name('exam.show');
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
+        Route::post('/exam/{id}/approve', [ExamController::class, 'approve'])->name('exam.approve');
+        Route::post('/exam/{id}/reject', [ExamController::class, 'reject'])->name('exam.reject');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
     });
 
     Route::middleware(['role:patient'])->group(function () {
-    Route::get('/my-exams', [PatientExamController::class, 'index'])->name('patient-exams.index');
-    Route::get('/my-exams/{id}/pdf', [PatientExamController::class, 'exportPdf'])->name('patient-exams.pdf');
+        Route::get('/my-exams', [PatientExamController::class, 'index'])->name('patient-exams.index');
+        Route::get('/my-exams/{id}/pdf', [PatientExamController::class, 'exportPdf'])->name('patient-exams.pdf');
     });
 });

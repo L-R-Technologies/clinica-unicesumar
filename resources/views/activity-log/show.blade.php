@@ -18,7 +18,6 @@
             <div class="col-lg-10">
                 <div class="card">
                     <div class="card-body">
-                        <!-- Informações Básicas -->
                         <h5 class="mb-4"><i class="fas fa-info-circle"></i> Informações Básicas</h5>
 
                         <div class="row">
@@ -69,7 +68,6 @@
 
                         <hr class="my-4">
 
-                        <!-- Detalhes das Alterações -->
                         @if ($log->event === 'updated' && $log->properties && isset($log->properties['old']) && isset($log->properties['attributes']))
                             <h5 class="mb-4"><i class="fas fa-exchange-alt"></i> Alterações Realizadas</h5>
 

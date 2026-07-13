@@ -18,7 +18,7 @@
                         {{ session('success') }}
                     </div>
                 @endif
-                <form action="{{ route('login.store') }}" method="POST" name="login">
+                <form action="{{ route('login') }}" method="POST" name="login">
                     @csrf
 
                     <div class="mb-3">

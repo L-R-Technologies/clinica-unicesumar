@@ -127,6 +127,7 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 - Git
 - PHP 8.1+
 - Composer
+- Dompdf
 
 ### Passos
 

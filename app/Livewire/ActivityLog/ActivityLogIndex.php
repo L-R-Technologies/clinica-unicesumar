@@ -3,10 +3,15 @@
 namespace App\Livewire\ActivityLog;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogIndex extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'bootstrap';
+
     public $search = '';
 
     public $logNameFilter = '';
@@ -17,15 +22,30 @@ class ActivityLogIndex extends Component
 
     public $dateTo = '';
 
-    public function updatedSearch() {}
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
 
-    public function updatedLogNameFilter() {}
+    public function updatedLogNameFilter()
+    {
+        $this->resetPage();
+    }
 
-    public function updatedEventFilter() {}
+    public function updatedEventFilter()
+    {
+        $this->resetPage();
+    }
 
-    public function updatedDateFrom() {}
+    public function updatedDateFrom()
+    {
+        $this->resetPage();
+    }
 
-    public function updatedDateTo() {}
+    public function updatedDateTo()
+    {
+        $this->resetPage();
+    }
 
     public function clearFilters()
     {
@@ -34,6 +54,7 @@ class ActivityLogIndex extends Component
         $this->eventFilter = '';
         $this->dateFrom = '';
         $this->dateTo = '';
+        $this->resetPage();
     }
 
     public function getLogs()

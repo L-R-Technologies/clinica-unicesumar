@@ -143,20 +143,24 @@ class ExamService
         }
     }
 
-    public function getFilteredExams(array $filters)
-    {
-        $query = Exam::with(['user', 'patient.user', 'patientHistory', 'sample', 'examType']);
+public function getFilteredExams(array $filters)
+{
+    $query = Exam::with(['user', 'patient.user', 'patientHistory', 'sample', 'examType']);
 
-        // Filtrar por responsável se for aluno
-        if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
-            if ($filters['user_role'] === 'student') {
-                $query->where('user_id', $filters['user_id']);
-            }
-            // Professores veem todos os exames, então não aplicamos filtro
+    // Filtrar por responsável se for aluno
+    if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
+        if ($filters['user_role'] === 'student') {
+            $query->where('user_id', $filters['user_id']);
         }
+    }
 
-        if (! empty($filters['search'])) {
-            $search = $filters['search'];
+    // NOVO: filtrar pelo paciente logado (usado na área "Meus Exames")
+    if (! empty($filters['patient_id'])) {
+        $query->where('patient_id', $filters['patient_id']);
+    }
+
+    if (! empty($filters['search'])) {
+        $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->whereHas('examType', function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
@@ -241,4 +245,7 @@ class ExamService
 
         return $query->orderBy('name')->get();
     }
+
+
+
 }

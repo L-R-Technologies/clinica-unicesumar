@@ -9,6 +9,7 @@ use App\Http\Controllers\SampleController;
 use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\PatientExamController;
 use App\Livewire\Calibrations\CalibrationIndex;
 use App\Livewire\Calibrations\CreateCalibration;
 use App\Livewire\Calibrations\EditCalibration;
@@ -105,5 +106,10 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/exam/{id}/approve', [ExamController::class, 'approve'])->name('exam.approve');
         Route::post('/exam/{id}/reject', [ExamController::class, 'reject'])->name('exam.reject');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
+    });
+
+    Route::middleware(['role:patient'])->group(function () {
+        Route::get('/my-exams', [PatientExamController::class, 'index'])->name('patient-exams.index');
+        Route::get('/my-exams/{id}/pdf', [PatientExamController::class, 'exportPdf'])->name('patient-exams.pdf');
     });
 });

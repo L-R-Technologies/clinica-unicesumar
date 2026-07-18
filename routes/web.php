@@ -4,12 +4,12 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PatientExamController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\SampleController;
 use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
-use App\Http\Controllers\PatientExamController;
 use App\Livewire\Calibrations\CalibrationIndex;
 use App\Livewire\Calibrations\CreateCalibration;
 use App\Livewire\Calibrations\EditCalibration;
@@ -55,6 +55,7 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/sample-type/{sampleType}', [SampleTypeController::class, 'show'])->name('sample-type.show');
         Route::get('/sample-type/{sampleType}/edit', [SampleTypeController::class, 'edit'])->name('sample-type.edit');
         Route::put('/sample-type/{sampleType}', [SampleTypeController::class, 'update'])->name('sample-type.update');
+        Route::patch('/sample-type/{sampleType}/toggle-status', [SampleTypeController::class, 'toggleStatus'])->name('sample-type.toggle-status');
         Route::delete('/sample-type/{sampleType}', [SampleTypeController::class, 'destroy'])->name('sample-type.destroy');
 
         // Gerenciamento de Máquinas

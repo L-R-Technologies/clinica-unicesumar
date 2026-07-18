@@ -212,13 +212,6 @@ class UserManagementController extends Controller
         }
     }
 
-    public function generatePassword()
-    {
-        $password = $this->userManagementService->generateTemporaryPassword();
-
-        return response()->json(['password' => $password]);
-    }
-
     public function toggleStatus($id): RedirectResponse
     {
         try {

@@ -145,12 +145,15 @@ export default function ExamsIndex() {
                 </Button>
             }
         >
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                <div className="sm:col-span-2 lg:col-span-1">
+            <div className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+                    <Label htmlFor="search">Buscar</Label>
                     <SearchInput
+                        id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Tipo, paciente ou responsável..."
+                        className="max-w-none"
                     />
                 </div>
 

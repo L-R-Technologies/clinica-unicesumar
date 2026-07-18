@@ -14,15 +14,23 @@ function decodeLabel(label: string): string {
 }
 
 function isPreviousLink(label: string): boolean {
-    return label.includes('&laquo;') || label.toLowerCase().includes('anterior');
+    const normalized = label.toLowerCase();
+    return (
+        label.includes('&laquo;') ||
+        normalized.includes('anterior') ||
+        // Cobre a chave de tradução crua "pagination.previous"
+        normalized.includes('previous')
+    );
 }
 
 function isNextLink(label: string): boolean {
+    const normalized = label.toLowerCase();
     return (
         label.includes('&raquo;') ||
-        label.toLowerCase().includes('próximo') ||
-        label.toLowerCase().includes('proximo') ||
-        label.toLowerCase().includes('next')
+        normalized.includes('próximo') ||
+        normalized.includes('proximo') ||
+        // Cobre "next" e a chave crua "pagination.next"
+        normalized.includes('next')
     );
 }
 

@@ -2,6 +2,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,10 +64,25 @@ export default function UserCreate() {
     }
 
     return (
-        <AppLayout title="Novo Usuário">
-            <Card className="max-w-2xl">
+        <AppLayout title="Novo Usuário"
+            actions={
+                <>
+                    <BackButton
+                        href={route('user-management.index')}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form onSubmit={submit} className="space-y-4">
+                    <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <FormField
                             id="user_type"
                             label="Tipo de usuário"
@@ -246,16 +262,6 @@ export default function UserCreate() {
                             </>
                         )}
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route('user-management.index')}>
-                                    Cancelar
-                                </Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Salvar
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

@@ -1,6 +1,7 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,10 +26,25 @@ export default function SampleTypeEdit() {
     }
 
     return (
-        <AppLayout title="Editar Tipo de Amostra">
-            <Card className="max-w-2xl">
+        <AppLayout title="Editar Tipo de Amostra"
+            actions={
+                <>
+                    <BackButton
+                        href={route('sample-type.index')}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar alterações
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form onSubmit={submit} className="space-y-4">
+                    <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <FormField
                             id="name"
                             label="Nome"
@@ -60,16 +76,6 @@ export default function SampleTypeEdit() {
                             />
                         </FormField>
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route('sample-type.index')}>
-                                    Cancelar
-                                </Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Salvar alterações
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

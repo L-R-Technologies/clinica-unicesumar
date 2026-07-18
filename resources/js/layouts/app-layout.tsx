@@ -34,10 +34,16 @@ export default function AppLayout({
                         className="mr-2 data-[orientation=vertical]:h-4"
                     />
                     <h1 className="text-base font-semibold">{title}</h1>
-                    {actions && <div className="ml-auto">{actions}</div>}
+                    {actions && (
+                        <div className="ml-auto flex items-center gap-2">
+                            {actions}
+                        </div>
+                    )}
                 </header>
-                <main className="flex flex-1 flex-col gap-4 p-4">
-                    {children}
+                <main className="flex flex-1 flex-col p-4 sm:p-6">
+                    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4">
+                        {children}
+                    </div>
                 </main>
             </SidebarInset>
             <Toaster richColors position="top-right" />

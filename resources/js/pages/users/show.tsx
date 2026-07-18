@@ -1,7 +1,9 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { ActiveBadge } from '@/components/status-badge';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -34,15 +36,29 @@ export default function UserShow() {
         <AppLayout
             title={user.name}
             actions={
-                <Button asChild>
-                    <Link href={route('user-management.edit', user.id)}>
-                        <Pencil />
-                        Editar
-                    </Link>
-                </Button>
+                <>
+                    <BackButton href={route('user-management.index')} />
+                    <Button asChild>
+                        <Link href={route('user-management.edit', user.id)}>
+                            <Pencil />
+                            Editar
+                        </Link>
+                    </Button>
+                    <ConfirmDeleteDialog
+                        action={route('user-management.destroy', user.id)}
+                        title="Excluir usuário"
+                        description="O usuário será removido permanentemente."
+                        trigger={
+                            <Button variant="destructive">
+                                <Trash2 />
+                                Excluir
+                            </Button>
+                        }
+                    />
+                </>
             }
         >
-            <Card className="max-w-2xl">
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent className="space-y-4">
                     <InfoRow label="Nome" value={user.name} />
                     <InfoRow label="Email" value={user.email} />

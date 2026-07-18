@@ -2,6 +2,7 @@ import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { Check, Pencil, X } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -78,6 +79,7 @@ export default function ExamsShow() {
             title="Detalhes do Exame"
             actions={
                 <div className="flex flex-wrap items-center gap-2">
+                    <BackButton href={route('exam.index')} />
                     <Button asChild variant="outline">
                         <Link href={route('exam.edit', exam.id)}>
                             <Pencil />

@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Pencil } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -24,6 +25,7 @@ export default function CalibrationShow() {
             title={`Calibração #${calibration.id}`}
             actions={
                 <div className="flex gap-2">
+                    <BackButton href={route('calibrations.index')} />
                     <Button variant="outline" asChild>
                         <Link href={route('calibrations.edit', calibration.id)}>
                             <Pencil />
@@ -40,7 +42,7 @@ export default function CalibrationShow() {
                 </div>
             }
         >
-            <Card className="max-w-2xl">
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent className="space-y-4">
                     <div>
                         <p className="text-sm text-muted-foreground">Status</p>

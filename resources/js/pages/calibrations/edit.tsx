@@ -1,6 +1,7 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,14 +28,29 @@ export default function CalibrationEdit() {
     }
 
     return (
-        <AppLayout title="Editar Calibração">
-            <Card className="max-w-2xl">
+        <AppLayout title="Editar Calibração"
+            actions={
+                <>
+                    <BackButton
+                        href={route('calibrations.show', calibration.id,)}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar alterações
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
                     <p className="mb-4 text-sm text-muted-foreground">
                         O status é recalculado automaticamente conforme a faixa
                         de calibração do equipamento.
                     </p>
-                    <form onSubmit={submit} className="space-y-4">
+                    <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <FormField
                             id="calibration_date"
                             label="Data da calibração"
@@ -83,21 +99,6 @@ export default function CalibrationEdit() {
                             />
                         </FormField>
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link
-                                    href={route(
-                                        'calibrations.show',
-                                        calibration.id,
-                                    )}
-                                >
-                                    Cancelar
-                                </Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Salvar alterações
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

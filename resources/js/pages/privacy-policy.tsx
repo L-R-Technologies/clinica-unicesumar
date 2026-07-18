@@ -133,7 +133,7 @@ export default function PrivacyPolicy() {
 
     return (
         <GuestLayout title="Política de Privacidade">
-            <div className="mx-auto max-w-3xl px-6 py-10">
+            <div className="mx-auto w-full max-w-3xl px-6 py-10">
                 <Card>
                     <CardContent className="prose prose-slate max-w-none dark:prose-invert print:shadow-none">
                         <div className="text-center">

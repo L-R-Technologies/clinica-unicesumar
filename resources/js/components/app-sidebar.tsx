@@ -1,9 +1,11 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
+    Boxes,
     ClipboardList,
     FlaskConical,
     History,
     LayoutDashboard,
+    ListChecks,
     Microscope,
     Settings2,
     TestTubes,
@@ -33,62 +35,101 @@ interface NavItem {
     roles: UserRole[];
 }
 
-const NAV_ITEMS: readonly NavItem[] = [
+interface NavGroup {
+    label: string;
+    items: readonly NavItem[];
+}
+
+const NAV_GROUPS: readonly NavGroup[] = [
     {
-        title: 'Dashboard',
-        routeName: 'home',
-        icon: LayoutDashboard,
-        activePattern: 'home',
-        roles: ['teacher', 'student'],
+        label: 'Principal',
+        items: [
+            {
+                title: 'Dashboard',
+                routeName: 'home',
+                icon: LayoutDashboard,
+                activePattern: 'home',
+                roles: ['teacher', 'student'],
+            },
+            {
+                title: 'Meus Exames',
+                routeName: 'patient-exams.index',
+                icon: TestTubes,
+                activePattern: 'patient-exams.*',
+                roles: ['patient'],
+            },
+        ],
     },
     {
-        title: 'Amostras',
-        routeName: 'samples.index',
-        icon: FlaskConical,
-        activePattern: 'samples.*',
-        roles: ['teacher', 'student'],
+        label: 'Atendimento',
+        items: [
+            {
+                title: 'Anamneses',
+                routeName: 'patient-histories.index',
+                icon: ClipboardList,
+                activePattern: 'patient-histories.*',
+                roles: ['teacher', 'student'],
+            },
+            {
+                title: 'Amostras',
+                routeName: 'samples.index',
+                icon: FlaskConical,
+                activePattern: 'samples.*',
+                roles: ['teacher', 'student'],
+            },
+            {
+                title: 'Exames',
+                routeName: 'exam.index',
+                icon: Microscope,
+                activePattern: 'exam.*',
+                roles: ['teacher', 'student'],
+            },
+        ],
     },
     {
-        title: 'Anamneses',
-        routeName: 'patient-histories.index',
-        icon: ClipboardList,
-        activePattern: 'patient-histories.*',
-        roles: ['teacher', 'student'],
+        label: 'Cadastros',
+        items: [
+            {
+                title: 'Tipos de Amostra',
+                routeName: 'sample-type.index',
+                icon: Boxes,
+                activePattern: 'sample-type.*',
+                roles: ['teacher'],
+            },
+            {
+                title: 'Tipos de Exame',
+                routeName: 'exam-type.index',
+                icon: ListChecks,
+                activePattern: 'exam-type.*',
+                roles: ['teacher'],
+            },
+            {
+                title: 'Máquinas',
+                routeName: 'machines.index',
+                icon: Settings2,
+                activePattern: 'machines.*',
+                roles: ['teacher'],
+            },
+        ],
     },
     {
-        title: 'Exames',
-        routeName: 'exam.index',
-        icon: Microscope,
-        activePattern: 'exam.*',
-        roles: ['teacher', 'student'],
-    },
-    {
-        title: 'Máquinas',
-        routeName: 'machines.index',
-        icon: Settings2,
-        activePattern: 'machines.*',
-        roles: ['teacher'],
-    },
-    {
-        title: 'Usuários',
-        routeName: 'user-management.index',
-        icon: UserCog,
-        activePattern: 'user-management.*',
-        roles: ['teacher'],
-    },
-    {
-        title: 'Logs',
-        routeName: 'activity-logs.index',
-        icon: History,
-        activePattern: 'activity-logs.*',
-        roles: ['teacher'],
-    },
-    {
-        title: 'Meus Exames',
-        routeName: 'patient-exams.index',
-        icon: TestTubes,
-        activePattern: 'patient-exams.*',
-        roles: ['patient'],
+        label: 'Administração',
+        items: [
+            {
+                title: 'Usuários',
+                routeName: 'user-management.index',
+                icon: UserCog,
+                activePattern: 'user-management.*',
+                roles: ['teacher'],
+            },
+            {
+                title: 'Logs',
+                routeName: 'activity-logs.index',
+                icon: History,
+                activePattern: 'activity-logs.*',
+                roles: ['teacher'],
+            },
+        ],
     },
 ] as const;
 
@@ -96,8 +137,11 @@ export function AppSidebar() {
     const { auth } = usePage<PageProps>().props;
     const role = auth.user?.role;
 
-    const items = role
-        ? NAV_ITEMS.filter((item) => item.roles.includes(role))
+    const groups = role
+        ? NAV_GROUPS.map((group) => ({
+              ...group,
+              items: group.items.filter((item) => item.roles.includes(role)),
+          })).filter((group) => group.items.length > 0)
         : [];
 
     return (
@@ -126,27 +170,29 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Navegação</SidebarGroupLabel>
-                    <SidebarMenu>
-                        {items.map((item) => (
-                            <SidebarMenuItem key={item.routeName}>
-                                <SidebarMenuButton
-                                    asChild
-                                    isActive={route().current(
-                                        item.activePattern,
-                                    )}
-                                    tooltip={item.title}
-                                >
-                                    <Link href={route(item.routeName)}>
-                                        <item.icon />
-                                        <span>{item.title}</span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                </SidebarGroup>
+                {groups.map((group) => (
+                    <SidebarGroup key={group.label}>
+                        <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                        <SidebarMenu>
+                            {group.items.map((item) => (
+                                <SidebarMenuItem key={item.routeName}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={route().current(
+                                            item.activePattern,
+                                        )}
+                                        tooltip={item.title}
+                                    >
+                                        <Link href={route(item.routeName)}>
+                                            <item.icon />
+                                            <span>{item.title}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
 
             <SidebarFooter>

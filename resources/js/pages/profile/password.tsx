@@ -24,7 +24,7 @@ export default function ProfilePassword() {
 
     return (
         <AppLayout title="Alterar Senha">
-            <Card className="max-w-lg">
+            <Card className="mx-auto w-full max-w-lg">
                 <CardContent>
                     <form onSubmit={submit} className="space-y-4">
                         <FormField

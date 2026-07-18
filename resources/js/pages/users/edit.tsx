@@ -2,6 +2,7 @@ import { Link, useForm, usePage } from '@inertiajs/react';
 import { Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -56,10 +57,25 @@ export default function UserEdit() {
     }
 
     return (
-        <AppLayout title="Editar Usuário">
-            <Card className="max-w-2xl">
+        <AppLayout title="Editar Usuário"
+            actions={
+                <>
+                    <BackButton
+                        href={route('user-management.index')}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar alterações
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form onSubmit={submit} className="space-y-4">
+                    <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <div className="space-y-2">
                             <p className="text-sm text-muted-foreground">
                                 Tipo de usuário
@@ -222,16 +238,6 @@ export default function UserEdit() {
                             </>
                         )}
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route('user-management.index')}>
-                                    Cancelar
-                                </Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Salvar alterações
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

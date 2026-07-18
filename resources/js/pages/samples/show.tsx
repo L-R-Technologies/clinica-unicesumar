@@ -1,6 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,15 +24,29 @@ export default function SampleShow() {
         <AppLayout
             title={`Amostra ${sample.code}`}
             actions={
-                <Button asChild>
-                    <Link href={route('samples.edit', sample.id)}>
-                        <Pencil />
-                        Editar
-                    </Link>
-                </Button>
+                <>
+                    <BackButton href={route('samples.index')} />
+                    <Button asChild>
+                        <Link href={route('samples.edit', sample.id)}>
+                            <Pencil />
+                            Editar
+                        </Link>
+                    </Button>
+                    <ConfirmDeleteDialog
+                        action={route('samples.destroy', sample.id)}
+                        title="Excluir amostra"
+                        description="A amostra será removida permanentemente."
+                        trigger={
+                            <Button variant="destructive">
+                                <Trash2 />
+                                Excluir
+                            </Button>
+                        }
+                    />
+                </>
             }
         >
-            <Card className="max-w-2xl">
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent className="space-y-4">
                     <div>
                         <p className="text-sm text-muted-foreground">

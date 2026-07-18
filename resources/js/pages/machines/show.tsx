@@ -1,6 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Download, Eye, Pencil, Plus } from 'lucide-react';
+import { Download, Eye, Pencil, Plus, Trash2 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
 import { StatusBadge } from '@/components/status-badge';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -64,6 +66,7 @@ export default function MachineShow() {
             title={`Prontuário: ${machine.name}`}
             actions={
                 <div className="flex gap-2">
+                    <BackButton href={route('machines.index')} />
                     <Button variant="outline" asChild>
                         <Link href={route('machines.edit', machine.id)}>
                             <Pencil />
@@ -82,10 +85,21 @@ export default function MachineShow() {
                             Nova calibração
                         </Link>
                     </Button>
+                    <ConfirmDeleteDialog
+                        action={route('machines.destroy', machine.id)}
+                        title="Excluir máquina"
+                        description="A máquina e seu histórico de calibrações serão removidos permanentemente."
+                        trigger={
+                            <Button variant="destructive">
+                                <Trash2 />
+                                Excluir
+                            </Button>
+                        }
+                    />
                 </div>
             }
         >
-            <Card className="max-w-3xl">
+            <Card className="mx-auto w-full max-w-3xl">
                 <CardContent className="grid gap-4 sm:grid-cols-2">
                     <div>
                         <p className="text-sm text-muted-foreground">

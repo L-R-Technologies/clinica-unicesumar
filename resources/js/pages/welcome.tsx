@@ -31,7 +31,7 @@ export default function Welcome() {
 
     return (
         <GuestLayout title="Bem-vindo">
-            <section className="mx-auto max-w-5xl px-6 py-16 text-center">
+            <section className="mx-auto w-full max-w-5xl px-6 py-16 text-center">
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
                     Clínica Unicesumar
                 </h1>

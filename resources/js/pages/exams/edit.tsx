@@ -1,6 +1,7 @@
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -135,10 +136,25 @@ export default function ExamsEdit() {
     }
 
     return (
-        <AppLayout title="Editar Exame">
-            <Card className="max-w-3xl">
+        <AppLayout title="Editar Exame"
+            actions={
+                <>
+                    <BackButton
+                        href={route('exam.index')}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar alterações
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-3xl">
                 <CardContent>
-                    <form onSubmit={submit} className="space-y-6">
+                    <form id="resource-form" onSubmit={submit} className="space-y-6">
                         <div className="flex items-center gap-2">
                             <span className="text-sm text-muted-foreground">
                                 Status:
@@ -326,14 +342,6 @@ export default function ExamsEdit() {
                             )}
                         </div>
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route('exam.index')}>Cancelar</Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Salvar alterações
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

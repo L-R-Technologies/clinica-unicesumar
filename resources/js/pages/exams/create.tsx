@@ -1,6 +1,7 @@
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -88,10 +89,25 @@ export default function ExamsCreate() {
     const hasPatient = data.patient_id !== '';
 
     return (
-        <AppLayout title="Novo Exame">
-            <Card className="max-w-3xl">
+        <AppLayout title="Novo Exame"
+            actions={
+                <>
+                    <BackButton
+                        href={route('exam.index')}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar exame
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-3xl">
                 <CardContent>
-                    <form onSubmit={submit} className="space-y-4">
+                    <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                             <FormField
                                 id="patient_id"
@@ -264,14 +280,6 @@ export default function ExamsCreate() {
                             />
                         </FormField>
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route('exam.index')}>Cancelar</Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Salvar exame
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

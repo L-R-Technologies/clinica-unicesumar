@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -53,6 +54,7 @@ export default function PatientHistoriesShow() {
             title="Detalhes da Anamnese"
             actions={
                 <div className="flex gap-2">
+                    <BackButton href={route('patient-histories.index')} />
                     <Button asChild>
                         <Link
                             href={route(
@@ -81,7 +83,7 @@ export default function PatientHistoriesShow() {
                 </div>
             }
         >
-            <div className="max-w-3xl space-y-6">
+            <div className="mx-auto w-full max-w-3xl space-y-6">
                 <Card>
                     <CardHeader>
                         <CardTitle>Informações Básicas</CardTitle>

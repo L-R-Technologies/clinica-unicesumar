@@ -1,6 +1,7 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import {
     ExamTypeFieldsRepeater,
     type ExamTypeFieldRow,
@@ -51,10 +52,25 @@ export default function ExamTypeEdit() {
     }
 
     return (
-        <AppLayout title="Editar Tipo de Exame">
-            <Card className="max-w-2xl">
+        <AppLayout title="Editar Tipo de Exame"
+            actions={
+                <>
+                    <BackButton
+                        href={route('exam-type.index')}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar alterações
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form onSubmit={submit} className="space-y-6">
+                    <form id="resource-form" onSubmit={submit} className="space-y-6">
                         <FormField
                             id="name"
                             label="Nome"
@@ -92,16 +108,6 @@ export default function ExamTypeEdit() {
                             errors={errors}
                         />
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route('exam-type.index')}>
-                                    Cancelar
-                                </Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Salvar alterações
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

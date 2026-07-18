@@ -1,6 +1,7 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import {
@@ -63,8 +64,23 @@ export default function PatientHistoriesCreate() {
     }
 
     return (
-        <AppLayout title="Nova Anamnese">
-            <form onSubmit={submit} className="max-w-3xl space-y-6">
+        <AppLayout title="Nova Anamnese"
+            actions={
+                <>
+                    <BackButton
+                        href={route('patient-histories.index')}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Salvar
+                    </Button>
+                </>
+            }>
+            <form id="resource-form" onSubmit={submit} className="mx-auto w-full max-w-3xl space-y-6">
                 <PatientHistoryFields
                     data={data}
                     setData={setData}
@@ -104,16 +120,6 @@ export default function PatientHistoriesCreate() {
                     }
                 />
 
-                <div className="flex justify-end gap-2">
-                    <Button variant="outline" asChild>
-                        <Link href={route('patient-histories.index')}>
-                            Cancelar
-                        </Link>
-                    </Button>
-                    <Button type="submit" disabled={processing}>
-                        Salvar
-                    </Button>
-                </div>
             </form>
         </AppLayout>
     );

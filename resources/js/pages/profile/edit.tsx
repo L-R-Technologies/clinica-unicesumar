@@ -146,7 +146,7 @@ export default function ProfileEdit() {
     return (
         <AppLayout title="Editar Perfil">
             <div className="flex flex-col gap-6">
-                <Card className="max-w-2xl">
+                <Card className="mx-auto w-full max-w-2xl">
                     <CardHeader>
                         <CardTitle>Dados básicos</CardTitle>
                         <CardDescription>
@@ -212,7 +212,7 @@ export default function ProfileEdit() {
                 </Card>
 
                 {isPatient && (
-                    <Card className="max-w-2xl">
+                    <Card className="mx-auto w-full max-w-2xl">
                         <CardHeader>
                             <CardTitle>Endereço</CardTitle>
                             <CardDescription>
@@ -385,7 +385,7 @@ export default function ProfileEdit() {
                 )}
 
                 {isPatient && (
-                    <Card className="max-w-2xl border-destructive/50">
+                    <Card className="mx-auto w-full max-w-2xl border-destructive/50">
                         <CardHeader>
                             <CardTitle className="text-destructive">
                                 Revogar acesso e anonimizar dados

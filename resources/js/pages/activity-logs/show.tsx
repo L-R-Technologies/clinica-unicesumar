@@ -167,7 +167,7 @@ export default function ActivityLogShow() {
                 </Button>
             }
         >
-            <Card className="max-w-4xl">
+            <Card className="mx-auto w-full max-w-4xl">
                 <CardContent className="space-y-6">
                     <div className="grid gap-4 sm:grid-cols-3">
                         <InfoRow

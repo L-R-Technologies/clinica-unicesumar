@@ -1,6 +1,7 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,15 +33,30 @@ export default function CalibrationCreate() {
     }
 
     return (
-        <AppLayout title={`Nova Calibração: ${machine.name}`}>
-            <Card className="max-w-2xl">
+        <AppLayout title={`Nova Calibração: ${machine.name}`}
+            actions={
+                <>
+                    <BackButton
+                        href={route('machines.show', machine.id)}
+                        label="Cancelar"
+                    />
+                    <Button
+                        type="submit"
+                        form="resource-form"
+                        disabled={processing}
+                    >
+                        Registrar calibração
+                    </Button>
+                </>
+            }>
+            <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
                     <p className="mb-4 text-sm text-muted-foreground">
                         O status (aprovada ou rejeitada) é calculado
                         automaticamente conforme a faixa de calibração do
                         equipamento.
                     </p>
-                    <form onSubmit={submit} className="space-y-4">
+                    <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <FormField
                             id="calibration_date"
                             label="Data da calibração"
@@ -90,16 +106,6 @@ export default function CalibrationCreate() {
                             />
                         </FormField>
 
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" asChild>
-                                <Link href={route('machines.show', machine.id)}>
-                                    Cancelar
-                                </Link>
-                            </Button>
-                            <Button type="submit" disabled={processing}>
-                                Registrar calibração
-                            </Button>
-                        </div>
                     </form>
                 </CardContent>
             </Card>

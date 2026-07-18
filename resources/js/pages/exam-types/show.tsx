@@ -1,6 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Pencil } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
+import { BackButton } from '@/components/back-button';
+import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
 import { ActiveBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -39,16 +41,30 @@ export default function ExamTypeShow() {
         <AppLayout
             title={examType.name}
             actions={
-                <Button asChild>
-                    <Link href={route('exam-type.edit', examType.id)}>
-                        <Pencil />
-                        Editar
-                    </Link>
-                </Button>
+                <>
+                    <BackButton href={route('exam-type.index')} />
+                    <Button asChild>
+                        <Link href={route('exam-type.edit', examType.id)}>
+                            <Pencil />
+                            Editar
+                        </Link>
+                    </Button>
+                    <ConfirmDeleteDialog
+                        action={route('exam-type.destroy', examType.id)}
+                        title="Excluir tipo de exame"
+                        description="O tipo de exame será removido permanentemente."
+                        trigger={
+                            <Button variant="destructive">
+                                <Trash2 />
+                                Excluir
+                            </Button>
+                        }
+                    />
+                </>
             }
         >
             <div className="space-y-6">
-                <Card className="max-w-2xl">
+                <Card className="mx-auto w-full max-w-2xl">
                     <CardContent className="space-y-4">
                         <div>
                             <p className="text-sm text-muted-foreground">

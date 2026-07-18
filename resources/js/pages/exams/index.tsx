@@ -3,6 +3,7 @@ import { Eye, Pencil, Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { StatusBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
@@ -53,7 +54,7 @@ export default function ExamsIndex() {
         date_to: filters.date_to,
     };
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'exam.index',
         initialValue: filters.search,
         extraParams: otherFilters,
@@ -74,6 +75,23 @@ export default function ExamsIndex() {
             replace: true,
         });
     }
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('exam.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(
+        search ||
+        otherFilters.status ||
+        otherFilters.exam_type_id ||
+        otherFilters.date_from ||
+        otherFilters.date_to
+    );
 
     const columns: Column<Exam>[] = [
         {
@@ -145,19 +163,22 @@ export default function ExamsIndex() {
                 </Button>
             }
         >
-            <div className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-5">
-                <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
                     <Label htmlFor="search">Buscar</Label>
                     <SearchInput
                         id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Tipo, paciente ou responsável..."
-                        className="max-w-none"
+                        className="w-full"
                     />
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
                         value={filters.status || ALL_OPTION}
@@ -168,7 +189,7 @@ export default function ExamsIndex() {
                             )
                         }
                     >
-                        <SelectTrigger id="status" className="w-full">
+                        <SelectTrigger id="status" className="sm:w-44">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
@@ -184,7 +205,7 @@ export default function ExamsIndex() {
                     </Select>
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                     <Label htmlFor="type">Tipo</Label>
                     <Select
                         value={filters.exam_type_id || ALL_OPTION}
@@ -195,7 +216,7 @@ export default function ExamsIndex() {
                             )
                         }
                     >
-                        <SelectTrigger id="type" className="w-full">
+                        <SelectTrigger id="type" className="sm:w-48">
                             <SelectValue placeholder="Todos os tipos" />
                         </SelectTrigger>
                         <SelectContent>
@@ -214,7 +235,7 @@ export default function ExamsIndex() {
                     </Select>
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                     <Label htmlFor="date_from">Data de</Label>
                     <Input
                         id="date_from"
@@ -226,7 +247,7 @@ export default function ExamsIndex() {
                     />
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                     <Label htmlFor="date_to">Data até</Label>
                     <Input
                         id="date_to"
@@ -235,7 +256,7 @@ export default function ExamsIndex() {
                         onChange={(e) => applyFilter('date_to', e.target.value)}
                     />
                 </div>
-            </div>
+            </FiltersCard>
 
             <DataTable
                 columns={columns}

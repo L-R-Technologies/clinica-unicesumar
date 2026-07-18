@@ -3,6 +3,7 @@ import { Eye, Pencil, Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { StatusBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
@@ -44,7 +45,7 @@ export default function SamplesIndex() {
         PageProps<SamplesIndexProps>
     >().props;
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'samples.index',
         initialValue: filters.search,
         extraParams: { status: filters.status, date: filters.date },
@@ -66,6 +67,17 @@ export default function SamplesIndex() {
             { preserveState: true, preserveScroll: true, replace: true },
         );
     }
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('samples.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(search || filters.status || filters.date);
 
     const columns: Column<Sample>[] = [
         {
@@ -136,15 +148,21 @@ export default function SamplesIndex() {
                 </Button>
             }
         >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <div className="flex-1">
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
                     <SearchInput
+                        id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Buscar por código, tipo ou paciente..."
+                        className="w-full"
                     />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
                         value={filters.status || ALL_STATUS}
@@ -169,7 +187,7 @@ export default function SamplesIndex() {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="date">Data da coleta</Label>
                     <Input
                         id="date"
@@ -178,7 +196,7 @@ export default function SamplesIndex() {
                         onChange={(e) => applyFilters({ date: e.target.value })}
                     />
                 </div>
-            </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={samples.data}

@@ -25,10 +25,16 @@ export function useDebouncedSearch({
 }: UseDebouncedSearchOptions) {
     const [search, setSearch] = useState(initialValue);
     const isFirstRender = useRef(true);
+    const skipNextRequest = useRef(false);
 
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
+            return;
+        }
+
+        if (skipNextRequest.current) {
+            skipNextRequest.current = false;
             return;
         }
 
@@ -54,5 +60,11 @@ export function useDebouncedSearch({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]);
 
-    return { search, setSearch };
+    /** Zera o campo de busca sem disparar a requisição debounced (evita corrida com um clear manual). */
+    function reset(): void {
+        skipNextRequest.current = true;
+        setSearch('');
+    }
+
+    return { search, setSearch, reset };
 }

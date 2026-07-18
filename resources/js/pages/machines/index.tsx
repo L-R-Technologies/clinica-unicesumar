@@ -3,6 +3,7 @@ import { Eye, Pencil, Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { StatusBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
@@ -37,7 +38,7 @@ export default function MachinesIndex() {
         PageProps<MachinesIndexProps>
     >().props;
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'machines.index',
         initialValue: filters.search,
         extraParams: { status: filters.status },
@@ -57,6 +58,17 @@ export default function MachinesIndex() {
             { preserveState: true, preserveScroll: true, replace: true },
         );
     }
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('machines.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(search || filters.status);
 
     const columns: Column<Machine>[] = [
         {
@@ -118,15 +130,21 @@ export default function MachinesIndex() {
                 </Button>
             }
         >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <div className="flex-1">
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
                     <SearchInput
+                        id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Buscar por nome, modelo ou série..."
+                        className="w-full"
                     />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
                         value={filters.status || ALL_STATUS}
@@ -147,7 +165,7 @@ export default function MachinesIndex() {
                         </SelectContent>
                     </Select>
                 </div>
-            </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={machines.data}

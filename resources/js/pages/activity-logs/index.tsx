@@ -2,6 +2,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { Eye } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { TablePagination } from '@/components/table-pagination';
 import { Badge } from '@/components/ui/badge';
@@ -96,7 +97,7 @@ export default function ActivityLogsIndex() {
         PageProps<ActivityLogsIndexProps>
     >().props;
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'activity-logs.index',
         initialValue: filters.search,
         extraParams: {
@@ -125,6 +126,23 @@ export default function ActivityLogsIndex() {
             { preserveState: true, preserveScroll: true, replace: true },
         );
     }
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('activity-logs.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(
+        search ||
+        filters.log_name ||
+        filters.event ||
+        filters.date_from ||
+        filters.date_to
+    );
 
     const columns: Column<ActivityLogSummary>[] = [
         {
@@ -176,15 +194,21 @@ export default function ActivityLogsIndex() {
 
     return (
         <AppLayout title="Histórico de Atividades">
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-                <div className="flex-1">
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
                     <SearchInput
+                        id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Buscar por usuário ou objeto..."
+                        className="w-full"
                     />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="log_name">Tipo</Label>
                     <Select
                         value={filters.log_name || ALL_OPTION}
@@ -258,7 +282,7 @@ export default function ActivityLogsIndex() {
                         }
                     />
                 </div>
-            </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={logs.data}

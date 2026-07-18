@@ -4,10 +4,12 @@ import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { TablePagination } from '@/components/table-pagination';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps } from '@/types';
@@ -33,7 +35,7 @@ export default function PatientHistoriesIndex() {
 
     const [date, setDate] = useState(filters.date ?? '');
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'patient-histories.index',
         initialValue: filters.search,
         extraParams: { date: date || undefined },
@@ -47,6 +49,18 @@ export default function PatientHistoriesIndex() {
             { preserveState: true, preserveScroll: true, replace: true },
         );
     }
+
+    function clearFilters(): void {
+        reset();
+        setDate('');
+        router.get(
+            route('patient-histories.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(search || date);
 
     const columns: Column<PatientHistoryRecord>[] = [
         {
@@ -107,20 +121,31 @@ export default function PatientHistoriesIndex() {
                 </Button>
             }
         >
-            <div className="flex flex-col gap-3 sm:flex-row">
-                <SearchInput
-                    value={search}
-                    onChange={setSearch}
-                    placeholder="Buscar por paciente ou profissional..."
-                />
-                <Input
-                    type="date"
-                    value={date}
-                    onChange={(e) => handleDateChange(e.target.value)}
-                    className="sm:w-48"
-                    aria-label="Filtrar por data da coleta"
-                />
-            </div>
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
+                    <SearchInput
+                        id="search"
+                        value={search}
+                        onChange={setSearch}
+                        placeholder="Buscar por paciente ou profissional..."
+                        className="w-full"
+                    />
+                </div>
+                <div className="space-y-1.5">
+                    <Label htmlFor="date">Data da coleta</Label>
+                    <Input
+                        id="date"
+                        type="date"
+                        value={date}
+                        onChange={(e) => handleDateChange(e.target.value)}
+                        className="sm:w-48"
+                    />
+                </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={patientHistories.data}

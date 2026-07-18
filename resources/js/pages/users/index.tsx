@@ -3,6 +3,7 @@ import { Eye, Pencil, Plus, Power } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { ActiveBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
@@ -40,7 +41,7 @@ export default function UsersIndex() {
         PageProps<UsersIndexProps>
     >().props;
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'user-management.index',
         initialValue: filters.search,
         extraParams: { role: filters.role, status: filters.status },
@@ -62,6 +63,17 @@ export default function UsersIndex() {
             { preserveState: true, preserveScroll: true, replace: true },
         );
     }
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('user-management.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(search || filters.role || filters.status);
 
     const columns: Column<User>[] = [
         { header: 'Nome', cell: (row) => row.name },
@@ -143,15 +155,21 @@ export default function UsersIndex() {
                 </Button>
             }
         >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <div className="flex-1">
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
                     <SearchInput
+                        id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Buscar por nome ou email..."
+                        className="w-full"
                     />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="role">Perfil</Label>
                     <Select
                         value={filters.role || ALL_OPTION}
@@ -201,7 +219,7 @@ export default function UsersIndex() {
                         </SelectContent>
                     </Select>
                 </div>
-            </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={users.data}

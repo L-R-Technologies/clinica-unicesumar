@@ -2,6 +2,7 @@ import { router, usePage } from '@inertiajs/react';
 import { FileText } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { StatusBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
@@ -46,7 +47,7 @@ export default function MyExamsIndex() {
         PageProps<MyExamsIndexProps>
     >().props;
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'patient-exams.index',
         initialValue: filters.search,
         extraParams: {
@@ -75,6 +76,23 @@ export default function MyExamsIndex() {
             { preserveState: true, preserveScroll: true, replace: true },
         );
     }
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('patient-exams.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(
+        search ||
+        filters.status ||
+        filters.exam_type_id ||
+        filters.date_from ||
+        filters.date_to
+    );
 
     const columns: Column<Exam>[] = [
         {
@@ -119,15 +137,21 @@ export default function MyExamsIndex() {
 
     return (
         <AppLayout title="Meus Exames">
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-                <div className="flex-1 sm:min-w-60">
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
                     <SearchInput
+                        id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Buscar por tipo de exame..."
+                        className="w-full"
                     />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
                         value={filters.status || ALL_OPTION}
@@ -202,7 +226,7 @@ export default function MyExamsIndex() {
                         }
                     />
                 </div>
-            </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={exams.data}

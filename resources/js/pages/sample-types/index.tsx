@@ -2,10 +2,12 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { Pencil, Plus, Power } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { ActiveBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps, SampleType } from '@/types';
@@ -20,10 +22,19 @@ export default function SampleTypesIndex() {
         PageProps<SampleTypesIndexProps>
     >().props;
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'sample-type.index',
         initialValue: filters.search,
     });
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('sample-type.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
 
     const columns: Column<SampleType>[] = [
         { header: 'Nome', cell: (row) => row.name },
@@ -81,11 +92,18 @@ export default function SampleTypesIndex() {
                 </Button>
             }
         >
-            <SearchInput
-                value={search}
-                onChange={setSearch}
-                placeholder="Buscar por nome ou descrição..."
-            />
+            <FiltersCard onClear={clearFilters} hasActiveFilters={!!search}>
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
+                    <SearchInput
+                        id="search"
+                        value={search}
+                        onChange={setSearch}
+                        placeholder="Buscar por nome ou descrição..."
+                        className="w-full"
+                    />
+                </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={sampleTypes.data}

@@ -2,6 +2,7 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { Download, Eye, Pencil } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
+import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
 import { StatusBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
@@ -52,7 +53,7 @@ export default function CalibrationsIndex() {
         PageProps<CalibrationsIndexProps>
     >().props;
 
-    const { search, setSearch } = useDebouncedSearch({
+    const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'calibrations.index',
         initialValue: filters.search,
         extraParams: {
@@ -75,6 +76,21 @@ export default function CalibrationsIndex() {
             replace: true,
         });
     }
+
+    function clearFilters(): void {
+        reset();
+        router.get(
+            route('calibrations.index'),
+            {},
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
+    }
+
+    const hasActiveFilters = !!(
+        search ||
+        filters.status ||
+        filters.machine_id
+    );
 
     const exportHref = route(
         'calibrations.export',
@@ -144,15 +160,21 @@ export default function CalibrationsIndex() {
                 </Button>
             }
         >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                <div className="flex-1">
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
+                <div className="min-w-56 flex-1 space-y-1.5">
+                    <Label htmlFor="search">Buscar</Label>
                     <SearchInput
+                        id="search"
                         value={search}
                         onChange={setSearch}
                         placeholder="Buscar por nome do equipamento..."
+                        className="w-full"
                     />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
                         value={filters.status || ALL_STATUS}
@@ -177,7 +199,7 @@ export default function CalibrationsIndex() {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                     <Label htmlFor="machine">Máquina</Label>
                     <Select
                         value={filters.machine_id || ALL_MACHINES}
@@ -204,7 +226,7 @@ export default function CalibrationsIndex() {
                         </SelectContent>
                     </Select>
                 </div>
-            </div>
+            </FiltersCard>
             <DataTable
                 columns={columns}
                 rows={calibrations.data}

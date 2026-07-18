@@ -6,10 +6,21 @@ use App\Models\Calibration;
 use App\Models\Machine;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 
 class CalibrationService
 {
+    public function getFilteredCalibrationsQuery(array $filters): Builder
+    {
+        return Calibration::with(['machine', 'user'])
+            ->when(! empty($filters['search']), function ($q) use ($filters) {
+                $q->whereHas('machine', fn ($m) => $m->where('name', 'like', '%'.$filters['search'].'%'));
+            })
+            ->when(! empty($filters['status']), fn ($q) => $q->where('status', $filters['status']))
+            ->when(! empty($filters['machine_id']), fn ($q) => $q->where('machine_id', $filters['machine_id']));
+    }
+
     public function validateAndCreate(array $data)
     {
         $machine = Machine::findOrFail($data['machine_id']);

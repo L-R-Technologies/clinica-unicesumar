@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Sample;
 use App\Service\SampleService;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SampleController extends Controller
 {
@@ -20,17 +23,37 @@ class SampleController extends Controller
         $this->sampleService = $sampleService;
     }
 
-    public function index()
+    public function index(Request $request): Response
     {
-        return view('samples.index-livewire');
+        $user = Auth::user();
+
+        $filters = [
+            'search' => $request->input('search', ''),
+            'status' => $request->input('status', ''),
+            'date' => $request->input('date', ''),
+        ];
+
+        return Inertia::render('samples/index', [
+            'samples' => $this->sampleService->getFilteredSamples([
+                ...$filters,
+                'user_id' => $user->id,
+                'user_role' => $user->role,
+            ]),
+            'filters' => $filters,
+            'statusOptions' => $this->sampleService->getStatusOptions(),
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('samples.create-livewire');
+        return Inertia::render('samples/create', [
+            'patients' => $this->sampleService->getPatients()->values(),
+            'sampleTypes' => $this->sampleService->getSampleTypes(),
+            'statusOptions' => $this->sampleService->getStatusOptions(),
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             $validatedData = $this->sampleService->validateSampleData($request->all());
@@ -45,26 +68,33 @@ class SampleController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao criar amostra: '.$e->getMessage()])
+                ->with('error', 'Erro ao criar amostra: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function show($id)
+    public function show($id): Response
     {
         $sample = Sample::with(['patient.user', 'user', 'sampleType'])->findOrFail($id);
 
-        return view('samples.show', compact('sample'));
+        return Inertia::render('samples/show', [
+            'sample' => $sample,
+        ]);
     }
 
-    public function edit($id)
+    public function edit($id): Response
     {
         $sample = Sample::with(['patient.user', 'user', 'sampleType'])->findOrFail($id);
 
-        return view('samples.edit', compact('sample'));
+        return Inertia::render('samples/edit', [
+            'sample' => $sample,
+            'patients' => $this->sampleService->getPatients()->values(),
+            'sampleTypes' => $this->sampleService->getSampleTypesForEdit($sample->sample_type_id),
+            'statusOptions' => $this->sampleService->getStatusOptions(),
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         try {
             $sample = Sample::findOrFail($id);
@@ -81,12 +111,12 @@ class SampleController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar amostra: '.$e->getMessage()])
+                ->with('error', 'Erro ao atualizar amostra: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         try {
             $sample = Sample::findOrFail($id);
@@ -96,8 +126,7 @@ class SampleController extends Controller
                 ->route('samples.index')
                 ->with('success', 'Amostra removida com sucesso!');
         } catch (Exception $e) {
-            return back()
-                ->withErrors(['error' => 'Erro ao remover amostra: '.$e->getMessage()]);
+            return back()->with('error', $e->getMessage());
         }
     }
 }

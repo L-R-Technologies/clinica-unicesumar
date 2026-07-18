@@ -1,23 +1,17 @@
 <?php
 
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\CalibrationController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MachineController;
 use App\Http\Controllers\PatientExamController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\SampleController;
 use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserManagementController;
-use App\Livewire\Calibrations\CalibrationIndex;
-use App\Livewire\Calibrations\CreateCalibration;
-use App\Livewire\Calibrations\EditCalibration;
-use App\Livewire\Calibrations\ShowCalibration;
-use App\Livewire\Machines\CreateMachine;
-use App\Livewire\Machines\EditMachine;
-use App\Livewire\Machines\MachineIndex;
-use App\Livewire\Machines\ShowMachine;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
@@ -32,7 +26,6 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/user/management', [UserManagementController::class, 'index'])->name('user-management.index');
         Route::get('/user/management/create', [UserManagementController::class, 'create'])->name('user-management.create');
         Route::post('/user/management', [UserManagementController::class, 'store'])->name('user-management.store');
-        Route::get('/user/management/generate-password', [UserManagementController::class, 'generatePassword'])->name('user-management.generate-password');
         Route::get('/user/management/{id}', [UserManagementController::class, 'show'])->name('user-management.show');
         Route::get('/user/management/{id}/edit', [UserManagementController::class, 'edit'])->name('user-management.edit');
         Route::put('/user/management/{id}', [UserManagementController::class, 'update'])->name('user-management.update');
@@ -46,6 +39,7 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::get('/exam-type/{examType}', [ExamTypeController::class, 'show'])->name('exam-type.show');
         Route::get('/exam-type/{examType}/edit', [ExamTypeController::class, 'edit'])->name('exam-type.edit');
         Route::put('/exam-type/{examType}', [ExamTypeController::class, 'update'])->name('exam-type.update');
+        Route::patch('/exam-type/{examType}/toggle-status', [ExamTypeController::class, 'toggleStatus'])->name('exam-type.toggle-status');
         Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
 
         // Tipos de Amostra
@@ -59,23 +53,34 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::delete('/sample-type/{sampleType}', [SampleTypeController::class, 'destroy'])->name('sample-type.destroy');
 
         // Gerenciamento de Máquinas
-        Route::get('/machines', MachineIndex::class)->name('machines.index');
-        Route::get('/machines/create', CreateMachine::class)->name('machines.create');
-        Route::get('/machines/{machine}', ShowMachine::class)->name('machines.show');
-        Route::get('/machines/{machine}/edit', EditMachine::class)->name('machines.edit');
+        Route::get('/machines', [MachineController::class, 'index'])->name('machines.index');
+        Route::get('/machines/create', [MachineController::class, 'create'])->name('machines.create');
+        Route::post('/machines', [MachineController::class, 'store'])->name('machines.store');
+        Route::get('/machines/{machine}/pdf', [MachineController::class, 'exportPdf'])->name('machines.pdf');
+        Route::get('/machines/{machine}', [MachineController::class, 'show'])->name('machines.show');
+        Route::get('/machines/{machine}/edit', [MachineController::class, 'edit'])->name('machines.edit');
+        Route::put('/machines/{machine}', [MachineController::class, 'update'])->name('machines.update');
+        Route::delete('/machines/{machine}', [MachineController::class, 'destroy'])->name('machines.destroy');
 
         // Gerenciamento de Calibrações
-        Route::get('/calibrations', CalibrationIndex::class)->name('calibrations.index');
-        Route::get('/calibrations/create/{machine}', CreateCalibration::class)->name('calibrations.create');
-        Route::get('/calibrations/{calibration}', ShowCalibration::class)->name('calibrations.show');
-        Route::get('/calibrations/{calibration}/edit', EditCalibration::class)->name('calibrations.edit');
+        // A rota "export" precisa vir ANTES do wildcard {calibration}, senão o wildcard captura "export".
+        Route::get('/calibrations', [CalibrationController::class, 'index'])->name('calibrations.index');
+        Route::get('/calibrations/export', [CalibrationController::class, 'export'])->name('calibrations.export');
+        Route::get('/calibrations/create/{machine}', [CalibrationController::class, 'create'])->name('calibrations.create');
+        Route::post('/calibrations', [CalibrationController::class, 'store'])->name('calibrations.store');
+        Route::get('/calibrations/{calibration}', [CalibrationController::class, 'show'])->name('calibrations.show');
+        Route::get('/calibrations/{calibration}/edit', [CalibrationController::class, 'edit'])->name('calibrations.edit');
+        Route::put('/calibrations/{calibration}', [CalibrationController::class, 'update'])->name('calibrations.update');
+        Route::delete('/calibrations/{calibration}', [CalibrationController::class, 'destroy'])->name('calibrations.destroy');
 
         Route::resource('activity-logs', ActivityLogController::class);
     });
 
     // Perfil do Usuário
-    Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
+    Route::post('/user/anonymize', [UserController::class, 'anonymize'])->name('user.anonymize');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
+    Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/user/{user}/address', [UserController::class, 'updateAddress'])->name('user.address.update');
 
     // GRUPO: Professores e Alunos (role: teacher, student)
     Route::middleware(['role:teacher,student'])->group(function () {

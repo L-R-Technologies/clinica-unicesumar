@@ -6,9 +6,12 @@ use App\Models\ExamType;
 use App\Models\ExamTypeField;
 use App\Service\ExamTypeService;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ExamTypeController extends Controller
 {
@@ -21,35 +24,31 @@ class ExamTypeController extends Controller
         $this->examTypeService = $examTypeService;
     }
 
-    public function index()
+    public function index(Request $request): Response
     {
-        return view('exam-type.index-livewire');
+        return Inertia::render('exam-types/index', [
+            'examTypes' => $this->examTypeService->getFilteredExamTypes([
+                'search' => $request->input('search', ''),
+            ]),
+            'filters' => [
+                'search' => $request->input('search', ''),
+            ],
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('exam-type.create-livewire');
+        return Inertia::render('exam-types/create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             $validatedData = $this->examTypeService->validateExamTypeData($request->all());
-            $examType = $this->examTypeService->createExamType($validatedData, Auth::id());
+            $fields = $this->validateFields($request);
 
-            // --- Criação dos campos personalizados ---
-            if ($request->has('fields') && is_array($request->fields)) {
-                foreach ($request->fields as $fieldData) {
-                    if (! empty($fieldData['name']) && ! empty($fieldData['label'])) {
-                        $examType->fields()->create([
-                            'name' => $fieldData['name'],
-                            'label' => $fieldData['label'],
-                            'field_type' => $fieldData['field_type'] ?? 'string',
-                            'unit' => $fieldData['unit'] ?? null,
-                        ]);
-                    }
-                }
-            }
+            $examType = $this->examTypeService->createExamType($validatedData);
+            $this->syncFields($examType, $fields);
 
             return redirect()
                 ->route('exam-type.index')
@@ -60,68 +59,33 @@ class ExamTypeController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao criar tipo de exame: '.$e->getMessage()])
+                ->with('error', 'Erro ao criar tipo de exame: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function show($id)
+    public function show(ExamType $examType): Response
     {
-        $examType = ExamType::with('fields')->findOrFail($id);
-
-        return view('exam-type.show', compact('examType'));
+        return Inertia::render('exam-types/show', [
+            'examType' => $examType->load('fields'),
+        ]);
     }
 
-    public function edit($id)
+    public function edit(ExamType $examType): Response
     {
-        $examType = ExamType::with('fields')->findOrFail($id);
-
-        return view('exam-type.edit', compact('examType'));
+        return Inertia::render('exam-types/edit', [
+            'examType' => $examType->load('fields'),
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, ExamType $examType): RedirectResponse
     {
         try {
-            $examType = ExamType::findOrFail($id);
-
             $validatedData = $this->examTypeService->validateExamTypeData($request->all(), $examType->id);
+            $fields = $this->validateFields($request);
+
             $this->examTypeService->updateExamType($examType, $validatedData);
-
-            // --- Atualização dos campos personalizados ---
-            if ($request->has('fields') && is_array($request->fields)) {
-                $existingIds = $examType->fields()->pluck('id')->toArray();
-                $incomingIds = array_filter(array_column($request->fields, 'id'));
-
-                // Exclui campos removidos
-                $toDelete = array_diff($existingIds, $incomingIds);
-                if (! empty($toDelete)) {
-                    ExamTypeField::whereIn('id', $toDelete)->delete();
-                }
-
-                // Atualiza ou cria novos campos
-                foreach ($request->fields as $fieldData) {
-                    if (isset($fieldData['id'])) {
-                        $field = ExamTypeField::find($fieldData['id']);
-                        if ($field) {
-                            $field->update([
-                                'name' => $fieldData['name'],
-                                'label' => $fieldData['label'],
-                                'field_type' => $fieldData['field_type'] ?? 'string',
-                                'unit' => $fieldData['unit'] ?? null,
-                            ]);
-                        }
-                    } else {
-                        if (! empty($fieldData['name']) && ! empty($fieldData['label'])) {
-                            $examType->fields()->create([
-                                'name' => $fieldData['name'],
-                                'label' => $fieldData['label'],
-                                'field_type' => $fieldData['field_type'] ?? 'string',
-                                'unit' => $fieldData['unit'] ?? null,
-                            ]);
-                        }
-                    }
-                }
-            }
+            $this->syncFields($examType, $fields);
 
             return redirect()
                 ->route('exam-type.index')
@@ -132,23 +96,88 @@ class ExamTypeController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar tipo de exame: '.$e->getMessage()])
+                ->with('error', 'Erro ao atualizar tipo de exame: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function destroy($id)
+    public function toggleStatus(ExamType $examType): RedirectResponse
     {
         try {
-            $examType = ExamType::findOrFail($id);
+            $this->examTypeService->toggleStatus($examType);
+            $status = $examType->fresh()->is_active ? 'ativado' : 'desativado';
+
+            return back()->with('success', "Tipo de exame {$status} com sucesso!");
+        } catch (Exception $e) {
+            return back()->with('error', 'Erro ao alterar status: '.$e->getMessage());
+        }
+    }
+
+    public function destroy(ExamType $examType): RedirectResponse
+    {
+        try {
             $this->examTypeService->deleteExamType($examType);
 
             return redirect()
                 ->route('exam-type.index')
-                ->with('success', 'Tipo de exame removido com sucesso!');
+                ->with('success', 'Tipo de exame desativado com sucesso!');
         } catch (Exception $e) {
-            return back()
-                ->withErrors(['error' => 'Erro ao remover tipo de exame: '.$e->getMessage()]);
+            return back()->with('error', 'Erro ao remover tipo de exame: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Valida os campos personalizados recebidos e devolve o array já validado.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function validateFields(Request $request): array
+    {
+        $validator = Validator::make($request->all(), [
+            'fields' => 'nullable|array',
+            'fields.*.id' => 'nullable|integer',
+            'fields.*.name' => 'required|string|max:255',
+            'fields.*.label' => 'required|string|max:255',
+            'fields.*.field_type' => 'required|string|in:int,float,string,boolean',
+            'fields.*.unit' => 'nullable|string|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return $request->input('fields', []);
+    }
+
+    /**
+     * Sincroniza os campos personalizados do tipo de exame: cria os novos,
+     * atualiza os existentes e remove os que não vieram na requisição.
+     *
+     * @param  array<int, array<string, mixed>>  $fields
+     */
+    private function syncFields(ExamType $examType, array $fields): void
+    {
+        $existingIds = $examType->fields()->pluck('id')->toArray();
+        $incomingIds = array_filter(array_column($fields, 'id'));
+
+        $idsToDelete = array_diff($existingIds, $incomingIds);
+        if (! empty($idsToDelete)) {
+            ExamTypeField::whereIn('id', $idsToDelete)->delete();
+        }
+
+        foreach ($fields as $fieldData) {
+            $attributes = [
+                'name' => $fieldData['name'],
+                'label' => $fieldData['label'],
+                'field_type' => $fieldData['field_type'],
+                'unit' => $fieldData['unit'] ?? null,
+            ];
+
+            if (! empty($fieldData['id'])) {
+                $examType->fields()->whereKey($fieldData['id'])->update($attributes);
+            } else {
+                $examType->fields()->create($attributes);
+            }
         }
     }
 }

@@ -8,9 +8,12 @@ use App\Notifications\ExamApprovedNotification;
 use App\Notifications\ExamRejectedNotification;
 use App\Service\ExamService;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ExamController extends Controller
 {
@@ -23,17 +26,40 @@ class ExamController extends Controller
         $this->examService = $examService;
     }
 
-    public function index()
+    public function index(Request $request): Response
     {
-        return view('exam.index-livewire');
+        $filters = [
+            'search' => $request->input('search', ''),
+            'status' => $request->input('status', ''),
+            'exam_type_id' => $request->input('exam_type_id', ''),
+            'date_from' => $request->input('date_from', ''),
+            'date_to' => $request->input('date_to', ''),
+        ];
+
+        return Inertia::render('exams/index', [
+            'exams' => $this->examService->getFilteredExams(array_merge($filters, [
+                'user_id' => Auth::id(),
+                'user_role' => Auth::user()->role,
+            ])),
+            'filters' => $filters,
+            'statusOptions' => $this->examService->getStatusOptions(),
+            'examTypes' => $this->examService->getExamTypes(),
+        ]);
     }
 
-    public function create()
+    public function create(Request $request): Response
     {
-        return view('exam.create-livewire');
+        $patientId = $request->input('patient_id');
+
+        return Inertia::render('exams/create', [
+            'patients' => $this->examService->getPatients(),
+            'examTypes' => $this->examService->getExamTypes(),
+            'histories' => $patientId ? $this->examService->getPatientHistories($patientId) : [],
+            'samples' => $patientId ? $this->examService->getSamples($patientId) : [],
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             $validatedData = $this->examService->validateExamData($request->all());
@@ -48,26 +74,50 @@ class ExamController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao criar exame: '.$e->getMessage()])
+                ->with('error', 'Erro ao criar exame: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function show($id)
+    public function show($id): Response
     {
-        $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample', 'examType.fields'])->findOrFail($id);
+        $exam = Exam::with([
+            'user',
+            'patient.user',
+            'patientHistory',
+            'sample.sampleType',
+            'examType.fields',
+            'latestRejection.user',
+        ])->findOrFail($id);
 
-        return view('exam.show', compact('exam'));
+        return Inertia::render('exams/show', [
+            'exam' => $exam,
+        ]);
     }
 
-    public function edit($id)
+    public function edit(Request $request, $id): Response
     {
-        $exam = Exam::with(['user', 'patient', 'patientHistory', 'sample', 'examType.fields'])->findOrFail($id);
+        $exam = Exam::with([
+            'user',
+            'patient.user',
+            'patientHistory',
+            'sample.sampleType',
+            'examType.fields',
+        ])->findOrFail($id);
 
-        return view('exam.edit', compact('exam'));
+        // Ao trocar o paciente (partial reload), recarrega histórico/amostras daquele paciente.
+        $patientId = $request->input('patient_id', $exam->patient_id);
+
+        return Inertia::render('exams/edit', [
+            'exam' => $exam,
+            'patients' => $this->examService->getPatients(),
+            'examTypes' => $this->examService->getExamTypesForEdit($exam->exam_type_id),
+            'histories' => $this->examService->getPatientHistories($patientId),
+            'samples' => $this->examService->getSamples($patientId),
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         try {
             $exam = Exam::findOrFail($id);
@@ -84,12 +134,12 @@ class ExamController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar exame: '.$e->getMessage()])
+                ->with('error', 'Erro ao atualizar exame: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         try {
             $exam = Exam::findOrFail($id);
@@ -99,17 +149,16 @@ class ExamController extends Controller
                 ->route('exam.index')
                 ->with('success', 'Exame removido com sucesso!');
         } catch (Exception $e) {
-            return back()
-                ->withErrors(['error' => 'Erro ao remover exame: '.$e->getMessage()]);
+            return back()->with('error', 'Erro ao remover exame: '.$e->getMessage());
         }
     }
 
-    public function approve($id)
+    public function approve($id): RedirectResponse
     {
         try {
             // Apenas professores podem aprovar exames
             if (Auth::user()->role !== 'teacher') {
-                return back()->withErrors(['error' => 'Apenas professores podem aprovar exames.']);
+                return back()->with('error', 'Apenas professores podem aprovar exames.');
             }
 
             $exam = Exam::with('user')->findOrFail($id);
@@ -122,16 +171,16 @@ class ExamController extends Controller
 
             return back()->with('success', 'Exame aprovado com sucesso! Email enviado ao aluno.');
         } catch (Exception $e) {
-            return back()->withErrors(['error' => 'Erro ao aprovar exame: '.$e->getMessage()]);
+            return back()->with('error', 'Erro ao aprovar exame: '.$e->getMessage());
         }
     }
 
-    public function reject(Request $request, $id)
+    public function reject(Request $request, $id): RedirectResponse
     {
         try {
             // Apenas professores podem reprovar exames
             if (Auth::user()->role !== 'teacher') {
-                return back()->withErrors(['error' => 'Apenas professores podem reprovar exames.']);
+                return back()->with('error', 'Apenas professores podem reprovar exames.');
             }
 
             // Validar a justificativa
@@ -159,10 +208,10 @@ class ExamController extends Controller
             $exam->user->notify(new ExamRejectedNotification($exam, $validated['justification']));
 
             return back()->with('success', 'Exame rejeitado com sucesso! Email enviado ao aluno com a justificativa.');
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors());
         } catch (Exception $e) {
-            return back()->withErrors(['error' => 'Erro ao reprovar exame: '.$e->getMessage()]);
+            return back()->with('error', 'Erro ao reprovar exame: '.$e->getMessage());
         }
     }
 }

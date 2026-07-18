@@ -5,11 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Service\UserManagementService;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserManagementController extends Controller
 {
+    private const USERS_PER_PAGE = 10;
+
+    private const ROLE_OPTIONS = [
+        'teacher' => 'Professor',
+        'student' => 'Estudante',
+    ];
+
+    private const STATUS_OPTIONS = [
+        'active' => 'Ativo',
+        'inactive' => 'Inativo',
+    ];
+
     protected $userManagementService;
 
     public function __construct(UserManagementService $userManagementService)
@@ -19,17 +35,39 @@ class UserManagementController extends Controller
         $this->userManagementService = $userManagementService;
     }
 
-    public function index()
+    public function index(Request $request): Response
     {
-        return view('user-management.index-livewire');
+        $filters = [
+            'search' => $request->input('search', ''),
+            'role' => $request->input('role', ''),
+            'status' => $request->input('status', ''),
+        ];
+
+        $users = $this->userManagementService->getFilteredUsers($filters);
+
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $paginator = new LengthAwarePaginator(
+            $users->forPage($page, self::USERS_PER_PAGE)->values(),
+            $users->count(),
+            self::USERS_PER_PAGE,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return Inertia::render('users/index', [
+            'users' => $paginator,
+            'filters' => $filters,
+            'roleOptions' => self::ROLE_OPTIONS,
+            'statusOptions' => self::STATUS_OPTIONS,
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('user-management.create-livewire');
+        return Inertia::render('users/create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
             $userType = $request->input('user_type');
@@ -65,7 +103,7 @@ class UserManagementController extends Controller
 
                 $this->userManagementService->createStudent($userData, $studentData);
             } else {
-                return back()->withErrors(['user_type' => 'Tipo de usuário inválido.']);
+                return back()->withErrors(['user_type' => 'Tipo de usuário inválido.'])->withInput();
             }
 
             return redirect()
@@ -77,26 +115,30 @@ class UserManagementController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao criar usuário: '.$e->getMessage()])
+                ->with('error', 'Erro ao criar usuário: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function show($id)
+    public function show($id): Response
     {
         $user = User::with(['teacher', 'student'])->findOrFail($id);
 
-        return view('user-management.show', compact('user'));
+        return Inertia::render('users/show', [
+            'user' => $user,
+        ]);
     }
 
-    public function edit($id)
+    public function edit($id): Response
     {
         $user = User::with(['teacher', 'student'])->findOrFail($id);
 
-        return view('user-management.edit', compact('user'));
+        return Inertia::render('users/edit', [
+            'user' => $user,
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         try {
             $user = User::findOrFail($id);
@@ -150,12 +192,12 @@ class UserManagementController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar usuário: '.$e->getMessage()])
+                ->with('error', 'Erro ao atualizar usuário: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         try {
             $user = User::findOrFail($id);
@@ -166,8 +208,7 @@ class UserManagementController extends Controller
                 ->route('user-management.index')
                 ->with('success', 'Usuário removido com sucesso!');
         } catch (Exception $e) {
-            return back()
-                ->withErrors(['error' => 'Erro ao remover usuário: '.$e->getMessage()]);
+            return back()->with('error', 'Erro ao remover usuário: '.$e->getMessage());
         }
     }
 
@@ -178,7 +219,7 @@ class UserManagementController extends Controller
         return response()->json(['password' => $password]);
     }
 
-    public function toggleStatus($id)
+    public function toggleStatus($id): RedirectResponse
     {
         try {
             $user = User::findOrFail($id);
@@ -187,16 +228,9 @@ class UserManagementController extends Controller
 
             $message = $updatedUser->active ? 'Usuário ativado com sucesso!' : 'Usuário desativado com sucesso!';
 
-            return response()->json([
-                'success' => true,
-                'message' => $message,
-                'active' => $updatedUser->active,
-            ]);
+            return back()->with('success', $message);
         } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao alterar status do usuário: '.$e->getMessage(),
-            ], 500);
+            return back()->with('error', 'Erro ao alterar status do usuário: '.$e->getMessage());
         }
     }
 }

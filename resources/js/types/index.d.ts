@@ -123,6 +123,7 @@ export interface Exam {
     status: ExamStatus;
     observation: string | null;
     patient?: Patient;
+    patient_history?: PatientHistory | null;
     exam_type?: ExamType;
     sample?: Sample;
     user?: User;

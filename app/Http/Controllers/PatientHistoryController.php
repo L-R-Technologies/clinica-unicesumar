@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\PatientHistory;
 use App\Service\PatientHistoryService;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PatientHistoryController extends Controller
 {
@@ -19,20 +23,32 @@ class PatientHistoryController extends Controller
         $this->patientHistoryService = $patientHistoryService;
     }
 
-    public function index()
+    public function index(Request $request): Response
     {
-        return view('patient-history.index-livewire');
+        $filters = [
+            'search' => $request->input('search', ''),
+            'date' => $request->input('date', ''),
+        ];
+
+        return Inertia::render('patient-histories/index', [
+            'patientHistories' => $this->patientHistoryService->getFilteredHistories(Auth::user(), $filters),
+            'filters' => $filters,
+        ]);
     }
 
-    public function create()
+    public function create(): Response
     {
-        return view('patient-history.create-livewire');
+        return Inertia::render('patient-histories/create', [
+            'patients' => $this->patientHistoryService->getPatients(),
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         try {
-            $validatedData = $this->patientHistoryService->validateData($request->all());
+            $data = array_merge($request->all(), ['user_id' => Auth::id()]);
+
+            $validatedData = $this->patientHistoryService->validateData($data);
             $this->patientHistoryService->create($validatedData);
 
             return redirect()
@@ -44,33 +60,42 @@ class PatientHistoryController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao criar anamnese: '.$e->getMessage()])
+                ->with('error', 'Erro ao criar anamnese: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function show($id)
+    public function show($id): Response
     {
-        $anamnese = PatientHistory::with(['patient', 'user'])->findOrFail($id);
+        $patientHistory = PatientHistory::with(['patient.user', 'user'])->findOrFail($id);
 
-        return view('patient-history.show', compact('anamnese'));
+        return Inertia::render('patient-histories/show', [
+            'patientHistory' => $patientHistory,
+        ]);
     }
 
-    public function edit($id)
+    public function edit($id): Response
     {
-        $anamnese = PatientHistory::with(['patient.user', 'user'])->findOrFail($id);
+        $patientHistory = PatientHistory::with(['patient.user', 'user'])->findOrFail($id);
 
-        return view('patient-history.edit', compact('anamnese'));
+        return Inertia::render('patient-histories/edit', [
+            'patientHistory' => $patientHistory,
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): RedirectResponse
     {
         try {
-            $anamnesis = PatientHistory::findOrFail($id);
+            $patientHistory = PatientHistory::findOrFail($id);
 
-            $validatedData = $this->patientHistoryService->validateData($request->all());
+            // Paciente e responsável não são editáveis: preserva os valores originais.
+            $data = array_merge($request->all(), [
+                'patient_id' => $patientHistory->patient_id,
+                'user_id' => $patientHistory->user_id,
+            ]);
 
-            $this->patientHistoryService->update($anamnesis, $validatedData);
+            $validatedData = $this->patientHistoryService->validateData($data);
+            $this->patientHistoryService->update($patientHistory, $validatedData);
 
             return redirect()
                 ->route('patient-histories.index')
@@ -81,24 +106,23 @@ class PatientHistoryController extends Controller
                 ->withInput();
         } catch (Exception $e) {
             return back()
-                ->withErrors(['error' => 'Erro ao atualizar anamnese: '.$e->getMessage()])
+                ->with('error', 'Erro ao atualizar anamnese: '.$e->getMessage())
                 ->withInput();
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         try {
-            $anamnesis = PatientHistory::findOrFail($id);
+            $patientHistory = PatientHistory::findOrFail($id);
 
-            $this->patientHistoryService->delete($anamnesis);
+            $this->patientHistoryService->delete($patientHistory);
 
             return redirect()
                 ->route('patient-histories.index')
                 ->with('success', 'Anamnese removida com sucesso!');
         } catch (Exception $e) {
-            return back()
-                ->withErrors(['error' => $e->getMessage()]);
+            return back()->with('error', $e->getMessage());
         }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use Inertia\Response;
+
 class HomeController extends Controller
 {
     public function welcome()
@@ -9,9 +12,9 @@ class HomeController extends Controller
         return view('welcome');
     }
 
-    public function privacyPolicy()
+    public function privacyPolicy(): Response
     {
-        return view('privacy-policy');
+        return Inertia::render('privacy-policy');
     }
 
     public function home()

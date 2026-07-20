@@ -131,6 +131,13 @@ class ActivityLogTranslator
             'exam_id' => 'Exame',
             'justification' => 'Justificativa',
 
+            // Feedback de Exame
+            'clarity' => 'Clareza das Explicações',
+            'cordiality' => 'Cordialidade da Equipe',
+            'waiting_time' => 'Tempo de Espera',
+            'result_speed' => 'Agilidade na Entrega do Resultado',
+            'confidence' => 'Confiança Transmitida',
+
             // Máquinas
             'model' => 'Modelo',
             'serial_number' => 'Número de Série',

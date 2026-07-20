@@ -87,7 +87,7 @@ class ExamService
         }
     }
 
-    protected function handleStatusChangeEmails(Exam $exam, $status)
+    public function handleStatusChangeEmails(Exam $exam, $status)
     {
         $exam->load(['patient.user', 'user.student.supervisor', 'examType']);
 

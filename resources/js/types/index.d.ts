@@ -111,6 +111,18 @@ export interface ExamRejection {
     created_at: string;
 }
 
+export interface ExamFeedback {
+    id: number;
+    exam_id: number;
+    clarity: number;
+    cordiality: number;
+    waiting_time: number;
+    result_speed: number;
+    confidence: number;
+    observation: string | null;
+    created_at: string;
+}
+
 export interface Exam {
     id: number;
     user_id: number;
@@ -128,6 +140,7 @@ export interface Exam {
     sample?: Sample;
     user?: User;
     latest_rejection?: ExamRejection | null;
+    feedback?: ExamFeedback | null;
 }
 
 export interface PatientHistory {

@@ -1,5 +1,5 @@
-import { router, usePage } from '@inertiajs/react';
-import { FileText } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { Eye, FileText } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
 import { FiltersCard } from '@/components/filters-card';
@@ -117,7 +117,17 @@ export default function MyExamsIndex() {
             header: 'Ações',
             className: 'w-1 text-right',
             cell: (row) => (
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-2">
+                    <Link
+                        href={route('patient-exams.show', row.id)}
+                        className={cn(
+                            buttonVariants({ variant: 'outline', size: 'sm' }),
+                        )}
+                        aria-label="Ver detalhes do exame"
+                    >
+                        <Eye className="size-4" />
+                        Ver
+                    </Link>
                     <a
                         href={route('patient-exams.pdf', row.id)}
                         target="_blank"

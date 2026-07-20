@@ -117,5 +117,7 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::middleware(['role:patient'])->group(function () {
         Route::get('/my-exams', [PatientExamController::class, 'index'])->name('patient-exams.index');
         Route::get('/my-exams/{id}/pdf', [PatientExamController::class, 'exportPdf'])->name('patient-exams.pdf');
+        Route::post('/my-exams/{id}/feedback', [PatientExamController::class, 'storeFeedback'])->name('patient-exams.feedback.store');
+        Route::get('/my-exams/{id}', [PatientExamController::class, 'show'])->name('patient-exams.show');
     });
 });

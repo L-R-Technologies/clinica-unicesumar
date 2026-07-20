@@ -169,7 +169,10 @@ class ExamController extends Controller
             // Enviar notificação ao aluno que cadastrou o exame
             $exam->user->notify(new ExamApprovedNotification($exam));
 
-            return back()->with('success', 'Exame aprovado com sucesso! Email enviado ao aluno.');
+            // Envia o exame (email de resultados disponíveis) ao paciente
+            $this->examService->handleStatusChangeEmails($exam, 'approved');
+
+            return back()->with('success', 'Exame aprovado com sucesso! Email enviado ao aluno e ao paciente.');
         } catch (Exception $e) {
             return back()->with('error', 'Erro ao aprovar exame: '.$e->getMessage());
         }

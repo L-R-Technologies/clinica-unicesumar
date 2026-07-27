@@ -49,7 +49,7 @@ export default function GuestLayout({ title, children }: GuestLayoutProps) {
                 </nav>
             </header>
             <main className="flex-1">{children}</main>
-            <Toaster richColors position="top-right" />
+            <Toaster richColors position="bottom-right" />
             <FlashToaster />
         </div>
     );

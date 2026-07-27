@@ -99,6 +99,7 @@ class UserManagementController extends Controller
                 $studentData = [
                     'ra' => $validatedData['ra'],
                     'course' => $validatedData['course'],
+                    'semester' => $validatedData['semester'],
                 ];
 
                 $this->userManagementService->createStudent($userData, $studentData);
@@ -176,6 +177,7 @@ class UserManagementController extends Controller
                 $specificData = [
                     'ra' => $validatedData['ra'],
                     'course' => $validatedData['course'],
+                    'semester' => $validatedData['semester'],
                 ];
             } else {
                 return back()->withErrors(['error' => 'Tipo de usuário inválido para edição.']);

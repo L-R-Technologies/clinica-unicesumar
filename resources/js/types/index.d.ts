@@ -109,6 +109,7 @@ export interface ExamRejection {
     user_id: number;
     justification: string;
     created_at: string;
+    user?: User;
 }
 
 export interface ExamFeedback {
@@ -139,7 +140,7 @@ export interface Exam {
     exam_type?: ExamType;
     sample?: Sample;
     user?: User;
-    latest_rejection?: ExamRejection | null;
+    rejections?: ExamRejection[];
     feedback?: ExamFeedback | null;
 }
 
@@ -149,10 +150,31 @@ export interface PatientHistory {
     patient_id: number;
     fasting: boolean;
     fasting_hours: number | null;
+    alcohol_last_24h: boolean;
+    on_medication: boolean;
+    medications: string | null;
+    on_supplements: boolean;
+    supplements: string | null;
+    chronic_disease: boolean;
+    chronic_disease_details: string | null;
+    infectious_disease_history: boolean;
+    infectious_disease_details: string | null;
+    recent_surgery: boolean;
+    surgery_details: string | null;
+    allergies: boolean;
+    allergy_details: string | null;
+    pregnant_or_lactating: boolean;
+    menstrual_period: string;
+    smokes: boolean;
+    cigarettes_per_day: number | null;
+    physically_active: boolean;
+    recent_fever_or_flu: boolean;
+    observation: string | null;
     recorded_at: string | null;
+    created_at: string | null;
+    updated_at: string | null;
     patient?: Patient;
     user?: User;
-    [key: string]: unknown;
 }
 
 export type MachineStatus = 'active' | 'inactive' | 'maintenance';

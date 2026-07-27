@@ -144,7 +144,7 @@ class CalibrationController extends Controller
                     $row->id,
                     $row->machine->getAttribute('name'),
                     $row->machine->getAttribute('serial_number'),
-                    $date->format('d/m/Y'),
+                    $date->format('d/m/Y H:i'),
                     $row->value,
                     $row->status === 'approved' ? 'Aprovada' : 'Rejeitada',
                     $row->user->getAttribute('name'),

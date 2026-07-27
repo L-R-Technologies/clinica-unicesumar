@@ -117,7 +117,7 @@ class PatientHistoryService
             $query->whereDate('recorded_at', $filters['date']);
         }
 
-        return $query->latest('recorded_at')->paginate(10);
+        return $query->latest('recorded_at')->paginate(10)->withQueryString();
     }
 
     /**

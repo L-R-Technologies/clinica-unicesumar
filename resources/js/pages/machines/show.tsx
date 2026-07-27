@@ -16,7 +16,8 @@ interface MachineShowProps extends Record<string, unknown> {
 
 function formatDate(isoDate: string): string {
     const [year, month, day] = isoDate.slice(0, 10).split('-');
-    return `${day}/${month}/${year}`;
+    const time = isoDate.slice(11, 16);
+    return `${day}/${month}/${year} ${time}`;
 }
 
 function formatValue(value: number): string {

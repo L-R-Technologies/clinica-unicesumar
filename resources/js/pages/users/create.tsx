@@ -45,6 +45,7 @@ export default function UserCreate() {
         crbm: '',
         ra: '',
         course: '',
+        semester: '',
     });
 
     function changeUserType(value: UserType): void {
@@ -55,6 +56,7 @@ export default function UserCreate() {
             crbm: '',
             ra: '',
             course: '',
+            semester: '',
         }));
     }
 
@@ -256,6 +258,24 @@ export default function UserCreate() {
                                         value={data.course}
                                         onChange={(e) =>
                                             setData('course', e.target.value)
+                                        }
+                                    />
+                                </FormField>
+
+                                <FormField
+                                    id="semester"
+                                    label="Semestre"
+                                    error={errors.semester}
+                                    required
+                                >
+                                    <Input
+                                        id="semester"
+                                        type="number"
+                                        min={1}
+                                        max={20}
+                                        value={data.semester}
+                                        onChange={(e) =>
+                                            setData('semester', e.target.value)
                                         }
                                     />
                                 </FormField>

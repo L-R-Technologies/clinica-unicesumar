@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
+import { PatientHistorySummary } from '@/components/patient-history-summary';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -157,6 +158,17 @@ export default function ExamsShow() {
                 </Card>
             </div>
 
+            {exam.patient_history && (
+                <div className="space-y-4">
+                    <h2 className="text-lg font-semibold">
+                        Anamnese do Paciente
+                    </h2>
+                    <PatientHistorySummary
+                        patientHistory={exam.patient_history}
+                    />
+                </div>
+            )}
+
             {exam.observation && (
                 <Card>
                     <CardHeader>
@@ -212,21 +224,31 @@ export default function ExamsShow() {
                 </CardContent>
             </Card>
 
-            {exam.status === 'rejected' && exam.latest_rejection && (
+            {exam.rejections && exam.rejections.length > 0 && (
                 <Card className="border-destructive/50">
                     <CardHeader>
                         <CardTitle className="text-destructive">
-                            Justificativa da Rejeição
+                            Histórico de Rejeições ({exam.rejections.length})
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-1">
-                        <p className="whitespace-pre-line">
-                            {exam.latest_rejection.justification}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            Rejeitado em{' '}
-                            {formatDate(exam.latest_rejection.created_at)}
-                        </p>
+                    <CardContent className="space-y-4">
+                        {exam.rejections.map((rejection, index) => (
+                            <div
+                                key={rejection.id}
+                                className={
+                                    index > 0 ? 'border-t pt-4' : undefined
+                                }
+                            >
+                                <p className="whitespace-pre-line">
+                                    {rejection.justification}
+                                </p>
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    Rejeitado por{' '}
+                                    {rejection.user?.name ?? '—'} em{' '}
+                                    {formatDate(rejection.created_at)}
+                                </p>
+                            </div>
+                        ))}
                     </CardContent>
                 </Card>
             )}

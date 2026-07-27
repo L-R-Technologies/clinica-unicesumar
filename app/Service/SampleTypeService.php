@@ -63,7 +63,7 @@ class SampleTypeService
             });
         }
 
-        return $query->orderBy('name')->paginate(10);
+        return $query->orderBy('name')->paginate(10)->withQueryString();
     }
 
     public function getActiveSampleTypes()

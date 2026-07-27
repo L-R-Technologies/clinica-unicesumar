@@ -17,17 +17,34 @@ interface AppLayoutProps {
     actions?: ReactNode;
 }
 
+/**
+ * Cada página Inertia remonta o AppLayout (não há layout persistente aqui),
+ * então o estado da sidebar não sobrevive à navegação por si só. O componente
+ * shadcn já grava o cookie `sidebar_state` ao expandir/colapsar, mas nunca o lê
+ * de volta (ele espera um Server Component lendo o cookie, o que não existe
+ * numa SPA Inertia). Lendo o cookie aqui e usando como `defaultOpen`, o estado
+ * visual é restaurado a cada novo mount.
+ */
+function getStoredSidebarOpen(): boolean {
+    if (typeof document === 'undefined') {
+        return true;
+    }
+
+    const match = document.cookie.match(/(?:^|;\s*)sidebar_state=(true|false)/);
+    return match ? match[1] === 'true' : true;
+}
+
 export default function AppLayout({
     title,
     children,
     actions,
 }: AppLayoutProps) {
     return (
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={getStoredSidebarOpen()}>
             <Head title={title} />
             <AppSidebar />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
                     <SidebarTrigger className="-ml-1" />
                     <Separator
                         orientation="vertical"
@@ -46,7 +63,7 @@ export default function AppLayout({
                     </div>
                 </main>
             </SidebarInset>
-            <Toaster richColors position="top-right" />
+            <Toaster richColors position="bottom-right" />
             <FlashToaster />
         </SidebarProvider>
     );

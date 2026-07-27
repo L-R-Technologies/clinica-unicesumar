@@ -4,7 +4,6 @@ import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import { RatingScale, RatingScaleReadOnly } from '@/components/rating-scale';
-import { StatusBadge } from '@/components/status-badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -112,12 +111,6 @@ export default function MyExamsShow() {
                             label="Data do Exame"
                             value={formatDate(exam.date)}
                         />
-                        <div>
-                            <p className="text-sm text-muted-foreground">
-                                Status
-                            </p>
-                            <StatusBadge status={exam.status} />
-                        </div>
                     </CardContent>
                 </Card>
 

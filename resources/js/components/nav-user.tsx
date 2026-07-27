@@ -51,7 +51,7 @@ export function NavUser({ user }: { user: User }) {
                                 <span className="truncate font-medium">
                                     {user.name}
                                 </span>
-                                <span className="truncate text-xs text-muted-foreground">
+                                <span className="truncate text-xs text-sidebar-foreground/70">
                                     {user.email}
                                 </span>
                             </div>

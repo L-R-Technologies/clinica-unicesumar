@@ -17,7 +17,7 @@ class Calibration extends Model
     ];
 
     protected $casts = [
-        'calibration_date' => 'date',
+        'calibration_date' => 'datetime',
         'value' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     Boxes,
+    CalendarClock,
     ClipboardList,
     FlaskConical,
     History,
@@ -19,7 +20,6 @@ import {
     SidebarFooter,
     SidebarGroup,
     SidebarGroupLabel,
-    SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -110,6 +110,13 @@ const NAV_GROUPS: readonly NavGroup[] = [
                 activePattern: 'machines.*',
                 roles: ['teacher'],
             },
+            {
+                title: 'Calibrações',
+                routeName: 'calibrations.index',
+                icon: CalendarClock,
+                activePattern: 'calibrations.*',
+                roles: ['teacher'],
+            },
         ],
     },
     {
@@ -146,29 +153,6 @@ export function AppSidebar() {
 
     return (
         <Sidebar collapsible="icon">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href="/home">
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                                    <img
-                                        src="/imgs/unicesumar-logo.png"
-                                        alt="Unicesumar"
-                                        className="size-6 object-contain"
-                                    />
-                                </div>
-                                <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-semibold">
-                                        Clínica Unicesumar
-                                    </span>
-                                </div>
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
-
             <SidebarContent>
                 {groups.map((group) => (
                     <SidebarGroup key={group.label}>

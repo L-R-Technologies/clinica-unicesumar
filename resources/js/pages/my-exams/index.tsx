@@ -4,7 +4,6 @@ import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
 import { FiltersCard } from '@/components/filters-card';
 import { SearchInput } from '@/components/search-input';
-import { StatusBadge } from '@/components/status-badge';
 import { TablePagination } from '@/components/table-pagination';
 import { buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +23,6 @@ const ALL_OPTION = 'all';
 
 interface MyExamsFilters {
     search: string;
-    status: string;
     exam_type_id: string;
     date_from: string;
     date_to: string;
@@ -32,7 +30,6 @@ interface MyExamsFilters {
 
 interface MyExamsIndexProps extends Record<string, unknown> {
     exams: Paginated<Exam>;
-    statusOptions: Record<string, string>;
     examTypes: ExamType[];
     filters: MyExamsFilters;
 }
@@ -43,7 +40,7 @@ function formatDate(isoDate: string): string {
 }
 
 export default function MyExamsIndex() {
-    const { exams, statusOptions, examTypes, filters } = usePage<
+    const { exams, examTypes, filters } = usePage<
         PageProps<MyExamsIndexProps>
     >().props;
 
@@ -51,7 +48,6 @@ export default function MyExamsIndex() {
         routeName: 'patient-exams.index',
         initialValue: filters.search,
         extraParams: {
-            status: filters.status,
             exam_type_id: filters.exam_type_id,
             date_from: filters.date_from,
             date_to: filters.date_to,
@@ -61,7 +57,6 @@ export default function MyExamsIndex() {
     function applyFilters(next: Partial<MyExamsFilters>): void {
         const params = {
             search,
-            status: filters.status,
             exam_type_id: filters.exam_type_id,
             date_from: filters.date_from,
             date_to: filters.date_to,
@@ -88,7 +83,6 @@ export default function MyExamsIndex() {
 
     const hasActiveFilters = !!(
         search ||
-        filters.status ||
         filters.exam_type_id ||
         filters.date_from ||
         filters.date_to
@@ -108,10 +102,6 @@ export default function MyExamsIndex() {
         {
             header: 'Data',
             cell: (row) => formatDate(row.date),
-        },
-        {
-            header: 'Status',
-            cell: (row) => <StatusBadge status={row.status} />,
         },
         {
             header: 'Ações',
@@ -160,31 +150,6 @@ export default function MyExamsIndex() {
                         placeholder="Buscar por tipo de exame..."
                         className="w-full"
                     />
-                </div>
-                <div className="space-y-1.5">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                        value={filters.status || ALL_OPTION}
-                        onValueChange={(value) =>
-                            applyFilters({
-                                status: value === ALL_OPTION ? '' : value,
-                            })
-                        }
-                    >
-                        <SelectTrigger id="status" className="sm:w-48">
-                            <SelectValue placeholder="Todos" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value={ALL_OPTION}>Todos</SelectItem>
-                            {Object.entries(statusOptions).map(
-                                ([value, label]) => (
-                                    <SelectItem key={value} value={value}>
-                                        {label}
-                                    </SelectItem>
-                                ),
-                            )}
-                        </SelectContent>
-                    </Select>
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="exam_type_id">Tipo</Label>

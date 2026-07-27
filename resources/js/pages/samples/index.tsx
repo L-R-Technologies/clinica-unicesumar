@@ -158,7 +158,7 @@ export default function SamplesIndex() {
                         id="search"
                         value={search}
                         onChange={setSearch}
-                        placeholder="Buscar por código, tipo ou paciente..."
+                        placeholder="Buscar por código, tipo, paciente ou responsável..."
                         className="w-full"
                     />
                 </div>

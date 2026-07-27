@@ -190,7 +190,7 @@ class ExamService
             $query->whereDate('date', '<=', $filters['date_to']);
         }
 
-        return $query->orderBy('date', 'desc')->paginate(10);
+        return $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
     }
 
     public function getPatients()

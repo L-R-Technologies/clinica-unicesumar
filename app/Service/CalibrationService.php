@@ -56,9 +56,14 @@ class CalibrationService
     {
         $calibrations = Calibration::with(['machine', 'user'])
             ->when(isset($filters['machine_id']), fn ($q) => $q->where('machine_id', $filters['machine_id']))
+            ->latest('calibration_date')
             ->get();
 
-        $pdf = Pdf::loadView('pdf.calibrations', compact('calibrations'));
+        $machine = isset($filters['machine_id'])
+            ? Machine::find($filters['machine_id'])
+            : null;
+
+        $pdf = Pdf::loadView('pdf.calibrations', compact('calibrations', 'machine'));
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
@@ -70,7 +75,7 @@ class CalibrationService
         return Validator::make($data, [
             'machine_id' => 'required|exists:machines,id',
             'user_id' => 'required|exists:users,id',
-            'calibration_date' => 'required|date|before_or_equal:today',
+            'calibration_date' => 'required|date|before_or_equal:now',
             'value' => 'required|numeric',
             'status' => 'required|in:approved,rejected',
             'observation' => 'nullable|string|max:1000',

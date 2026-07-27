@@ -117,6 +117,9 @@ class SampleService
                     })
                     ->orWhereHas('patient.user', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
                     });
             });
         }
@@ -141,7 +144,7 @@ class SampleService
             $query->whereDate('date', '<=', $filters['date_to']);
         }
 
-        return $query->orderBy('date', 'desc')->paginate(10);
+        return $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
     }
 
     public function getPatients()

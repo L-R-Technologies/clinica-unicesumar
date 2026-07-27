@@ -103,6 +103,7 @@ class UserManagementService
                 'user_id' => $user->id,
                 'ra' => $studentData['ra'],
                 'course' => $studentData['course'],
+                'semester' => $studentData['semester'],
             ]);
 
             DB::commit();
@@ -144,6 +145,7 @@ class UserManagementService
                     $student->update([
                         'ra' => $specificData['ra'],
                         'course' => $specificData['course'] ?? $student->getAttribute('course'),
+                        'semester' => $specificData['semester'] ?? $student->getAttribute('semester'),
                     ]);
                 }
             }
@@ -236,6 +238,7 @@ class UserManagementService
             'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
             'ra' => 'required|string|max:9|unique:students,ra'.($userId ? ",{$userId},user_id" : ''),
             'course' => 'required|string|max:255',
+            'semester' => 'required|integer|min:1|max:20',
         ];
 
         return validator($data, $rules)->validate();

@@ -149,7 +149,7 @@ class ExamTypeService
             $query->where('id', $filters['exam_type_id']);
         }
 
-        return $query->orderBy('name')->paginate(10);
+        return $query->orderBy('name')->paginate(10)->withQueryString();
     }
 
     /**

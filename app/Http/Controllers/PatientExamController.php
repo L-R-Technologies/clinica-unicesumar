@@ -32,9 +32,10 @@ class PatientExamController extends Controller
     {
         $patient = Auth::user()->patient;
 
+        // Paciente só pode ver exames já aprovados — resultado não aprovado não é exibido.
         $exams = $this->examService->getFilteredExams([
             'search' => $request->input('search', ''),
-            'status' => $request->input('status', ''),
+            'status' => 'approved',
             'exam_type_id' => $request->input('exam_type_id', ''),
             'date_from' => $request->input('date_from', ''),
             'date_to' => $request->input('date_to', ''),
@@ -43,11 +44,9 @@ class PatientExamController extends Controller
 
         return Inertia::render('my-exams/index', [
             'exams' => $exams,
-            'statusOptions' => $this->examService->getStatusOptions(),
             'examTypes' => $this->examService->getExamTypes(),
             'filters' => [
                 'search' => $request->input('search', ''),
-                'status' => $request->input('status', ''),
                 'exam_type_id' => $request->input('exam_type_id', ''),
                 'date_from' => $request->input('date_from', ''),
                 'date_to' => $request->input('date_to', ''),
@@ -61,9 +60,10 @@ class PatientExamController extends Controller
 
         abort_if(! $patient, 403, 'Perfil de paciente não encontrado.');
 
-        // Garante que o exame pertence ao paciente logado (defesa em profundidade)
+        // Garante que o exame pertence ao paciente logado e já foi aprovado (defesa em profundidade)
         $exam = Exam::with(['patient.user', 'sample.sampleType', 'examType.fields', 'feedback'])
             ->where('patient_id', $patient->id)
+            ->where('status', 'approved')
             ->findOrFail($id);
 
         return Inertia::render('my-exams/show', [
@@ -77,9 +77,10 @@ class PatientExamController extends Controller
 
         abort_if(! $patient, 403, 'Perfil de paciente não encontrado.');
 
-        // Garante que o exame pertence ao paciente logado (defesa em profundidade)
+        // Garante que o exame pertence ao paciente logado e já foi aprovado (defesa em profundidade)
         $exam = Exam::with(['patient.user', 'sample.sampleType', 'examType.fields'])
             ->where('patient_id', $patient->id)
+            ->where('status', 'approved')
             ->findOrFail($id);
 
         $pdf = Pdf::loadView('patient-exams.pdf', compact('exam'));
@@ -93,8 +94,10 @@ class PatientExamController extends Controller
 
         abort_if(! $patient, 403, 'Perfil de paciente não encontrado.');
 
-        // Garante que o exame pertence ao paciente logado (defesa em profundidade)
-        $exam = Exam::where('patient_id', $patient->id)->findOrFail($id);
+        // Garante que o exame pertence ao paciente logado e já foi aprovado (defesa em profundidade)
+        $exam = Exam::where('patient_id', $patient->id)
+            ->where('status', 'approved')
+            ->findOrFail($id);
 
         try {
             $validatedData = $this->examFeedbackService->validateFeedbackData($request->all());

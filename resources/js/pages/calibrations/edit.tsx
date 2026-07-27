@@ -17,7 +17,7 @@ export default function CalibrationEdit() {
     const { calibration } = usePage<PageProps<CalibrationEditProps>>().props;
 
     const { data, setData, put, processing, errors } = useForm({
-        calibration_date: calibration.calibration_date.slice(0, 10),
+        calibration_date: calibration.calibration_date.slice(0, 16),
         value: String(calibration.value),
         observation: calibration.observation ?? '',
     });
@@ -53,13 +53,13 @@ export default function CalibrationEdit() {
                     <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <FormField
                             id="calibration_date"
-                            label="Data da calibração"
+                            label="Data e hora da calibração"
                             error={errors.calibration_date}
                             required
                         >
                             <Input
                                 id="calibration_date"
-                                type="date"
+                                type="datetime-local"
                                 value={data.calibration_date}
                                 onChange={(e) =>
                                     setData('calibration_date', e.target.value)

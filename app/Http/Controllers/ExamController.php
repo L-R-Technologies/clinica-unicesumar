@@ -87,7 +87,7 @@ class ExamController extends Controller
             'patientHistory',
             'sample.sampleType',
             'examType.fields',
-            'latestRejection.user',
+            'rejections' => fn ($query) => $query->latest()->with('user'),
         ])->findOrFail($id);
 
         return Inertia::render('exams/show', [

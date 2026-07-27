@@ -13,16 +13,20 @@ interface CalibrationCreateProps extends Record<string, unknown> {
     machine: Machine;
 }
 
-function today(): string {
-    return new Date().toISOString().slice(0, 10);
+/** Data/hora local no formato aceito pelo input datetime-local (YYYY-MM-DDTHH:mm). */
+function nowLocal(): string {
+    const now = new Date();
+    const pad = (value: number) => String(value).padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
 }
 
 export default function CalibrationCreate() {
     const { machine } = usePage<PageProps<CalibrationCreateProps>>().props;
+    const maxDateTime = nowLocal();
 
     const { data, setData, post, processing, errors } = useForm({
         machine_id: String(machine.id),
-        calibration_date: today(),
+        calibration_date: maxDateTime,
         value: '',
         observation: '',
     });
@@ -59,13 +63,14 @@ export default function CalibrationCreate() {
                     <form id="resource-form" onSubmit={submit} className="space-y-4">
                         <FormField
                             id="calibration_date"
-                            label="Data da calibração"
+                            label="Data e hora da calibração"
                             error={errors.calibration_date}
                             required
                         >
                             <Input
                                 id="calibration_date"
-                                type="date"
+                                type="datetime-local"
+                                max={maxDateTime}
                                 value={data.calibration_date}
                                 onChange={(e) =>
                                     setData('calibration_date', e.target.value)

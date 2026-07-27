@@ -1,42 +1,10 @@
-import type { Patient, User } from '@/types';
+import type { PatientHistory } from '@/types';
 
 /**
  * Registro completo de anamnese (todos os campos do $fillable do model).
- * O tipo PatientHistory de @/types é parcial (index signature); este é o
- * shape completo usado pelas telas de leitura e edição deste domínio.
+ * Alias do tipo central para manter os imports existentes deste domínio.
  */
-export interface PatientHistoryRecord {
-    id: number;
-    user_id: number;
-    patient_id: number;
-    fasting: boolean;
-    fasting_hours: number | null;
-    alcohol_last_24h: boolean;
-    on_medication: boolean;
-    medications: string | null;
-    on_supplements: boolean;
-    supplements: string | null;
-    chronic_disease: boolean;
-    chronic_disease_details: string | null;
-    infectious_disease_history: boolean;
-    infectious_disease_details: string | null;
-    recent_surgery: boolean;
-    surgery_details: string | null;
-    allergies: boolean;
-    allergy_details: string | null;
-    pregnant_or_lactating: boolean;
-    menstrual_period: string;
-    smokes: boolean;
-    cigarettes_per_day: number | null;
-    physically_active: boolean;
-    recent_fever_or_flu: boolean;
-    observation: string | null;
-    recorded_at: string | null;
-    created_at: string | null;
-    updated_at: string | null;
-    patient?: Patient;
-    user?: User;
-}
+export type PatientHistoryRecord = PatientHistory;
 
 /**
  * Shape do formulário de anamnese. Campos numéricos ficam como string (valor

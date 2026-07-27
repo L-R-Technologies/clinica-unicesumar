@@ -49,6 +49,7 @@ export default function UserEdit() {
         crbm: '',
         ra: user.student?.ra ?? '',
         course: user.student?.course ?? '',
+        semester: user.student?.semester ?? '',
     });
 
     function submit(event: FormEvent): void {
@@ -232,6 +233,24 @@ export default function UserEdit() {
                                         value={data.course}
                                         onChange={(e) =>
                                             setData('course', e.target.value)
+                                        }
+                                    />
+                                </FormField>
+
+                                <FormField
+                                    id="semester"
+                                    label="Semestre"
+                                    error={errors.semester}
+                                    required
+                                >
+                                    <Input
+                                        id="semester"
+                                        type="number"
+                                        min={1}
+                                        max={20}
+                                        value={data.semester}
+                                        onChange={(e) =>
+                                            setData('semester', e.target.value)
                                         }
                                     />
                                 </FormField>

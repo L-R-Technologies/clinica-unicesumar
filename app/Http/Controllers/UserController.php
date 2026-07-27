@@ -2,19 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Address;
 use App\Models\User;
+use App\Service\AddressService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class UserController extends Controller
 {
+    protected $addressService;
+
+    public function __construct(AddressService $addressService)
+    {
+        $this->addressService = $addressService;
+    }
+
     public function edit(User $user): Response
     {
+        abort_unless($user->id === Auth::id(), 403);
+
         $user->load('patient.address');
 
         return Inertia::render('profile/edit', [
@@ -26,6 +36,8 @@ class UserController extends Controller
 
     public function editPassword(User $user): Response
     {
+        abort_unless($user->id === Auth::id(), 403);
+
         return Inertia::render('profile/password', [
             'profileUser' => $user,
         ]);
@@ -33,34 +45,13 @@ class UserController extends Controller
 
     public function updateAddress(Request $request, User $user): RedirectResponse
     {
+        abort_unless($user->id === Auth::id(), 403);
+
         $patient = $user->patient;
 
         abort_if(! $patient, 403, 'Perfil de paciente não encontrado.');
 
-        $input = $request->all();
-        if (isset($input['zip_code'])) {
-            $input['zip_code'] = preg_replace('/\D/', '', $input['zip_code']);
-        }
-
-        $validated = validator($input, [
-            'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
-            'number' => ['required', 'string', 'max:20'],
-            'complement' => ['nullable', 'string', 'max:100'],
-            'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'zip_code' => ['required', 'string', 'min:8', 'max:8'],
-        ])->validate();
-
-        $address = $patient->address;
-
-        if ($address) {
-            $address->update($validated);
-        } else {
-            $address = Address::create($validated);
-            $patient->update(['address_id' => $address->id]);
-        }
+        $this->addressService->updateForPatient($patient, $request->all());
 
         return back()->with('success', 'Endereço atualizado com sucesso!');
     }
@@ -84,6 +75,8 @@ class UserController extends Controller
 
             return redirect('/')->with('status', 'Seus dados foram apagados com sucesso. Obrigado por utilizar nossos serviços.');
         } catch (\Exception $e) {
+            Log::error('Erro ao anonimizar dados do usuário', ['user_id' => $user->id, 'exception' => $e]);
+
             return back()->with('error', 'Ocorreu um erro ao apagar os dados. Por favor, tente novamente.');
         }
     }

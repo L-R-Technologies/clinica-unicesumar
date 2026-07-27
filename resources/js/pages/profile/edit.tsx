@@ -1,8 +1,8 @@
 import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { AddressFields } from '@/components/address-fields';
 import { FormField } from '@/components/form-field';
-import { MaskedInput } from '@/components/masked-input';
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -36,9 +36,8 @@ interface ProfileEditProps extends Record<string, unknown> {
 }
 
 export default function ProfileEdit() {
-    const { profileUser, patient, address } = usePage<
-        PageProps<ProfileEditProps>
-    >().props;
+    const { profileUser, patient, address } =
+        usePage<PageProps<ProfileEditProps>>().props;
 
     const isPatient = profileUser.role === 'patient';
 
@@ -165,7 +164,10 @@ export default function ProfileEdit() {
                                     id="name"
                                     value={basicForm.data.name}
                                     onChange={(e) =>
-                                        basicForm.setData('name', e.target.value)
+                                        basicForm.setData(
+                                            'name',
+                                            e.target.value,
+                                        )
                                     }
                                 />
                             </FormField>
@@ -224,152 +226,24 @@ export default function ProfileEdit() {
                                 onSubmit={submitAddress}
                                 className="space-y-4"
                             >
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                    <FormField
-                                        id="zip_code"
-                                        label="CEP"
-                                        error={addressForm.errors.zip_code}
-                                        required
-                                    >
-                                        <MaskedInput
-                                            id="zip_code"
-                                            mask="cep"
-                                            value={addressForm.data.zip_code}
-                                            onValueChange={(value) =>
-                                                addressForm.setData(
-                                                    'zip_code',
-                                                    value,
-                                                )
-                                            }
-                                            onBlur={handleCepBlur}
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        id="street"
-                                        label="Rua"
-                                        error={addressForm.errors.street}
-                                        required
-                                    >
-                                        <Input
-                                            id="street"
-                                            value={addressForm.data.street}
-                                            onChange={(e) =>
-                                                addressForm.setData(
-                                                    'street',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        id="number"
-                                        label="Número"
-                                        error={addressForm.errors.number}
-                                        required
-                                    >
-                                        <Input
-                                            id="number"
-                                            value={addressForm.data.number}
-                                            onChange={(e) =>
-                                                addressForm.setData(
-                                                    'number',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        id="complement"
-                                        label="Complemento"
-                                        error={addressForm.errors.complement}
-                                    >
-                                        <Input
-                                            id="complement"
-                                            value={addressForm.data.complement}
-                                            onChange={(e) =>
-                                                addressForm.setData(
-                                                    'complement',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        id="neighborhood"
-                                        label="Bairro"
-                                        error={addressForm.errors.neighborhood}
-                                        required
-                                    >
-                                        <Input
-                                            id="neighborhood"
-                                            value={addressForm.data.neighborhood}
-                                            onChange={(e) =>
-                                                addressForm.setData(
-                                                    'neighborhood',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        id="city"
-                                        label="Cidade"
-                                        error={addressForm.errors.city}
-                                        required
-                                    >
-                                        <Input
-                                            id="city"
-                                            value={addressForm.data.city}
-                                            onChange={(e) =>
-                                                addressForm.setData(
-                                                    'city',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        id="state"
-                                        label="Estado"
-                                        error={addressForm.errors.state}
-                                        required
-                                    >
-                                        <Input
-                                            id="state"
-                                            value={addressForm.data.state}
-                                            onChange={(e) =>
-                                                addressForm.setData(
-                                                    'state',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                    </FormField>
-
-                                    <FormField
-                                        id="country"
-                                        label="País"
-                                        error={addressForm.errors.country}
-                                        required
-                                    >
-                                        <Input
-                                            id="country"
-                                            value={addressForm.data.country}
-                                            onChange={(e) =>
-                                                addressForm.setData(
-                                                    'country',
-                                                    e.target.value,
-                                                )
-                                            }
-                                        />
-                                    </FormField>
-                                </div>
+                                <AddressFields
+                                    values={{
+                                        zip_code: addressForm.data.zip_code,
+                                        street: addressForm.data.street,
+                                        number: addressForm.data.number,
+                                        complement: addressForm.data.complement,
+                                        neighborhood:
+                                            addressForm.data.neighborhood,
+                                        city: addressForm.data.city,
+                                        state: addressForm.data.state,
+                                        country: addressForm.data.country,
+                                    }}
+                                    errors={addressForm.errors}
+                                    onChange={(field, value) =>
+                                        addressForm.setData(field, value)
+                                    }
+                                    onCepBlur={handleCepBlur}
+                                />
 
                                 <div className="flex justify-end">
                                     <Button
@@ -392,8 +266,8 @@ export default function ProfileEdit() {
                             </CardTitle>
                             <CardDescription>
                                 Conforme a LGPD, você pode solicitar a exclusão
-                                dos seus dados pessoais. Esta ação é irreversível
-                                e encerrará sua sessão.
+                                dos seus dados pessoais. Esta ação é
+                                irreversível e encerrará sua sessão.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -422,8 +296,8 @@ export default function ProfileEdit() {
                                                     Todos os seus dados pessoais
                                                     serão anonimizados de forma
                                                     permanente e você perderá o
-                                                    acesso à sua conta. Esta ação
-                                                    não pode ser desfeita.
+                                                    acesso à sua conta. Esta
+                                                    ação não pode ser desfeita.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
@@ -451,8 +325,8 @@ export default function ProfileEdit() {
                                                     <strong>
                                                         {CONFIRMATION_KEYWORD}
                                                     </strong>{' '}
-                                                    para prosseguir com a exclusão
-                                                    dos seus dados.
+                                                    para prosseguir com a
+                                                    exclusão dos seus dados.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <div className="space-y-2">

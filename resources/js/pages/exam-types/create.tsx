@@ -1,4 +1,4 @@
-import { Link, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -40,7 +40,8 @@ export default function ExamTypeCreate() {
     }
 
     return (
-        <AppLayout title="Novo Tipo de Exame"
+        <AppLayout
+            title="Novo Tipo de Exame"
             actions={
                 <>
                     <BackButton
@@ -55,10 +56,15 @@ export default function ExamTypeCreate() {
                         Salvar
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-6">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-6"
+                    >
                         <FormField
                             id="name"
                             label="Nome"
@@ -95,7 +101,6 @@ export default function ExamTypeCreate() {
                             onChange={(fields) => setData('fields', fields)}
                             errors={errors}
                         />
-
                     </form>
                 </CardContent>
             </Card>

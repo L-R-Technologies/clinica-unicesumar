@@ -6,30 +6,13 @@ import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { PatientHistorySummary } from '@/components/patient-history-summary';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatDate, formatDateTime } from '@/lib/format';
 import type { PageProps } from '@/types';
 import type { PatientHistoryRecord } from './types';
 
 interface PatientHistoriesShowProps extends Record<string, unknown> {
     patientHistory: PatientHistoryRecord;
-}
-
-function formatDate(value: string | null): string {
-    return value ? new Date(value).toLocaleDateString('pt-BR') : '—';
-}
-
-function formatDateTime(value: string | null): string {
-    return value
-        ? new Date(value).toLocaleString('pt-BR', {
-              dateStyle: 'short',
-              timeStyle: 'short',
-          })
-        : '—';
 }
 
 function InfoItem({ label, value }: { label: string; value: ReactNode }) {
@@ -42,9 +25,8 @@ function InfoItem({ label, value }: { label: string; value: ReactNode }) {
 }
 
 export default function PatientHistoriesShow() {
-    const { patientHistory } = usePage<
-        PageProps<PatientHistoriesShowProps>
-    >().props;
+    const { patientHistory } =
+        usePage<PageProps<PatientHistoriesShowProps>>().props;
 
     return (
         <AppLayout

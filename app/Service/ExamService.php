@@ -7,11 +7,15 @@ use App\Mail\ExamPendingApproval;
 use App\Mail\ExamRejected;
 use App\Mail\ExamResultsAvailable;
 use App\Models\Exam;
+use App\Models\ExamRejection;
 use App\Models\ExamType;
 use App\Models\Patient;
 use App\Models\PatientHistory;
 use App\Models\Sample;
+use App\Notifications\ExamApprovedNotification;
+use App\Notifications\ExamRejectedNotification;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -19,8 +23,18 @@ use Illuminate\Validation\ValidationException;
 
 class ExamService
 {
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_PENDING_APPROVAL = 'pending_approval';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_REJECTED = 'rejected';
+
     public function validateExamData(array $data, $examId = null)
     {
+        // 'status' não é validado nem persistido aqui: a transição de status
+        // ocorre exclusivamente via approveExam()/rejectExam().
         $rules = [
             'patient_id' => 'required|exists:patients,id',
             'patient_history_id' => 'required|exists:patient_histories,id',
@@ -29,7 +43,6 @@ class ExamService
             'date' => 'required|date|before_or_equal:today',
             'observation' => 'nullable|string',
             'results' => 'nullable|array',
-            'status' => 'nullable|in:pending,pending_approval,rejected,approved',
         ];
 
         $validator = Validator::make($data, $rules);
@@ -56,9 +69,10 @@ class ExamService
             DB::beginTransaction();
 
             $examData['user_id'] = $userId;
-            $examData['status'] = 'pending';
 
-            $exam = Exam::create($examData);
+            $exam = new Exam($examData);
+            $exam->status = self::STATUS_PENDING;
+            $exam->save();
 
             DB::commit();
 
@@ -69,6 +83,40 @@ class ExamService
         }
     }
 
+    public function approveExam(Exam $exam): Exam
+    {
+        return DB::transaction(function () use ($exam) {
+            $exam->status = self::STATUS_APPROVED;
+            $exam->save();
+
+            $exam->loadMissing('user');
+            $exam->user?->notify(new ExamApprovedNotification($exam));
+
+            $this->handleStatusChangeEmails($exam, self::STATUS_APPROVED);
+
+            return $exam;
+        });
+    }
+
+    public function rejectExam(Exam $exam, string $justification): Exam
+    {
+        return DB::transaction(function () use ($exam, $justification) {
+            $exam->status = self::STATUS_REJECTED;
+            $exam->save();
+
+            ExamRejection::create([
+                'exam_id' => $exam->id,
+                'user_id' => Auth::id(),
+                'justification' => $justification,
+            ]);
+
+            $exam->loadMissing('user');
+            $exam->user?->notify(new ExamRejectedNotification($exam, $justification));
+
+            return $exam;
+        });
+    }
+
     public function updateExam(Exam $exam, array $examData)
     {
         try {
@@ -77,8 +125,6 @@ class ExamService
             $exam->update($examData);
 
             DB::commit();
-
-            $this->handleStatusChangeEmails($exam, $exam->status);
 
             return $exam->fresh();
         } catch (Exception $e) {
@@ -91,11 +137,11 @@ class ExamService
     {
         $exam->load(['patient.user', 'user.student.supervisor', 'examType']);
 
-        if ($status === 'pending_approval') {
+        if ($status === self::STATUS_PENDING_APPROVAL) {
             $this->notifyTeachersForApproval($exam);
         }
 
-        if ($status === 'approved') {
+        if ($status === self::STATUS_APPROVED) {
             $user = $exam->user;
             if ($user && $user->role === 'student' && isset($user->email)) {
                 Mail::to($user->email)->send(new ExamApproved($exam));
@@ -106,7 +152,7 @@ class ExamService
             }
         }
 
-        if ($status === 'rejected') {
+        if ($status === self::STATUS_REJECTED) {
             $user = $exam->user;
             if (isset($user->email)) {
                 Mail::to($user->email)->send(new ExamRejected($exam));
@@ -218,10 +264,10 @@ class ExamService
     public function getStatusOptions()
     {
         return [
-            'pending' => 'Pendente',
-            'pending_approval' => 'Pendente de Aprovação',
-            'approved' => 'Aprovado',
-            'rejected' => 'Rejeitado',
+            self::STATUS_PENDING => 'Pendente',
+            self::STATUS_PENDING_APPROVAL => 'Pendente de Aprovação',
+            self::STATUS_APPROVED => 'Aprovado',
+            self::STATUS_REJECTED => 'Rejeitado',
         ];
     }
 

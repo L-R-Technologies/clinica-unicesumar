@@ -18,16 +18,16 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ALL_FILTER_VALUE } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps, User } from '@/types';
 
-const ALL_OPTION = 'all';
-
-interface UsersIndexFilters {
+type UsersIndexFilters = {
     search: string;
     role: string;
     status: string;
-}
+};
 
 interface UsersIndexProps extends Record<string, unknown> {
     users: Paginated<User>;
@@ -37,9 +37,8 @@ interface UsersIndexProps extends Record<string, unknown> {
 }
 
 export default function UsersIndex() {
-    const { users, filters, roleOptions, statusOptions } = usePage<
-        PageProps<UsersIndexProps>
-    >().props;
+    const { users, filters, roleOptions, statusOptions } =
+        usePage<PageProps<UsersIndexProps>>().props;
 
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'user-management.index',
@@ -47,33 +46,13 @@ export default function UsersIndex() {
         extraParams: { role: filters.role, status: filters.status },
     });
 
-    function applyFilters(next: Partial<UsersIndexFilters>): void {
-        const params = {
+    const { applyFilters, clearFilters, hasActiveFilters } =
+        useTableFilters<UsersIndexFilters>({
+            routeName: 'user-management.index',
+            filters,
             search,
-            role: filters.role,
-            status: filters.status,
-            ...next,
-        };
-
-        router.get(
-            route('user-management.index'),
-            Object.fromEntries(
-                Object.entries(params).filter(([, value]) => value !== ''),
-            ),
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('user-management.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    const hasActiveFilters = !!(search || filters.role || filters.status);
+            resetSearch: reset,
+        });
 
     const columns: Column<User>[] = [
         { header: 'Nome', cell: (row) => row.name },
@@ -123,10 +102,7 @@ export default function UsersIndex() {
                         aria-label={row.active ? 'Desativar' : 'Ativar'}
                         onClick={() =>
                             router.patch(
-                                route(
-                                    'user-management.toggle-status',
-                                    row.id,
-                                ),
+                                route('user-management.toggle-status', row.id),
                                 {},
                                 { preserveScroll: true },
                             )
@@ -172,10 +148,10 @@ export default function UsersIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="role">Perfil</Label>
                     <Select
-                        value={filters.role || ALL_OPTION}
+                        value={filters.role || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
-                                role: value === ALL_OPTION ? '' : value,
+                                role: value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -183,7 +159,9 @@ export default function UsersIndex() {
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_OPTION}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {Object.entries(roleOptions).map(
                                 ([value, label]) => (
                                     <SelectItem key={value} value={value}>
@@ -197,10 +175,10 @@ export default function UsersIndex() {
                 <div className="space-y-2">
                     <Label htmlFor="status">Status</Label>
                     <Select
-                        value={filters.status || ALL_OPTION}
+                        value={filters.status || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
-                                status: value === ALL_OPTION ? '' : value,
+                                status: value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -208,7 +186,9 @@ export default function UsersIndex() {
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_OPTION}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {Object.entries(statusOptions).map(
                                 ([value, label]) => (
                                     <SelectItem key={value} value={value}>

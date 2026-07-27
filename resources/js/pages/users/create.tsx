@@ -1,4 +1,4 @@
-import { Link, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
@@ -14,6 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import type { UserType } from '@/types';
 
 const PASSWORD_ALPHABET =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -26,34 +27,51 @@ function generateTemporaryPassword(): string {
 
     let password = '';
     for (let i = 0; i < GENERATED_PASSWORD_LENGTH; i++) {
-        password += PASSWORD_ALPHABET[randomValues[i] % PASSWORD_ALPHABET.length];
+        password +=
+            PASSWORD_ALPHABET[randomValues[i] % PASSWORD_ALPHABET.length];
     }
 
     return password;
 }
 
-type UserType = 'teacher' | 'student';
+type UserCreateForm = {
+    user_type: UserType;
+    name: string;
+    email: string;
+    password: string;
+    registration_number: string;
+    professional_license: string;
+    ra: string;
+    course: string;
+    semester: string;
+};
 
 export default function UserCreate() {
     const [showPassword, setShowPassword] = useState(false);
-    const { data, setData, post, processing, errors } = useForm({
-        user_type: 'teacher' as UserType,
-        name: '',
-        email: '',
-        password: '',
-        registration_number: '',
-        crbm: '',
-        ra: '',
-        course: '',
-        semester: '',
-    });
+    const { data, setData, post, processing, errors } = useForm<UserCreateForm>(
+        {
+            user_type: 'teacher',
+            name: '',
+            email: '',
+            password: '',
+            registration_number: '',
+            professional_license: '',
+            ra: '',
+            course: '',
+            semester: '',
+        },
+    );
 
-    function changeUserType(value: UserType): void {
+    function changeUserType(value: string): void {
+        if (value !== 'teacher' && value !== 'student') {
+            return;
+        }
+
         setData((current) => ({
             ...current,
             user_type: value,
             registration_number: '',
-            crbm: '',
+            professional_license: '',
             ra: '',
             course: '',
             semester: '',
@@ -66,7 +84,8 @@ export default function UserCreate() {
     }
 
     return (
-        <AppLayout title="Novo Usuário"
+        <AppLayout
+            title="Novo Usuário"
             actions={
                 <>
                     <BackButton
@@ -81,10 +100,15 @@ export default function UserCreate() {
                         Salvar
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <FormField
                             id="user_type"
                             label="Tipo de usuário"
@@ -93,9 +117,7 @@ export default function UserCreate() {
                         >
                             <Select
                                 value={data.user_type}
-                                onValueChange={(value) =>
-                                    changeUserType(value as UserType)
-                                }
+                                onValueChange={changeUserType}
                             >
                                 <SelectTrigger id="user_type">
                                     <SelectValue />
@@ -120,7 +142,9 @@ export default function UserCreate() {
                             <Input
                                 id="name"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
                                 autoFocus
                             />
                         </FormField>
@@ -215,15 +239,18 @@ export default function UserCreate() {
                                 </FormField>
 
                                 <FormField
-                                    id="crbm"
+                                    id="professional_license"
                                     label="CRBM (opcional)"
-                                    error={errors.crbm}
+                                    error={errors.professional_license}
                                 >
                                     <Input
-                                        id="crbm"
-                                        value={data.crbm}
+                                        id="professional_license"
+                                        value={data.professional_license}
                                         onChange={(e) =>
-                                            setData('crbm', e.target.value)
+                                            setData(
+                                                'professional_license',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                 </FormField>
@@ -281,7 +308,6 @@ export default function UserCreate() {
                                 </FormField>
                             </>
                         )}
-
                     </form>
                 </CardContent>
             </Card>

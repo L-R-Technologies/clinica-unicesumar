@@ -10,8 +10,10 @@ const FORMATTERS: Record<MaskType, (value: string) => string> = {
     cep: formatCep,
 };
 
-interface MaskedInputProps
-    extends Omit<React.ComponentProps<typeof Input>, 'onChange' | 'value'> {
+interface MaskedInputProps extends Omit<
+    React.ComponentProps<typeof Input>,
+    'onChange' | 'value'
+> {
     mask: MaskType;
     value: string;
     onValueChange: (value: string) => void;

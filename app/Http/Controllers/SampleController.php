@@ -77,6 +77,8 @@ class SampleController extends Controller
     {
         $sample = Sample::with(['patient.user', 'user', 'sampleType'])->findOrFail($id);
 
+        $this->authorize('view', $sample);
+
         return Inertia::render('samples/show', [
             'sample' => $sample,
         ]);
@@ -85,6 +87,8 @@ class SampleController extends Controller
     public function edit($id): Response
     {
         $sample = Sample::with(['patient.user', 'user', 'sampleType'])->findOrFail($id);
+
+        $this->authorize('update', $sample);
 
         return Inertia::render('samples/edit', [
             'sample' => $sample,
@@ -96,9 +100,10 @@ class SampleController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
-        try {
-            $sample = Sample::findOrFail($id);
+        $sample = Sample::findOrFail($id);
+        $this->authorize('update', $sample);
 
+        try {
             $validatedData = $this->sampleService->validateSampleData($request->all(), $sample->id);
             $this->sampleService->updateSample($sample, $validatedData);
 
@@ -118,8 +123,10 @@ class SampleController extends Controller
 
     public function destroy($id): RedirectResponse
     {
+        $sample = Sample::findOrFail($id);
+        $this->authorize('delete', $sample);
+
         try {
-            $sample = Sample::findOrFail($id);
             $this->sampleService->deleteSample($sample);
 
             return redirect()

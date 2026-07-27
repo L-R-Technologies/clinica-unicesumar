@@ -13,6 +13,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { PageProps } from '@/types';
 
@@ -57,22 +58,6 @@ interface ActivityLogEntry {
 
 interface ActivityLogShowProps extends Record<string, unknown> {
     log: ActivityLogEntry;
-}
-
-function formatDateTime(isoDate: string | null): string {
-    if (!isoDate) {
-        return '—';
-    }
-
-    const date = new Date(isoDate);
-    return date.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-    });
 }
 
 function InfoRow({ label, value }: { label: string; value: ReactNode }) {

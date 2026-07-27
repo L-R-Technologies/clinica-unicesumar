@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
-Route::middleware(['auth', 'active'])->group(function () {
+Route::middleware(['auth', 'active', 'verified'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
     // GRUPO: Apenas Professores (role: teacher)

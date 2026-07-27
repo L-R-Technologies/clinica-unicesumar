@@ -48,7 +48,9 @@ export const MENSTRUAL_PERIOD_OPTIONS: ReadonlyArray<{
 ];
 
 export function formatMenstrualPeriod(value: string | null): string {
-    const option = MENSTRUAL_PERIOD_OPTIONS.find((item) => item.value === value);
+    const option = MENSTRUAL_PERIOD_OPTIONS.find(
+        (item) => item.value === value,
+    );
 
     return option ? option.label : '—';
 }

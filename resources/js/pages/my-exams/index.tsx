@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Eye, FileText } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
@@ -16,17 +16,18 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ALL_FILTER_VALUE } from '@/lib/constants';
+import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Exam, ExamType, Paginated, PageProps } from '@/types';
 
-const ALL_OPTION = 'all';
-
-interface MyExamsFilters {
+type MyExamsFilters = {
     search: string;
     exam_type_id: string;
     date_from: string;
     date_to: string;
-}
+};
 
 interface MyExamsIndexProps extends Record<string, unknown> {
     exams: Paginated<Exam>;
@@ -34,15 +35,9 @@ interface MyExamsIndexProps extends Record<string, unknown> {
     filters: MyExamsFilters;
 }
 
-function formatDate(isoDate: string): string {
-    const [year, month, day] = isoDate.slice(0, 10).split('-');
-    return `${day}/${month}/${year}`;
-}
-
 export default function MyExamsIndex() {
-    const { exams, examTypes, filters } = usePage<
-        PageProps<MyExamsIndexProps>
-    >().props;
+    const { exams, examTypes, filters } =
+        usePage<PageProps<MyExamsIndexProps>>().props;
 
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'patient-exams.index',
@@ -54,39 +49,13 @@ export default function MyExamsIndex() {
         },
     });
 
-    function applyFilters(next: Partial<MyExamsFilters>): void {
-        const params = {
+    const { applyFilters, clearFilters, hasActiveFilters } =
+        useTableFilters<MyExamsFilters>({
+            routeName: 'patient-exams.index',
+            filters,
             search,
-            exam_type_id: filters.exam_type_id,
-            date_from: filters.date_from,
-            date_to: filters.date_to,
-            ...next,
-        };
-
-        router.get(
-            route('patient-exams.index'),
-            Object.fromEntries(
-                Object.entries(params).filter(([, value]) => value !== ''),
-            ),
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('patient-exams.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    const hasActiveFilters = !!(
-        search ||
-        filters.exam_type_id ||
-        filters.date_from ||
-        filters.date_to
-    );
+            resetSearch: reset,
+        });
 
     const columns: Column<Exam>[] = [
         {
@@ -154,10 +123,11 @@ export default function MyExamsIndex() {
                 <div className="space-y-2">
                     <Label htmlFor="exam_type_id">Tipo</Label>
                     <Select
-                        value={filters.exam_type_id || ALL_OPTION}
+                        value={filters.exam_type_id || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
-                                exam_type_id: value === ALL_OPTION ? '' : value,
+                                exam_type_id:
+                                    value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -165,7 +135,7 @@ export default function MyExamsIndex() {
                             <SelectValue placeholder="Todos os tipos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_OPTION}>
+                            <SelectItem value={ALL_FILTER_VALUE}>
                                 Todos os tipos
                             </SelectItem>
                             {examTypes.map((examType) => (

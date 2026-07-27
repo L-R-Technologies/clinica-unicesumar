@@ -16,6 +16,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
+import { formatDate, formatResultValue } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Exam, ExamTypeField, PageProps } from '@/types';
 
@@ -45,23 +46,6 @@ const FEEDBACK_QUESTIONS = [
         question: 'Como avalia a confiança transmitida durante o exame?',
     },
 ] as const;
-
-function formatDate(value: string | null): string {
-    if (!value) {
-        return '—';
-    }
-    return new Date(value).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-}
-
-function formatResultValue(value: string | number | boolean | null): string {
-    if (typeof value === 'boolean') {
-        return value ? 'Sim' : 'Não';
-    }
-    if (value === null || value === '') {
-        return '—';
-    }
-    return String(value);
-}
 
 function DetailItem({ label, value }: { label: string; value: string }) {
     return (
@@ -180,8 +164,7 @@ export default function MyExamsShow() {
                         </Table>
                     ) : (
                         <p className="text-sm text-muted-foreground">
-                            Este exame ainda não possui resultados
-                            cadastrados.
+                            Este exame ainda não possui resultados cadastrados.
                         </p>
                     )}
                 </CardContent>
@@ -209,7 +192,9 @@ function FeedbackSection({ exam }: { exam: Exam }) {
         );
     }
 
-    if (exam.feedback) {
+    const feedback = exam.feedback;
+
+    if (feedback) {
         return (
             <Card>
                 <CardHeader>
@@ -220,16 +205,16 @@ function FeedbackSection({ exam }: { exam: Exam }) {
                         <RatingScaleReadOnly
                             key={key}
                             question={question}
-                            value={exam.feedback![key]}
+                            value={feedback[key]}
                         />
                     ))}
-                    {exam.feedback.observation && (
+                    {feedback.observation && (
                         <div className="space-y-1.5">
                             <p className="text-sm text-muted-foreground">
                                 Comentário
                             </p>
                             <p className="whitespace-pre-line">
-                                {exam.feedback.observation}
+                                {feedback.observation}
                             </p>
                         </div>
                     )}

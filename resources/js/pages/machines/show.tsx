@@ -7,17 +7,12 @@ import { DataTable, type Column } from '@/components/data-table';
 import { StatusBadge } from '@/components/status-badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Calibration, Machine, PageProps } from '@/types';
 
 interface MachineShowProps extends Record<string, unknown> {
     machine: Machine;
-}
-
-function formatDate(isoDate: string): string {
-    const [year, month, day] = isoDate.slice(0, 10).split('-');
-    const time = isoDate.slice(11, 16);
-    return `${day}/${month}/${year} ${time}`;
 }
 
 function formatValue(value: number): string {
@@ -32,7 +27,10 @@ export default function MachineShow() {
     const calibrations = machine.calibrations ?? [];
 
     const columns: Column<Calibration>[] = [
-        { header: 'Data', cell: (row) => formatDate(row.calibration_date) },
+        {
+            header: 'Data',
+            cell: (row) => formatDateTime(row.calibration_date),
+        },
         {
             header: 'Valor',
             cell: (row) => (

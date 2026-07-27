@@ -1,14 +1,26 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import type {
+    CalibrationStatus,
+    ExamStatus,
+    MachineStatus,
+    SampleStatus,
+} from '@/types';
+
+type BadgeStatus =
+    ExamStatus | MachineStatus | CalibrationStatus | SampleStatus;
 
 interface StatusConfig {
     label: string;
     className: string;
 }
 
-const SUCCESS = 'border-transparent bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300';
-const WARNING = 'border-transparent bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300';
-const DANGER = 'border-transparent bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300';
+const SUCCESS =
+    'border-transparent bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300';
+const WARNING =
+    'border-transparent bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300';
+const DANGER =
+    'border-transparent bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300';
 const NEUTRAL = 'border-transparent bg-muted text-muted-foreground';
 
 const STATUS_MAP: Record<string, StatusConfig> = {
@@ -24,7 +36,7 @@ const STATUS_MAP: Record<string, StatusConfig> = {
     discarded: { label: 'Descartada', className: NEUTRAL },
 };
 
-export function StatusBadge({ status }: { status: string }) {
+export function StatusBadge({ status }: { status: BadgeStatus }) {
     const config = STATUS_MAP[status] ?? {
         label: status,
         className: NEUTRAL,

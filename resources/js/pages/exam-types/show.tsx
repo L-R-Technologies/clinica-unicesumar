@@ -7,7 +7,12 @@ import { DataTable, type Column } from '@/components/data-table';
 import { ActiveBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import type { ExamFieldType, ExamType, ExamTypeField, PageProps } from '@/types';
+import type {
+    ExamFieldType,
+    ExamType,
+    ExamTypeField,
+    PageProps,
+} from '@/types';
 
 interface ExamTypeShowProps extends Record<string, unknown> {
     examType: ExamType;

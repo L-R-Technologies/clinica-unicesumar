@@ -12,49 +12,19 @@ class PatientsSeeder extends Seeder
     public function run(): void
     {
         // Paciente 1
-        $patient1 = User::create([
-            'name' => 'Maria Silva Santos',
-            'email' => 'maria.santos@email.com',
-            'password' => bcrypt('123456789'),
-            'role' => 'patient',
-            'email_verified_at' => now(),
-        ]);
+        $patient1 = $this->createPatientUser('Maria Silva Santos', 'maria.santos@email.com');
 
         // Paciente 2
-        $patient2 = User::create([
-            'name' => 'João Carlos Oliveira',
-            'email' => 'joao.oliveira@email.com',
-            'password' => bcrypt('123456789'),
-            'role' => 'patient',
-            'email_verified_at' => now(),
-        ]);
+        $patient2 = $this->createPatientUser('João Carlos Oliveira', 'joao.oliveira@email.com');
 
         // Paciente 3
-        $patient3 = User::create([
-            'name' => 'Ana Paula Costa',
-            'email' => 'ana.costa@email.com',
-            'password' => bcrypt('123456789'),
-            'role' => 'patient',
-            'email_verified_at' => now(),
-        ]);
+        $patient3 = $this->createPatientUser('Ana Paula Costa', 'ana.costa@email.com');
 
         // Paciente 4
-        $patient4 = User::create([
-            'name' => 'Carlos Eduardo Ferreira',
-            'email' => 'carlos.ferreira@email.com',
-            'password' => bcrypt('123456789'),
-            'role' => 'patient',
-            'email_verified_at' => now(),
-        ]);
+        $patient4 = $this->createPatientUser('Carlos Eduardo Ferreira', 'carlos.ferreira@email.com');
 
         // Paciente 5
-        $patient5 = User::create([
-            'name' => 'Fernanda Lima Silva',
-            'email' => 'fernanda.lima@email.com',
-            'password' => bcrypt('123456789'),
-            'role' => 'patient',
-            'email_verified_at' => now(),
-        ]);
+        $patient5 = $this->createPatientUser('Fernanda Lima Silva', 'fernanda.lima@email.com');
 
         $address1 = Address::where('street', 'Rua Itajubá')->first();
         $address2 = Address::where('street', 'Avenida Paulista')->first();
@@ -119,5 +89,19 @@ class PatientsSeeder extends Seeder
             'phone' => '11966554433',
             'lgpd_consent_at' => now(),
         ]);
+    }
+
+    private function createPatientUser(string $name, string $email): User
+    {
+        $user = new User([
+            'name' => $name,
+            'email' => $email,
+            'password' => bcrypt('123456789'),
+            'email_verified_at' => now(),
+        ]);
+        $user->role = 'patient';
+        $user->save();
+
+        return $user;
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -68,7 +69,9 @@ class CalibrationController extends Controller
         } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
+            Log::error('Erro ao registrar calibração', ['machine_id' => $machineId, 'exception' => $e]);
+
+            return back()->with('error', 'Não foi possível registrar a calibração. Tente novamente.')->withInput();
         }
     }
 
@@ -103,7 +106,9 @@ class CalibrationController extends Controller
         } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (Exception $e) {
-            return back()->with('error', $e->getMessage())->withInput();
+            Log::error('Erro ao atualizar calibração', ['calibration_id' => $calibration->id, 'exception' => $e]);
+
+            return back()->with('error', 'Não foi possível atualizar a calibração. Tente novamente.')->withInput();
         }
     }
 

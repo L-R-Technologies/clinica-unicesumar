@@ -93,9 +93,7 @@ export function PatientHistorySummary({
                     />
                     <InfoItem
                         label="Detalhes"
-                        value={
-                            patientHistory.infectious_disease_details || '—'
-                        }
+                        value={patientHistory.infectious_disease_details || '—'}
                     />
                 </CardContent>
             </Card>
@@ -155,9 +153,7 @@ export function PatientHistorySummary({
                     />
                     <InfoItem
                         label="Febre ou gripe recente"
-                        value={booleanLabel(
-                            patientHistory.recent_fever_or_flu,
-                        )}
+                        value={booleanLabel(patientHistory.recent_fever_or_flu)}
                     />
                 </CardContent>
             </Card>

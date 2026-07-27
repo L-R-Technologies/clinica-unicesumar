@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -26,7 +26,8 @@ export default function SampleTypeEdit() {
     }
 
     return (
-        <AppLayout title="Editar Tipo de Amostra"
+        <AppLayout
+            title="Editar Tipo de Amostra"
             actions={
                 <>
                     <BackButton
@@ -41,10 +42,15 @@ export default function SampleTypeEdit() {
                         Salvar alterações
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <FormField
                             id="name"
                             label="Nome"
@@ -75,7 +81,6 @@ export default function SampleTypeEdit() {
                                 rows={4}
                             />
                         </FormField>
-
                     </form>
                 </CardContent>
             </Card>

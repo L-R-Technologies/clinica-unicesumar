@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -22,12 +22,19 @@ interface SampleEditProps extends Record<string, unknown> {
     statusOptions: Record<string, string>;
 }
 
-export default function SampleEdit() {
-    const { sample, patients, sampleTypes, statusOptions } = usePage<
-        PageProps<SampleEditProps>
-    >().props;
+type SampleEditForm = {
+    patient_id: string;
+    sample_type_id: string;
+    date: string;
+    status: string;
+    location: string;
+};
 
-    const { data, setData, put, processing, errors } = useForm({
+export default function SampleEdit() {
+    const { sample, patients, sampleTypes, statusOptions } =
+        usePage<PageProps<SampleEditProps>>().props;
+
+    const { data, setData, put, processing, errors } = useForm<SampleEditForm>({
         patient_id: String(sample.patient_id),
         sample_type_id: String(sample.sample_type_id),
         date: sample.date.slice(0, 10),
@@ -41,7 +48,8 @@ export default function SampleEdit() {
     }
 
     return (
-        <AppLayout title="Editar Amostra"
+        <AppLayout
+            title="Editar Amostra"
             actions={
                 <>
                     <BackButton
@@ -56,10 +64,15 @@ export default function SampleEdit() {
                         Salvar alterações
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <FormField
                             id="patient_id"
                             label="Paciente"
@@ -126,7 +139,9 @@ export default function SampleEdit() {
                                 id="date"
                                 type="date"
                                 value={data.date}
-                                onChange={(e) => setData('date', e.target.value)}
+                                onChange={(e) =>
+                                    setData('date', e.target.value)
+                                }
                             />
                         </FormField>
 
@@ -174,7 +189,6 @@ export default function SampleEdit() {
                                 placeholder="Ex.: Geladeira 2, prateleira B"
                             />
                         </FormField>
-
                     </form>
                 </CardContent>
             </Card>

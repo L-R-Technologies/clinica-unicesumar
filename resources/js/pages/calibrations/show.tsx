@@ -6,16 +6,11 @@ import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { formatDateTime } from '@/lib/format';
 import type { Calibration, PageProps } from '@/types';
 
 interface CalibrationShowProps extends Record<string, unknown> {
     calibration: Calibration;
-}
-
-function formatDate(isoDate: string): string {
-    const [year, month, day] = isoDate.slice(0, 10).split('-');
-    const time = isoDate.slice(11, 16);
-    return `${day}/${month}/${year} ${time}`;
 }
 
 export default function CalibrationShow() {
@@ -36,9 +31,7 @@ export default function CalibrationShow() {
                     <ConfirmDeleteDialog
                         action={route('calibrations.destroy', calibration.id)}
                         description="Esta ação removerá permanentemente o registro de calibração."
-                        trigger={
-                            <Button variant="destructive">Excluir</Button>
-                        }
+                        trigger={<Button variant="destructive">Excluir</Button>}
                     />
                 </div>
             }
@@ -58,7 +51,7 @@ export default function CalibrationShow() {
                     <div>
                         <p className="text-sm text-muted-foreground">Data</p>
                         <p className="font-medium">
-                            {formatDate(calibration.calibration_date)}
+                            {formatDateTime(calibration.calibration_date)}
                         </p>
                     </div>
                     <div>

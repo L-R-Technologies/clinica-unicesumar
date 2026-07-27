@@ -8,6 +8,7 @@ use App\Service\ExamTypeService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -58,8 +59,10 @@ class ExamTypeController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao criar tipo de exame', ['exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao criar tipo de exame: '.$e->getMessage())
+                ->with('error', 'Não foi possível criar o tipo de exame. Tente novamente.')
                 ->withInput();
         }
     }
@@ -95,8 +98,10 @@ class ExamTypeController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao atualizar tipo de exame', ['exam_type_id' => $examType->id, 'exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao atualizar tipo de exame: '.$e->getMessage())
+                ->with('error', 'Não foi possível atualizar o tipo de exame. Tente novamente.')
                 ->withInput();
         }
     }

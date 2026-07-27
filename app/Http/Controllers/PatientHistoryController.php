@@ -69,6 +69,8 @@ class PatientHistoryController extends Controller
     {
         $patientHistory = PatientHistory::with(['patient.user', 'user'])->findOrFail($id);
 
+        $this->authorize('view', $patientHistory);
+
         return Inertia::render('patient-histories/show', [
             'patientHistory' => $patientHistory,
         ]);
@@ -78,6 +80,8 @@ class PatientHistoryController extends Controller
     {
         $patientHistory = PatientHistory::with(['patient.user', 'user'])->findOrFail($id);
 
+        $this->authorize('update', $patientHistory);
+
         return Inertia::render('patient-histories/edit', [
             'patientHistory' => $patientHistory,
         ]);
@@ -85,9 +89,10 @@ class PatientHistoryController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
-        try {
-            $patientHistory = PatientHistory::findOrFail($id);
+        $patientHistory = PatientHistory::findOrFail($id);
+        $this->authorize('update', $patientHistory);
 
+        try {
             // Paciente e responsável não são editáveis: preserva os valores originais.
             $data = array_merge($request->all(), [
                 'patient_id' => $patientHistory->patient_id,
@@ -113,9 +118,10 @@ class PatientHistoryController extends Controller
 
     public function destroy($id): RedirectResponse
     {
-        try {
-            $patientHistory = PatientHistory::findOrFail($id);
+        $patientHistory = PatientHistory::findOrFail($id);
+        $this->authorize('delete', $patientHistory);
 
+        try {
             $this->patientHistoryService->delete($patientHistory);
 
             return redirect()

@@ -112,10 +112,13 @@ return [
     | every email and IP address combination. However, if you would like to
     | specify a custom rate limiter to call then you may specify it here.
     |
+    | O valor 'login' referencia o RateLimiter nomeado registrado em
+    | FortifyServiceProvider (limita por email + IP, ~5 tentativas por minuto).
+    |
     */
 
     'limiters' => [
-        'login' => 3,
+        'login' => 'login',
         'two-factor' => 'two-factor',
     ],
 
@@ -146,6 +149,7 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
+        Features::emailVerification(),
         Features::updateProfileInformation(),
         Features::updatePasswords(),
         // Features::twoFactorAuthentication([

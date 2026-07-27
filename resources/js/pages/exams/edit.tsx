@@ -1,4 +1,4 @@
-import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -17,6 +17,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { formatDate } from '@/lib/format';
 import type { Exam, ExamTypeField, PageProps } from '@/types';
 
 interface PatientOption {
@@ -43,13 +44,6 @@ interface ExamsEditProps extends Record<string, unknown> {
 }
 
 type ResultValue = string | boolean;
-
-function formatDate(value: string | null): string {
-    if (!value) {
-        return '—';
-    }
-    return new Date(value).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-}
 
 function buildInitialResults(
     fields: ExamTypeField[],
@@ -136,13 +130,11 @@ export default function ExamsEdit() {
     }
 
     return (
-        <AppLayout title="Editar Exame"
+        <AppLayout
+            title="Editar Exame"
             actions={
                 <>
-                    <BackButton
-                        href={route('exam.index')}
-                        label="Cancelar"
-                    />
+                    <BackButton href={route('exam.index')} label="Cancelar" />
                     <Button
                         type="submit"
                         form="resource-form"
@@ -151,10 +143,15 @@ export default function ExamsEdit() {
                         Salvar alterações
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-3xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-6">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-6"
+                    >
                         <div className="flex items-center gap-2">
                             <span className="text-sm text-muted-foreground">
                                 Status:
@@ -225,10 +222,7 @@ export default function ExamsEdit() {
                                 </Select>
                             </FormField>
 
-                            <FormField
-                                id="exam_type"
-                                label="Tipo de Exame"
-                            >
+                            <FormField id="exam_type" label="Tipo de Exame">
                                 <Input
                                     id="exam_type"
                                     value={exam.exam_type?.name ?? ''}
@@ -281,7 +275,9 @@ export default function ExamsEdit() {
                                 id="date"
                                 type="date"
                                 value={data.date}
-                                onChange={(e) => setData('date', e.target.value)}
+                                onChange={(e) =>
+                                    setData('date', e.target.value)
+                                }
                             />
                         </FormField>
 
@@ -341,7 +337,6 @@ export default function ExamsEdit() {
                                 </FormField>
                             )}
                         </div>
-
                     </form>
                 </CardContent>
             </Card>

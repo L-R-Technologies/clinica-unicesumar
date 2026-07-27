@@ -8,6 +8,7 @@ use App\Service\MachineService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -58,8 +59,10 @@ class MachineController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao criar máquina', ['exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao criar máquina: '.$e->getMessage())
+                ->with('error', 'Não foi possível cadastrar a máquina. Tente novamente.')
                 ->withInput();
         }
     }
@@ -93,8 +96,10 @@ class MachineController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao atualizar máquina', ['machine_id' => $machine->id, 'exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao atualizar: '.$e->getMessage())
+                ->with('error', 'Não foi possível atualizar a máquina. Tente novamente.')
                 ->withInput();
         }
     }

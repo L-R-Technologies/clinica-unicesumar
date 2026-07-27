@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -51,9 +51,8 @@ const INITIAL_FORM_DATA: PatientHistoryFormData = {
 };
 
 export default function PatientHistoriesCreate() {
-    const { patients } = usePage<
-        PageProps<PatientHistoriesCreateProps>
-    >().props;
+    const { patients } =
+        usePage<PageProps<PatientHistoriesCreateProps>>().props;
 
     const { data, setData, post, processing, errors } =
         useForm<PatientHistoryFormData>(INITIAL_FORM_DATA);
@@ -64,7 +63,8 @@ export default function PatientHistoriesCreate() {
     }
 
     return (
-        <AppLayout title="Nova Anamnese"
+        <AppLayout
+            title="Nova Anamnese"
             actions={
                 <>
                     <BackButton
@@ -79,8 +79,13 @@ export default function PatientHistoriesCreate() {
                         Salvar
                     </Button>
                 </>
-            }>
-            <form id="resource-form" onSubmit={submit} className="mx-auto w-full max-w-3xl space-y-6">
+            }
+        >
+            <form
+                id="resource-form"
+                onSubmit={submit}
+                className="mx-auto w-full max-w-3xl space-y-6"
+            >
                 <PatientHistoryFields
                     data={data}
                     setData={setData}
@@ -119,7 +124,6 @@ export default function PatientHistoriesCreate() {
                         </FormField>
                     }
                 />
-
             </form>
         </AppLayout>
     );

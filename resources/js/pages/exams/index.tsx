@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Eye, Pencil, Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
@@ -18,19 +18,19 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ALL_FILTER_VALUE } from '@/lib/constants';
+import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Exam, ExamType, Paginated, PageProps } from '@/types';
 
-// Valor sentinela para o item "Todos" (o Select do shadcn não aceita value vazio).
-const ALL_OPTION = 'all';
-
-interface ExamFilters {
+type ExamFilters = {
     search: string;
     status: string;
     exam_type_id: string;
     date_from: string;
     date_to: string;
-}
+};
 
 interface ExamsIndexProps extends Record<string, unknown> {
     exams: Paginated<Exam>;
@@ -39,59 +39,28 @@ interface ExamsIndexProps extends Record<string, unknown> {
     examTypes: ExamType[];
 }
 
-function formatDate(value: string): string {
-    return new Date(value).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-}
-
 export default function ExamsIndex() {
     const { exams, filters, statusOptions, examTypes } =
         usePage<PageProps<ExamsIndexProps>>().props;
 
-    const otherFilters = {
-        status: filters.status,
-        exam_type_id: filters.exam_type_id,
-        date_from: filters.date_from,
-        date_to: filters.date_to,
-    };
-
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'exam.index',
         initialValue: filters.search,
-        extraParams: otherFilters,
+        extraParams: {
+            status: filters.status,
+            exam_type_id: filters.exam_type_id,
+            date_from: filters.date_from,
+            date_to: filters.date_to,
+        },
     });
 
-    function applyFilter(key: keyof ExamFilters, value: string): void {
-        const params: Record<string, string> = {
+    const { applyFilters, clearFilters, hasActiveFilters } =
+        useTableFilters<ExamFilters>({
+            routeName: 'exam.index',
+            filters,
             search,
-            ...otherFilters,
-            [key]: value,
-        };
-        const cleaned = Object.fromEntries(
-            Object.entries(params).filter(([, v]) => v !== ''),
-        );
-        router.get(route('exam.index'), cleaned, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
+            resetSearch: reset,
         });
-    }
-
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('exam.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    const hasActiveFilters = !!(
-        search ||
-        otherFilters.status ||
-        otherFilters.exam_type_id ||
-        otherFilters.date_from ||
-        otherFilters.date_to
-    );
 
     const columns: Column<Exam>[] = [
         {
@@ -181,19 +150,20 @@ export default function ExamsIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
-                        value={filters.status || ALL_OPTION}
+                        value={filters.status || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
-                            applyFilter(
-                                'status',
-                                value === ALL_OPTION ? '' : value,
-                            )
+                            applyFilters({
+                                status: value === ALL_FILTER_VALUE ? '' : value,
+                            })
                         }
                     >
                         <SelectTrigger id="status" className="sm:w-44">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_OPTION}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {Object.entries(statusOptions).map(
                                 ([value, label]) => (
                                     <SelectItem key={value} value={value}>
@@ -208,19 +178,19 @@ export default function ExamsIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="type">Tipo</Label>
                     <Select
-                        value={filters.exam_type_id || ALL_OPTION}
+                        value={filters.exam_type_id || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
-                            applyFilter(
-                                'exam_type_id',
-                                value === ALL_OPTION ? '' : value,
-                            )
+                            applyFilters({
+                                exam_type_id:
+                                    value === ALL_FILTER_VALUE ? '' : value,
+                            })
                         }
                     >
                         <SelectTrigger id="type" className="sm:w-48">
                             <SelectValue placeholder="Todos os tipos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_OPTION}>
+                            <SelectItem value={ALL_FILTER_VALUE}>
                                 Todos os tipos
                             </SelectItem>
                             {examTypes.map((examType) => (
@@ -242,7 +212,7 @@ export default function ExamsIndex() {
                         type="date"
                         value={filters.date_from}
                         onChange={(e) =>
-                            applyFilter('date_from', e.target.value)
+                            applyFilters({ date_from: e.target.value })
                         }
                     />
                 </div>
@@ -253,7 +223,9 @@ export default function ExamsIndex() {
                         id="date_to"
                         type="date"
                         value={filters.date_to}
-                        onChange={(e) => applyFilter('date_to', e.target.value)}
+                        onChange={(e) =>
+                            applyFilters({ date_to: e.target.value })
+                        }
                     />
                 </div>
             </FiltersCard>

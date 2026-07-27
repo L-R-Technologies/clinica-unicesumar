@@ -64,7 +64,12 @@ function PageLink({ link }: { link: PaginationLink }) {
     }
 
     return (
-        <Link href={link.url} className={baseClasses} preserveScroll preserveState>
+        <Link
+            href={link.url}
+            className={baseClasses}
+            preserveScroll
+            preserveState
+        >
             {content}
         </Link>
     );

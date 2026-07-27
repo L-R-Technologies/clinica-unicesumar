@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -37,7 +37,8 @@ export default function CalibrationCreate() {
     }
 
     return (
-        <AppLayout title={`Nova Calibração: ${machine.name}`}
+        <AppLayout
+            title={`Nova Calibração: ${machine.name}`}
             actions={
                 <>
                     <BackButton
@@ -52,7 +53,8 @@ export default function CalibrationCreate() {
                         Registrar calibração
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
                     <p className="mb-4 text-sm text-muted-foreground">
@@ -60,7 +62,11 @@ export default function CalibrationCreate() {
                         automaticamente conforme a faixa de calibração do
                         equipamento.
                     </p>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <FormField
                             id="calibration_date"
                             label="Data e hora da calibração"
@@ -110,7 +116,6 @@ export default function CalibrationCreate() {
                                 rows={4}
                             />
                         </FormField>
-
                     </form>
                 </CardContent>
             </Card>

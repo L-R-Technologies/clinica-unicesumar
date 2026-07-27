@@ -1,4 +1,4 @@
-import { Link, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -23,7 +23,8 @@ export default function MachineCreate() {
     }
 
     return (
-        <AppLayout title="Nova Máquina"
+        <AppLayout
+            title="Nova Máquina"
             actions={
                 <>
                     <BackButton
@@ -38,10 +39,15 @@ export default function MachineCreate() {
                         Salvar
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <FormField
                             id="name"
                             label="Nome"
@@ -51,7 +57,9 @@ export default function MachineCreate() {
                             <Input
                                 id="name"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
                                 autoFocus
                             />
                         </FormField>
@@ -140,7 +148,6 @@ export default function MachineCreate() {
                                 />
                             </FormField>
                         </div>
-
                     </form>
                 </CardContent>
             </Card>

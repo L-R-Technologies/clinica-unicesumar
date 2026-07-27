@@ -60,9 +60,7 @@ export function ExamTypeFieldsRepeater({
     ) {
         onChange(
             fields.map((field, currentIndex) =>
-                currentIndex === index
-                    ? { ...field, [key]: value }
-                    : field,
+                currentIndex === index ? { ...field, [key]: value } : field,
             ),
         );
     }

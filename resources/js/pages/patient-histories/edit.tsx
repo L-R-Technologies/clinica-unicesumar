@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -21,9 +21,7 @@ function toDateInput(value: string | null): string {
     return value ? value.slice(0, 10) : '';
 }
 
-function buildFormData(
-    record: PatientHistoryRecord,
-): PatientHistoryFormData {
+function buildFormData(record: PatientHistoryRecord): PatientHistoryFormData {
     return {
         patient_id: String(record.patient_id),
         recorded_at: toDateInput(record.recorded_at),
@@ -53,9 +51,8 @@ function buildFormData(
 }
 
 export default function PatientHistoriesEdit() {
-    const { patientHistory } = usePage<
-        PageProps<PatientHistoriesEditProps>
-    >().props;
+    const { patientHistory } =
+        usePage<PageProps<PatientHistoriesEditProps>>().props;
 
     const { data, setData, put, processing, errors } =
         useForm<PatientHistoryFormData>(buildFormData(patientHistory));
@@ -66,7 +63,8 @@ export default function PatientHistoriesEdit() {
     }
 
     return (
-        <AppLayout title="Editar Anamnese"
+        <AppLayout
+            title="Editar Anamnese"
             actions={
                 <>
                     <BackButton
@@ -81,8 +79,13 @@ export default function PatientHistoriesEdit() {
                         Salvar alterações
                     </Button>
                 </>
-            }>
-            <form id="resource-form" onSubmit={submit} className="mx-auto w-full max-w-3xl space-y-6">
+            }
+        >
+            <form
+                id="resource-form"
+                onSubmit={submit}
+                className="mx-auto w-full max-w-3xl space-y-6"
+            >
                 <PatientHistoryFields
                     data={data}
                     setData={setData}
@@ -100,7 +103,6 @@ export default function PatientHistoriesEdit() {
                         </FormField>
                     }
                 />
-
             </form>
         </AppLayout>
     );

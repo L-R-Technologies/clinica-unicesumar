@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
-use App\Models\ExamRejection;
-use App\Notifications\ExamApprovedNotification;
-use App\Notifications\ExamRejectedNotification;
 use App\Service\ExamService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -73,8 +71,10 @@ class ExamController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao criar exame', ['exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao criar exame: '.$e->getMessage())
+                ->with('error', 'Não foi possível criar o exame. Tente novamente.')
                 ->withInput();
         }
     }
@@ -89,6 +89,8 @@ class ExamController extends Controller
             'examType.fields',
             'rejections' => fn ($query) => $query->latest()->with('user'),
         ])->findOrFail($id);
+
+        $this->authorize('view', $exam);
 
         return Inertia::render('exams/show', [
             'exam' => $exam,
@@ -105,6 +107,8 @@ class ExamController extends Controller
             'examType.fields',
         ])->findOrFail($id);
 
+        $this->authorize('update', $exam);
+
         // Ao trocar o paciente (partial reload), recarrega histórico/amostras daquele paciente.
         $patientId = $request->input('patient_id', $exam->patient_id);
 
@@ -119,9 +123,10 @@ class ExamController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
-        try {
-            $exam = Exam::findOrFail($id);
+        $exam = Exam::findOrFail($id);
+        $this->authorize('update', $exam);
 
+        try {
             $validatedData = $this->examService->validateExamData($request->all(), $exam->id);
             $this->examService->updateExam($exam, $validatedData);
 
@@ -133,88 +138,69 @@ class ExamController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao atualizar exame', ['exam_id' => $id, 'exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao atualizar exame: '.$e->getMessage())
+                ->with('error', 'Não foi possível atualizar o exame. Tente novamente.')
                 ->withInput();
         }
     }
 
     public function destroy($id): RedirectResponse
     {
+        $exam = Exam::findOrFail($id);
+        $this->authorize('delete', $exam);
+
         try {
-            $exam = Exam::findOrFail($id);
             $this->examService->deleteExam($exam);
 
             return redirect()
                 ->route('exam.index')
                 ->with('success', 'Exame removido com sucesso!');
         } catch (Exception $e) {
-            return back()->with('error', 'Erro ao remover exame: '.$e->getMessage());
+            Log::error('Erro ao remover exame', ['exam_id' => $id, 'exception' => $e]);
+
+            return back()->with('error', 'Não foi possível remover o exame. Tente novamente.');
         }
     }
 
     public function approve($id): RedirectResponse
     {
+        $exam = Exam::with('user')->findOrFail($id);
+        $this->authorize('approve', $exam);
+
         try {
-            // Apenas professores podem aprovar exames
-            if (Auth::user()->role !== 'teacher') {
-                return back()->with('error', 'Apenas professores podem aprovar exames.');
-            }
-
-            $exam = Exam::with('user')->findOrFail($id);
-
-            // Atualizar status do exame
-            $exam->update(['status' => 'approved']);
-
-            // Enviar notificação ao aluno que cadastrou o exame
-            $exam->user->notify(new ExamApprovedNotification($exam));
-
-            // Envia o exame (email de resultados disponíveis) ao paciente
-            $this->examService->handleStatusChangeEmails($exam, 'approved');
+            $this->examService->approveExam($exam);
 
             return back()->with('success', 'Exame aprovado com sucesso! Email enviado ao aluno e ao paciente.');
         } catch (Exception $e) {
-            return back()->with('error', 'Erro ao aprovar exame: '.$e->getMessage());
+            Log::error('Erro ao aprovar exame', ['exam_id' => $id, 'exception' => $e]);
+
+            return back()->with('error', 'Não foi possível aprovar o exame. Tente novamente.');
         }
     }
 
     public function reject(Request $request, $id): RedirectResponse
     {
+        $exam = Exam::with('user')->findOrFail($id);
+        $this->authorize('reject', $exam);
+
+        $validated = $request->validate([
+            'justification' => 'required|string|min:10|max:1000',
+        ], [
+            'justification.required' => 'A justificativa é obrigatória.',
+            'justification.min' => 'A justificativa deve ter pelo menos 10 caracteres.',
+            'justification.max' => 'A justificativa não pode exceder 1000 caracteres.',
+        ]);
+
         try {
-            // Apenas professores podem reprovar exames
-            if (Auth::user()->role !== 'teacher') {
-                return back()->with('error', 'Apenas professores podem reprovar exames.');
-            }
-
-            // Validar a justificativa
-            $validated = $request->validate([
-                'justification' => 'required|string|min:10|max:1000',
-            ], [
-                'justification.required' => 'A justificativa é obrigatória.',
-                'justification.min' => 'A justificativa deve ter pelo menos 10 caracteres.',
-                'justification.max' => 'A justificativa não pode exceder 1000 caracteres.',
-            ]);
-
-            $exam = Exam::with('user')->findOrFail($id);
-
-            // Atualizar status do exame
-            $exam->update(['status' => 'rejected']);
-
-            // Registrar a rejeição com justificativa
-            ExamRejection::create([
-                'exam_id' => $exam->id,
-                'user_id' => Auth::id(),
-                'justification' => $validated['justification'],
-            ]);
-
-            // Enviar notificação ao aluno que cadastrou o exame com a justificativa
-            $exam->user->notify(new ExamRejectedNotification($exam, $validated['justification']));
+            $this->examService->rejectExam($exam, $validated['justification']);
 
             return back()->with('success', 'Exame rejeitado com sucesso! Email enviado ao aluno com a justificativa.');
-        } catch (ValidationException $e) {
-            return back()->withErrors($e->errors());
         } catch (Exception $e) {
-            return back()->with('error', 'Erro ao reprovar exame: '.$e->getMessage());
+            Log::error('Erro ao reprovar exame', ['exam_id' => $id, 'exception' => $e]);
+
+            return back()->with('error', 'Não foi possível reprovar o exame. Tente novamente.');
         }
     }
 }

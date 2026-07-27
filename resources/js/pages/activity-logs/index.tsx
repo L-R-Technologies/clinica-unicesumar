@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Eye } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
@@ -17,10 +17,11 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ALL_FILTER_VALUE } from '@/lib/constants';
+import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps } from '@/types';
-
-const ALL_OPTION = 'all';
 
 const EVENT_BADGE_CLASSES: Record<string, string> = {
     created:
@@ -48,13 +49,13 @@ interface ActivityLogSummary {
     created_at: string | null;
 }
 
-interface ActivityLogsFilters {
+type ActivityLogsFilters = {
     search: string;
     log_name: string;
     event: string;
     date_from: string;
     date_to: string;
-}
+};
 
 interface ActivityLogsIndexProps extends Record<string, unknown> {
     logs: Paginated<ActivityLogSummary>;
@@ -63,28 +64,7 @@ interface ActivityLogsIndexProps extends Record<string, unknown> {
     eventOptions: FilterOption[];
 }
 
-function formatDateTime(isoDate: string | null): string {
-    if (!isoDate) {
-        return '—';
-    }
-
-    const date = new Date(isoDate);
-    return date.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-}
-
-function EventBadge({
-    event,
-    label,
-}: {
-    event: string | null;
-    label: string;
-}) {
+function EventBadge({ event, label }: { event: string | null; label: string }) {
     const className =
         (event && EVENT_BADGE_CLASSES[event]) ??
         'border-transparent bg-muted text-muted-foreground';
@@ -93,9 +73,8 @@ function EventBadge({
 }
 
 export default function ActivityLogsIndex() {
-    const { logs, filters, logNameOptions, eventOptions } = usePage<
-        PageProps<ActivityLogsIndexProps>
-    >().props;
+    const { logs, filters, logNameOptions, eventOptions } =
+        usePage<PageProps<ActivityLogsIndexProps>>().props;
 
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'activity-logs.index',
@@ -108,41 +87,13 @@ export default function ActivityLogsIndex() {
         },
     });
 
-    function applyFilters(next: Partial<ActivityLogsFilters>): void {
-        const params = {
+    const { applyFilters, clearFilters, hasActiveFilters } =
+        useTableFilters<ActivityLogsFilters>({
+            routeName: 'activity-logs.index',
+            filters,
             search,
-            log_name: filters.log_name,
-            event: filters.event,
-            date_from: filters.date_from,
-            date_to: filters.date_to,
-            ...next,
-        };
-
-        router.get(
-            route('activity-logs.index'),
-            Object.fromEntries(
-                Object.entries(params).filter(([, value]) => value !== ''),
-            ),
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('activity-logs.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    const hasActiveFilters = !!(
-        search ||
-        filters.log_name ||
-        filters.event ||
-        filters.date_from ||
-        filters.date_to
-    );
+            resetSearch: reset,
+        });
 
     const columns: Column<ActivityLogSummary>[] = [
         {
@@ -211,10 +162,11 @@ export default function ActivityLogsIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="log_name">Tipo</Label>
                     <Select
-                        value={filters.log_name || ALL_OPTION}
+                        value={filters.log_name || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
-                                log_name: value === ALL_OPTION ? '' : value,
+                                log_name:
+                                    value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -222,7 +174,9 @@ export default function ActivityLogsIndex() {
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_OPTION}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {logNameOptions.map((option) => (
                                 <SelectItem
                                     key={option.value}
@@ -237,10 +191,10 @@ export default function ActivityLogsIndex() {
                 <div className="space-y-2">
                     <Label htmlFor="event">Evento</Label>
                     <Select
-                        value={filters.event || ALL_OPTION}
+                        value={filters.event || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
-                                event: value === ALL_OPTION ? '' : value,
+                                event: value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -248,7 +202,9 @@ export default function ActivityLogsIndex() {
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_OPTION}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {eventOptions.map((option) => (
                                 <SelectItem
                                     key={option.value}

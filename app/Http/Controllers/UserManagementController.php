@@ -7,7 +7,7 @@ use App\Service\UserManagementService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -43,19 +43,10 @@ class UserManagementController extends Controller
             'status' => $request->input('status', ''),
         ];
 
-        $users = $this->userManagementService->getFilteredUsers($filters);
-
-        $page = LengthAwarePaginator::resolveCurrentPage();
-        $paginator = new LengthAwarePaginator(
-            $users->forPage($page, self::USERS_PER_PAGE)->values(),
-            $users->count(),
-            self::USERS_PER_PAGE,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
+        $users = $this->userManagementService->getFilteredUsers($filters, self::USERS_PER_PAGE);
 
         return Inertia::render('users/index', [
-            'users' => $paginator,
+            'users' => $users,
             'filters' => $filters,
             'roleOptions' => self::ROLE_OPTIONS,
             'statusOptions' => self::STATUS_OPTIONS,
@@ -83,7 +74,7 @@ class UserManagementController extends Controller
 
                 $teacherData = [
                     'registration_number' => $validatedData['registration_number'],
-                    'crbm' => $validatedData['crbm'] ?? null,
+                    'professional_license' => $validatedData['professional_license'] ?? null,
                 ];
 
                 $this->userManagementService->createTeacher($userData, $teacherData);
@@ -115,8 +106,10 @@ class UserManagementController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao criar usuário', ['exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao criar usuário: '.$e->getMessage())
+                ->with('error', 'Não foi possível criar o usuário. Tente novamente.')
                 ->withInput();
         }
     }
@@ -160,7 +153,7 @@ class UserManagementController extends Controller
 
                 $specificData = [
                     'registration_number' => $validatedData['registration_number'],
-                    'crbm' => $validatedData['crbm'] ?? null,
+                    'professional_license' => $validatedData['professional_license'] ?? null,
                 ];
             } elseif ($user->role === 'student') {
                 $validatedData = $this->userManagementService->validateStudentData($request->all(), $user->id);
@@ -193,8 +186,10 @@ class UserManagementController extends Controller
                 ->withErrors($e->errors())
                 ->withInput();
         } catch (Exception $e) {
+            Log::error('Erro ao atualizar usuário', ['user_id' => $id, 'exception' => $e]);
+
             return back()
-                ->with('error', 'Erro ao atualizar usuário: '.$e->getMessage())
+                ->with('error', 'Não foi possível atualizar o usuário. Tente novamente.')
                 ->withInput();
         }
     }
@@ -210,7 +205,9 @@ class UserManagementController extends Controller
                 ->route('user-management.index')
                 ->with('success', 'Usuário removido com sucesso!');
         } catch (Exception $e) {
-            return back()->with('error', 'Erro ao remover usuário: '.$e->getMessage());
+            Log::error('Erro ao remover usuário', ['user_id' => $id, 'exception' => $e]);
+
+            return back()->with('error', 'Não foi possível remover o usuário. Tente novamente.');
         }
     }
 
@@ -225,7 +222,9 @@ class UserManagementController extends Controller
 
             return back()->with('success', $message);
         } catch (Exception $e) {
-            return back()->with('error', 'Erro ao alterar status do usuário: '.$e->getMessage());
+            Log::error('Erro ao alterar status do usuário', ['user_id' => $id, 'exception' => $e]);
+
+            return back()->with('error', 'Não foi possível alterar o status do usuário. Tente novamente.');
         }
     }
 }

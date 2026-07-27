@@ -21,9 +21,10 @@ class ExamNotificationTest extends TestCase
         $exam->patient->setRelation('user', new User(['name' => 'João']));
 
         $notification = new ExamApprovedNotification($exam);
-        $notifiable = new class
+        $notifiable = new class()
         {
             public $name = 'Maria';
+
             public $email = 'maria@example.com';
         };
 
@@ -40,9 +41,10 @@ class ExamNotificationTest extends TestCase
         $exam->patient->setRelation('user', new User(['name' => 'Ana']));
 
         $notification = new ExamRejectedNotification($exam, 'O exame precisa ser refeito.');
-        $notifiable = new class
+        $notifiable = new class()
         {
             public $name = 'Pedro';
+
             public $email = 'pedro@example.com';
         };
 

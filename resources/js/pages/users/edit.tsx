@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
@@ -27,7 +27,8 @@ function generateTemporaryPassword(): string {
 
     let password = '';
     for (let i = 0; i < GENERATED_PASSWORD_LENGTH; i++) {
-        password += PASSWORD_ALPHABET[randomValues[i] % PASSWORD_ALPHABET.length];
+        password +=
+            PASSWORD_ALPHABET[randomValues[i] % PASSWORD_ALPHABET.length];
     }
 
     return password;
@@ -46,7 +47,7 @@ export default function UserEdit() {
         email: user.email,
         password: '',
         registration_number: user.teacher?.registration_number ?? '',
-        crbm: '',
+        professional_license: user.teacher?.professional_license ?? '',
         ra: user.student?.ra ?? '',
         course: user.student?.course ?? '',
         semester: user.student?.semester ?? '',
@@ -58,7 +59,8 @@ export default function UserEdit() {
     }
 
     return (
-        <AppLayout title="Editar Usuário"
+        <AppLayout
+            title="Editar Usuário"
             actions={
                 <>
                     <BackButton
@@ -73,10 +75,15 @@ export default function UserEdit() {
                         Salvar alterações
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <div className="space-y-2">
                             <p className="text-sm text-muted-foreground">
                                 Tipo de usuário
@@ -95,7 +102,9 @@ export default function UserEdit() {
                             <Input
                                 id="name"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
                                 autoFocus
                             />
                         </FormField>
@@ -190,15 +199,18 @@ export default function UserEdit() {
                                 </FormField>
 
                                 <FormField
-                                    id="crbm"
+                                    id="professional_license"
                                     label="CRBM (opcional)"
-                                    error={errors.crbm}
+                                    error={errors.professional_license}
                                 >
                                     <Input
-                                        id="crbm"
-                                        value={data.crbm}
+                                        id="professional_license"
+                                        value={data.professional_license}
                                         onChange={(e) =>
-                                            setData('crbm', e.target.value)
+                                            setData(
+                                                'professional_license',
+                                                e.target.value,
+                                            )
                                         }
                                     />
                                 </FormField>
@@ -256,7 +268,6 @@ export default function UserEdit() {
                                 </FormField>
                             </>
                         )}
-
                     </form>
                 </CardContent>
             </Card>

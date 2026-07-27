@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -26,9 +26,8 @@ function today(): string {
 }
 
 export default function SampleCreate() {
-    const { patients, sampleTypes, statusOptions } = usePage<
-        PageProps<SampleCreateProps>
-    >().props;
+    const { patients, sampleTypes, statusOptions } =
+        usePage<PageProps<SampleCreateProps>>().props;
 
     const { data, setData, post, processing, errors } = useForm({
         patient_id: '',
@@ -44,7 +43,8 @@ export default function SampleCreate() {
     }
 
     return (
-        <AppLayout title="Nova Amostra"
+        <AppLayout
+            title="Nova Amostra"
             actions={
                 <>
                     <BackButton
@@ -59,10 +59,15 @@ export default function SampleCreate() {
                         Salvar
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <FormField
                             id="patient_id"
                             label="Paciente"
@@ -129,7 +134,9 @@ export default function SampleCreate() {
                                 id="date"
                                 type="date"
                                 value={data.date}
-                                onChange={(e) => setData('date', e.target.value)}
+                                onChange={(e) =>
+                                    setData('date', e.target.value)
+                                }
                             />
                         </FormField>
 
@@ -177,7 +184,6 @@ export default function SampleCreate() {
                                 placeholder="Ex.: Geladeira 2, prateleira B"
                             />
                         </FormField>
-
                     </form>
                 </CardContent>
             </Card>

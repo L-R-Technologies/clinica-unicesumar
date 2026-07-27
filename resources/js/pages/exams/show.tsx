@@ -27,27 +27,11 @@ import {
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { FormField } from '@/components/form-field';
+import { formatDate, formatResultValue } from '@/lib/format';
 import type { Exam, ExamTypeField, PageProps } from '@/types';
 
 interface ExamsShowProps extends Record<string, unknown> {
     exam: Exam;
-}
-
-function formatDate(value: string | null): string {
-    if (!value) {
-        return '—';
-    }
-    return new Date(value).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-}
-
-function formatResultValue(value: string | number | boolean | null): string {
-    if (typeof value === 'boolean') {
-        return value ? 'Sim' : 'Não';
-    }
-    if (value === null || value === '') {
-        return '—';
-    }
-    return String(value);
 }
 
 function DetailItem({ label, value }: { label: string; value: string }) {
@@ -243,9 +227,8 @@ export default function ExamsShow() {
                                     {rejection.justification}
                                 </p>
                                 <p className="mt-1 text-sm text-muted-foreground">
-                                    Rejeitado por{' '}
-                                    {rejection.user?.name ?? '—'} em{' '}
-                                    {formatDate(rejection.created_at)}
+                                    Rejeitado por {rejection.user?.name ?? '—'}{' '}
+                                    em {formatDate(rejection.created_at)}
                                 </p>
                             </div>
                         ))}

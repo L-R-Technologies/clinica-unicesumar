@@ -132,61 +132,72 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 ### Passos
 
 1. Clone o repositório:
-	```bash
-	git clone git@github.com:L-R-Technologies/clinica-unicesumar.git
-	cd clinica-unicesumar
-	```
+
+    ```bash
+    git clone git@github.com:L-R-Technologies/clinica-unicesumar.git
+    cd clinica-unicesumar
+    ```
 
 2. Copie o arquivo de ambiente:
-	```bash
-	cp .env.example .env
-	```
+
+    ```bash
+    cp .env.example .env
+    ```
 
 3. Instale as dependências:
-	```bash
-	composer install
-	```
+
+    ```bash
+    composer install
+    ```
 
 4. Configure o pre-commit:
-	```bash
-	composer run setup-hooks
-	```
+
+    ```bash
+    composer run setup-hooks
+    ```
 
 5. Suba os containers Docker:
-	```bash
-	./vendor/bin/sail up -d
-	```
+
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
 6. Entre no container do app para rodar comandos:
-	```bash
-	docker exec -u sail -it clinica-unicesumar-app-1 bash
-	```
+
+    ```bash
+    docker exec -u sail -it clinica-unicesumar-app-1 bash
+    ```
 
 7. Instale/atualize dependências dentro do container:
-	```bash
-	composer install
-	```
+
+    ```bash
+    composer install
+    ```
 
 8. Gere a chave da aplicação:
-	```bash
-	php artisan key:generate
-	```
+
+    ```bash
+    php artisan key:generate
+    ```
 
 9. Execute as migrations:
-	```bash
-	php artisan migrate
-	```
+
+    ```bash
+    php artisan migrate
+    ```
 
 10. Execute as seeds:
-	```bash
-	php artisan db:seed
-	```
 
-10. Dar permissão de escrita:
+    ```bash
+    php artisan db:seed
+    ```
+
+11. Dar permissão de escrita:
     ```bash
     chown -R sail:sail storage bootstrap/cache
     chmod -R 775 storage bootstrap/cache
     ```
+
 ---
 
 ## 7. Comandos Úteis
@@ -271,6 +282,7 @@ php artisan test tests/Feature/ExampleTest.php
 # Criar teste
 php artisan make:test NomeTest
 ```
+
 ---
 
 ## 8. Tecnologias Utilizadas
@@ -290,42 +302,49 @@ php artisan make:test NomeTest
 Se o container do MySQL não estiver subindo, pode ser que exista um arquivo `.lock` impedindo a inicialização. Siga estes passos para remover o arquivo com segurança:
 
 1. **Pare o serviço MySQL/Sail antes de manipular volumes.**
-	```bash
-	./vendor/bin/sail down
-	```
+
+    ```bash
+    ./vendor/bin/sail down
+    ```
 
 2. **Liste os volumes disponíveis:**
-	```bash
-	docker volume ls
-	```
+
+    ```bash
+    docker volume ls
+    ```
 
 3. **Identifique o nome do volume usado pelo serviço** (exemplo: `clinica-unicesumar_sail-mysql`).
 
 4. **Rode um container temporário com o volume montado:**
-	```bash
-	docker run --rm -it -v NOME_DO_VOLUME:/data alpine sh
-	```
-	Exemplo:
-	```bash
-	docker run --rm -it -v clinica-unicesumar_sail-mysql:/data alpine sh
-	```
+
+    ```bash
+    docker run --rm -it -v NOME_DO_VOLUME:/data alpine sh
+    ```
+
+    Exemplo:
+
+    ```bash
+    docker run --rm -it -v clinica-unicesumar_sail-mysql:/data alpine sh
+    ```
 
 5. **Dentro do shell do container, navegue até a pasta do volume e identifique arquivos `.lock`:**
-	```sh
-	cd /data
-	ls
-	```
+
+    ```sh
+    cd /data
+    ls
+    ```
 
 6. **Delete o arquivo de lock:**
-	```sh
-	rm -rf mysql.sock.lock
-	```
+
+    ```sh
+    rm -rf mysql.sock.lock
+    ```
 
 7. **Digite `exit` para sair do container.**
 
 8. **Tente subir o container novamente:**
-	```bash
-	./vendor/bin/sail up -d
-	```
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
 > **Atenção:** Remova arquivos `.lock` apenas se tiver certeza que o serviço está parado e não há processos usando o volume, para evitar corrupção de dados.

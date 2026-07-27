@@ -6,15 +6,11 @@ import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { formatDate } from '@/lib/format';
 import type { PageProps, Sample } from '@/types';
 
 interface SampleShowProps extends Record<string, unknown> {
     sample: Sample;
-}
-
-function formatDate(isoDate: string): string {
-    const [year, month, day] = isoDate.slice(0, 10).split('-');
-    return `${day}/${month}/${year}`;
 }
 
 export default function SampleShow() {
@@ -55,7 +51,9 @@ export default function SampleShow() {
                         <p className="font-mono font-medium">{sample.code}</p>
                     </div>
                     <div>
-                        <p className="text-sm text-muted-foreground">Paciente</p>
+                        <p className="text-sm text-muted-foreground">
+                            Paciente
+                        </p>
                         <p className="font-medium">
                             {sample.patient?.user?.name ?? 'N/A'}
                         </p>

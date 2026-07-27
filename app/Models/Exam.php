@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -18,8 +20,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class Exam extends Model
 {
-    use LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
+    // A transição de status ocorre apenas via ExamService::approveExam/rejectExam
+    // (atribuição explícita + save), por isso 'status' não é mass assignable.
     protected $fillable = [
         'user_id',
         'patient_history_id',
@@ -28,7 +32,6 @@ class Exam extends Model
         'sample_id',
         'date',
         'results',
-        'status',
         'observation',
     ];
 

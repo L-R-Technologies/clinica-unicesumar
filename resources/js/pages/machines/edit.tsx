@@ -1,4 +1,4 @@
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -25,9 +25,8 @@ function numberToString(value: number | null): string {
 }
 
 export default function MachineEdit() {
-    const { machine, statusOptions } = usePage<
-        PageProps<MachineEditProps>
-    >().props;
+    const { machine, statusOptions } =
+        usePage<PageProps<MachineEditProps>>().props;
 
     const { data, setData, put, processing, errors } = useForm({
         name: machine.name,
@@ -45,7 +44,8 @@ export default function MachineEdit() {
     }
 
     return (
-        <AppLayout title="Editar Máquina"
+        <AppLayout
+            title="Editar Máquina"
             actions={
                 <>
                     <BackButton
@@ -60,10 +60,15 @@ export default function MachineEdit() {
                         Salvar alterações
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-2xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <FormField
                             id="name"
                             label="Nome"
@@ -73,7 +78,9 @@ export default function MachineEdit() {
                             <Input
                                 id="name"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
                                 autoFocus
                             />
                         </FormField>
@@ -195,7 +202,6 @@ export default function MachineEdit() {
                                 />
                             </FormField>
                         </div>
-
                     </form>
                 </CardContent>
             </Card>

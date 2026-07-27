@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Eye, Pencil, Plus } from 'lucide-react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
@@ -11,6 +11,8 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps } from '@/types';
 import type { PatientHistoryRecord } from './types';
@@ -20,18 +22,9 @@ interface PatientHistoriesIndexProps extends Record<string, unknown> {
     filters: { search: string; date: string };
 }
 
-function formatDate(value: string | null): string {
-    if (!value) {
-        return '—';
-    }
-
-    return new Date(value).toLocaleDateString('pt-BR');
-}
-
 export default function PatientHistoriesIndex() {
-    const { patientHistories, filters } = usePage<
-        PageProps<PatientHistoriesIndexProps>
-    >().props;
+    const { patientHistories, filters } =
+        usePage<PageProps<PatientHistoriesIndexProps>>().props;
 
     const [date, setDate] = useState(filters.date ?? '');
 
@@ -41,26 +34,26 @@ export default function PatientHistoriesIndex() {
         extraParams: { date: date || undefined },
     });
 
+    const {
+        applyFilters,
+        clearFilters: clearTableFilters,
+        hasActiveFilters,
+    } = useTableFilters({
+        routeName: 'patient-histories.index',
+        filters: { search: filters.search, date },
+        search,
+        resetSearch: reset,
+    });
+
     function handleDateChange(value: string): void {
         setDate(value);
-        router.get(
-            route('patient-histories.index'),
-            { search: search || undefined, date: value || undefined },
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
+        applyFilters({ date: value });
     }
 
     function clearFilters(): void {
-        reset();
         setDate('');
-        router.get(
-            route('patient-histories.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
+        clearTableFilters();
     }
-
-    const hasActiveFilters = !!(search || date);
 
     const columns: Column<PatientHistoryRecord>[] = [
         {

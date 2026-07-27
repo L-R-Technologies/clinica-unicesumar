@@ -1,5 +1,8 @@
 export type UserRole = 'teacher' | 'student' | 'patient';
 
+/** Perfis que representam usuários internos do laboratório (não pacientes). */
+export type UserType = Exclude<UserRole, 'patient'>;
+
 export interface User {
     id: number;
     name: string;
@@ -81,6 +84,8 @@ export interface SampleType {
     is_active: boolean;
 }
 
+export type SampleStatus = 'under review' | 'stored' | 'discarded';
+
 export interface Sample {
     id: number;
     patient_id: number;
@@ -89,7 +94,7 @@ export interface Sample {
     code: string;
     date: string;
     location: string | null;
-    status: string;
+    status: SampleStatus;
     stored_at: string | null;
     notified: boolean;
     patient?: Patient;
@@ -98,10 +103,7 @@ export interface Sample {
 }
 
 export type ExamStatus =
-    | 'pending'
-    | 'pending_approval'
-    | 'approved'
-    | 'rejected';
+    'pending' | 'pending_approval' | 'approved' | 'rejected';
 
 export interface ExamRejection {
     id: number;
@@ -231,7 +233,9 @@ export interface Auth {
     user: User | null;
 }
 
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+export type PageProps<
+    T extends Record<string, unknown> = Record<string, unknown>,
+> = T & {
     auth: Auth;
     flash: FlashMessages;
     errors: Record<string, string>;

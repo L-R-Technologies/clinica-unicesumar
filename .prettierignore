@@ -1,0 +1,8 @@
+node_modules
+public/build
+public/hot
+vendor
+storage
+bootstrap/cache
+*.min.js
+resources/js/types/ziggy.d.ts

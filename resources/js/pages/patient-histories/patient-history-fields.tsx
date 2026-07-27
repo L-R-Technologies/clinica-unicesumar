@@ -1,12 +1,7 @@
 import type { SetDataAction } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { FormField } from '@/components/form-field';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,10 +13,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import {
-    MENSTRUAL_PERIOD_OPTIONS,
-    type PatientHistoryFormData,
-} from './types';
+import { MENSTRUAL_PERIOD_OPTIONS, type PatientHistoryFormData } from './types';
 
 interface PatientHistoryFieldsProps {
     data: PatientHistoryFormData;

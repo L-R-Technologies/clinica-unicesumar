@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Eye, Pencil, Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
@@ -18,16 +18,17 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ALL_FILTER_VALUE } from '@/lib/constants';
+import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps, Sample } from '@/types';
 
-const ALL_STATUS = 'all';
-
-interface SamplesIndexFilters {
+type SamplesIndexFilters = {
     search: string;
     status: string;
     date: string;
-}
+};
 
 interface SamplesIndexProps extends Record<string, unknown> {
     samples: Paginated<Sample>;
@@ -35,15 +36,9 @@ interface SamplesIndexProps extends Record<string, unknown> {
     statusOptions: Record<string, string>;
 }
 
-function formatDate(isoDate: string): string {
-    const [year, month, day] = isoDate.slice(0, 10).split('-');
-    return `${day}/${month}/${year}`;
-}
-
 export default function SamplesIndex() {
-    const { samples, filters, statusOptions } = usePage<
-        PageProps<SamplesIndexProps>
-    >().props;
+    const { samples, filters, statusOptions } =
+        usePage<PageProps<SamplesIndexProps>>().props;
 
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'samples.index',
@@ -51,33 +46,13 @@ export default function SamplesIndex() {
         extraParams: { status: filters.status, date: filters.date },
     });
 
-    function applyFilters(next: Partial<SamplesIndexFilters>): void {
-        const params = {
+    const { applyFilters, clearFilters, hasActiveFilters } =
+        useTableFilters<SamplesIndexFilters>({
+            routeName: 'samples.index',
+            filters,
             search,
-            status: filters.status,
-            date: filters.date,
-            ...next,
-        };
-
-        router.get(
-            route('samples.index'),
-            Object.fromEntries(
-                Object.entries(params).filter(([, value]) => value !== ''),
-            ),
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('samples.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    const hasActiveFilters = !!(search || filters.status || filters.date);
+            resetSearch: reset,
+        });
 
     const columns: Column<Sample>[] = [
         {
@@ -165,10 +140,10 @@ export default function SamplesIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
-                        value={filters.status || ALL_STATUS}
+                        value={filters.status || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
-                                status: value === ALL_STATUS ? '' : value,
+                                status: value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -176,7 +151,9 @@ export default function SamplesIndex() {
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_STATUS}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {Object.entries(statusOptions).map(
                                 ([value, label]) => (
                                     <SelectItem key={value} value={value}>

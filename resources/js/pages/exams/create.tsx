@@ -1,4 +1,4 @@
-import { Link, router, useForm, usePage } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -14,6 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { formatDate } from '@/lib/format';
 import type { ExamType, PageProps } from '@/types';
 
 interface PatientOption {
@@ -41,13 +42,6 @@ interface ExamsCreateProps extends Record<string, unknown> {
 
 function today(): string {
     return new Date().toISOString().slice(0, 10);
-}
-
-function formatDate(value: string | null): string {
-    if (!value) {
-        return '—';
-    }
-    return new Date(value).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 }
 
 export default function ExamsCreate() {
@@ -89,13 +83,11 @@ export default function ExamsCreate() {
     const hasPatient = data.patient_id !== '';
 
     return (
-        <AppLayout title="Novo Exame"
+        <AppLayout
+            title="Novo Exame"
             actions={
                 <>
-                    <BackButton
-                        href={route('exam.index')}
-                        label="Cancelar"
-                    />
+                    <BackButton href={route('exam.index')} label="Cancelar" />
                     <Button
                         type="submit"
                         form="resource-form"
@@ -104,10 +96,15 @@ export default function ExamsCreate() {
                         Salvar exame
                     </Button>
                 </>
-            }>
+            }
+        >
             <Card className="mx-auto w-full max-w-3xl">
                 <CardContent>
-                    <form id="resource-form" onSubmit={submit} className="space-y-4">
+                    <form
+                        id="resource-form"
+                        onSubmit={submit}
+                        className="space-y-4"
+                    >
                         <div className="grid gap-4 sm:grid-cols-2">
                             <FormField
                                 id="patient_id"
@@ -260,7 +257,9 @@ export default function ExamsCreate() {
                                 id="date"
                                 type="date"
                                 value={data.date}
-                                onChange={(e) => setData('date', e.target.value)}
+                                onChange={(e) =>
+                                    setData('date', e.target.value)
+                                }
                             />
                         </FormField>
 
@@ -279,7 +278,6 @@ export default function ExamsCreate() {
                                 placeholder="Observações sobre o exame..."
                             />
                         </FormField>
-
                     </form>
                 </CardContent>
             </Card>

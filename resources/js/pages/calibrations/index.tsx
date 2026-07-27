@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Download, Eye, Pencil } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { DataTable, type Column } from '@/components/data-table';
@@ -16,17 +16,17 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ALL_FILTER_VALUE } from '@/lib/constants';
+import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Calibration, Machine, Paginated, PageProps } from '@/types';
 
-const ALL_STATUS = 'all';
-const ALL_MACHINES = 'all';
-
-interface CalibrationsIndexFilters {
+type CalibrationsIndexFilters = {
     search: string;
     status: string;
     machine_id: string;
-}
+};
 
 interface CalibrationsIndexProps extends Record<string, unknown> {
     calibrations: Paginated<Calibration>;
@@ -35,24 +35,9 @@ interface CalibrationsIndexProps extends Record<string, unknown> {
     statusOptions: Record<string, string>;
 }
 
-function formatDate(isoDate: string): string {
-    const [year, month, day] = isoDate.slice(0, 10).split('-');
-    const time = isoDate.slice(11, 16);
-    return `${day}/${month}/${year} ${time}`;
-}
-
-function cleanParams(
-    params: Record<string, string>,
-): Record<string, string> {
-    return Object.fromEntries(
-        Object.entries(params).filter(([, value]) => value !== ''),
-    );
-}
-
 export default function CalibrationsIndex() {
-    const { calibrations, machines, filters, statusOptions } = usePage<
-        PageProps<CalibrationsIndexProps>
-    >().props;
+    const { calibrations, machines, filters, statusOptions } =
+        usePage<PageProps<CalibrationsIndexProps>>().props;
 
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'calibrations.index',
@@ -63,44 +48,15 @@ export default function CalibrationsIndex() {
         },
     });
 
-    function applyFilters(next: Partial<CalibrationsIndexFilters>): void {
-        const params = cleanParams({
+    const { applyFilters, clearFilters, hasActiveFilters, buildParams } =
+        useTableFilters<CalibrationsIndexFilters>({
+            routeName: 'calibrations.index',
+            filters,
             search,
-            status: filters.status,
-            machine_id: filters.machine_id,
-            ...next,
+            resetSearch: reset,
         });
 
-        router.get(route('calibrations.index'), params, {
-            preserveState: true,
-            preserveScroll: true,
-            replace: true,
-        });
-    }
-
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('calibrations.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    const hasActiveFilters = !!(
-        search ||
-        filters.status ||
-        filters.machine_id
-    );
-
-    const exportHref = route(
-        'calibrations.export',
-        cleanParams({
-            search,
-            status: filters.status,
-            machine_id: filters.machine_id,
-        }),
-    );
+    const exportHref = route('calibrations.export', buildParams());
 
     const columns: Column<Calibration>[] = [
         {
@@ -116,7 +72,10 @@ export default function CalibrationsIndex() {
                 </div>
             ),
         },
-        { header: 'Data', cell: (row) => formatDate(row.calibration_date) },
+        {
+            header: 'Data',
+            cell: (row) => formatDateTime(row.calibration_date),
+        },
         {
             header: 'Status',
             cell: (row) => <StatusBadge status={row.status} />,
@@ -178,10 +137,10 @@ export default function CalibrationsIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
-                        value={filters.status || ALL_STATUS}
+                        value={filters.status || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
-                                status: value === ALL_STATUS ? '' : value,
+                                status: value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -189,7 +148,9 @@ export default function CalibrationsIndex() {
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_STATUS}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {Object.entries(statusOptions).map(
                                 ([value, label]) => (
                                     <SelectItem key={value} value={value}>
@@ -203,11 +164,11 @@ export default function CalibrationsIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="machine">Máquina</Label>
                     <Select
-                        value={filters.machine_id || ALL_MACHINES}
+                        value={filters.machine_id || ALL_FILTER_VALUE}
                         onValueChange={(value) =>
                             applyFilters({
                                 machine_id:
-                                    value === ALL_MACHINES ? '' : value,
+                                    value === ALL_FILTER_VALUE ? '' : value,
                             })
                         }
                     >
@@ -215,7 +176,9 @@ export default function CalibrationsIndex() {
                             <SelectValue placeholder="Todas" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_MACHINES}>Todas</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todas
+                            </SelectItem>
                             {machines.map((machine) => (
                                 <SelectItem
                                     key={machine.id}

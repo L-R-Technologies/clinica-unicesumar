@@ -9,6 +9,7 @@ import { TablePagination } from '@/components/table-pagination';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps, SampleType } from '@/types';
 
@@ -18,23 +19,20 @@ interface SampleTypesIndexProps extends Record<string, unknown> {
 }
 
 export default function SampleTypesIndex() {
-    const { sampleTypes, filters } = usePage<
-        PageProps<SampleTypesIndexProps>
-    >().props;
+    const { sampleTypes, filters } =
+        usePage<PageProps<SampleTypesIndexProps>>().props;
 
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'sample-type.index',
         initialValue: filters.search,
     });
 
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('sample-type.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
+    const { clearFilters, hasActiveFilters } = useTableFilters({
+        routeName: 'sample-type.index',
+        filters: { search: filters.search },
+        search,
+        resetSearch: reset,
+    });
 
     const columns: Column<SampleType>[] = [
         { header: 'Nome', cell: (row) => row.name },
@@ -92,7 +90,10 @@ export default function SampleTypesIndex() {
                 </Button>
             }
         >
-            <FiltersCard onClear={clearFilters} hasActiveFilters={!!search}>
+            <FiltersCard
+                onClear={clearFilters}
+                hasActiveFilters={hasActiveFilters}
+            >
                 <div className="min-w-56 flex-1 space-y-1.5">
                     <Label htmlFor="search">Buscar</Label>
                     <SearchInput

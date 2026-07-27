@@ -1,4 +1,4 @@
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { Eye, Pencil, Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
@@ -17,15 +17,15 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
+import { useTableFilters } from '@/hooks/use-table-filters';
+import { ALL_FILTER_VALUE } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import type { Machine, Paginated, PageProps } from '@/types';
 
-const ALL_STATUS = 'all';
-
-interface MachinesIndexFilters {
+type MachinesIndexFilters = {
     search: string;
     status: string;
-}
+};
 
 interface MachinesIndexProps extends Record<string, unknown> {
     machines: Paginated<Machine>;
@@ -34,9 +34,8 @@ interface MachinesIndexProps extends Record<string, unknown> {
 }
 
 export default function MachinesIndex() {
-    const { machines, filters, statusOptions } = usePage<
-        PageProps<MachinesIndexProps>
-    >().props;
+    const { machines, filters, statusOptions } =
+        usePage<PageProps<MachinesIndexProps>>().props;
 
     const { search, setSearch, reset } = useDebouncedSearch({
         routeName: 'machines.index',
@@ -44,31 +43,13 @@ export default function MachinesIndex() {
         extraParams: { status: filters.status },
     });
 
-    function applyStatus(status: string): void {
-        const params = {
+    const { applyFilters, clearFilters, hasActiveFilters } =
+        useTableFilters<MachinesIndexFilters>({
+            routeName: 'machines.index',
+            filters,
             search,
-            status: status === ALL_STATUS ? '' : status,
-        };
-
-        router.get(
-            route('machines.index'),
-            Object.fromEntries(
-                Object.entries(params).filter(([, value]) => value !== ''),
-            ),
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    function clearFilters(): void {
-        reset();
-        router.get(
-            route('machines.index'),
-            {},
-            { preserveState: true, preserveScroll: true, replace: true },
-        );
-    }
-
-    const hasActiveFilters = !!(search || filters.status);
+            resetSearch: reset,
+        });
 
     const columns: Column<Machine>[] = [
         {
@@ -147,14 +128,20 @@ export default function MachinesIndex() {
                 <div className="space-y-1.5">
                     <Label htmlFor="status">Status</Label>
                     <Select
-                        value={filters.status || ALL_STATUS}
-                        onValueChange={applyStatus}
+                        value={filters.status || ALL_FILTER_VALUE}
+                        onValueChange={(value) =>
+                            applyFilters({
+                                status: value === ALL_FILTER_VALUE ? '' : value,
+                            })
+                        }
                     >
                         <SelectTrigger id="status" className="sm:w-48">
                             <SelectValue placeholder="Todos" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value={ALL_STATUS}>Todos</SelectItem>
+                            <SelectItem value={ALL_FILTER_VALUE}>
+                                Todos
+                            </SelectItem>
                             {Object.entries(statusOptions).map(
                                 ([value, label]) => (
                                     <SelectItem key={value} value={value}>

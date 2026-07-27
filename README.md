@@ -45,7 +45,8 @@ O sistema gerencia exames realizados por alunos no laboratório da Unicesumar, s
 ### Restrições
 
 - Web responsivo
-- Backend: Laravel
+- Backend: Laravel (API server-side via Inertia.js)
+- Frontend: React + TypeScript (SPA renderizado sobre o Laravel via Inertia)
 - Banco: MySQL
 - LGPD compliance
 
@@ -125,9 +126,9 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 
 - Docker e Docker Compose
 - Git
-- PHP 8.1+
+- PHP 8.2+
 - Composer
-- Dompdf
+- Node.js 20+ e npm (para o frontend Inertia + React/Vite)
 
 ### Passos
 
@@ -192,7 +193,21 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
     php artisan db:seed
     ```
 
-11. Dar permissão de escrita:
+11. Instale as dependências do frontend:
+
+    ```bash
+    npm install
+    ```
+
+12. Rode o servidor de desenvolvimento do Vite (mantenha rodando durante o desenvolvimento):
+
+    ```bash
+    npm run dev
+    ```
+
+    Para gerar os assets de produção, use `npm run build`.
+
+13. Dar permissão de escrita:
     ```bash
     chown -R sail:sail storage bootstrap/cache
     chmod -R 775 storage bootstrap/cache
@@ -251,7 +266,29 @@ php artisan route:list
 php artisan migrate:fresh --seed
 ```
 
-### Qualidade de Código
+### Frontend (Inertia + React/Vite)
+
+```bash
+# Servidor de desenvolvimento com hot reload
+npm run dev
+
+# Gerar assets de produção
+npm run build
+
+# Checagem de tipos (TypeScript)
+npm run types
+
+# Análise estática do frontend (ESLint)
+npm run lint
+
+# Corrigir problemas de lint automaticamente
+npm run lint:fix
+
+# Formatar o código (Prettier)
+npm run format
+```
+
+### Qualidade de Código (Backend)
 
 ```bash
 # Verificar problemas de formatação e análise estática
@@ -287,10 +324,13 @@ php artisan make:test NomeTest
 
 ## 8. Tecnologias Utilizadas
 
-- **Backend:** Laravel
-- **Frontend:** Blade, Livewire
+- **Backend:** Laravel 12, Laravel Fortify (autenticação)
+- **Frontend:** Inertia.js v2, React 19, TypeScript, shadcn/ui, Tailwind CSS 4, Vite
 - **Banco de Dados:** MySQL
+- **Geração de PDF:** dompdf (barryvdh/laravel-dompdf)
+- **Auditoria:** spatie/laravel-activitylog
 - **Containerização:** Docker, Laravel Sail
+- **Qualidade de Código:** Laravel Pint, Larastan/PHPStan (backend); ESLint, Prettier (frontend)
 - **Testes:** PHPUnit
 
 ---

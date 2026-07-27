@@ -44,7 +44,7 @@ class MachinesSeeder extends Seeder
                 'location' => 'Laboratório Central',
                 'calibration_range_min' => 500.0,
                 'calibration_range_max' => 15000.0,
-                'status' => 'calibrating',
+                'status' => 'maintenance',
             ],
             [
                 'name' => 'Espectrofotômetro',

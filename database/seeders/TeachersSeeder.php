@@ -10,13 +10,14 @@ class TeachersSeeder extends Seeder
 {
     public function run(): void
     {
-        $teacher = User::create([
+        $teacher = new User([
             'name' => 'Ricardo Martins Alves',
             'email' => 'ricardo.alves@email.com',
             'password' => bcrypt('123456789'),
-            'role' => 'teacher',
             'email_verified_at' => now(),
         ]);
+        $teacher->role = 'teacher';
+        $teacher->save();
 
         Teacher::create([
             'user_id' => $teacher->id,

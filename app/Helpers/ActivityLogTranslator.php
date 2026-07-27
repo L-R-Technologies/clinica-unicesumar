@@ -19,6 +19,8 @@ class ActivityLogTranslator
             'exam_type' => 'Tipo de Exame',
             'exam_type_field' => 'Campo de Exame',
             'exam_rejection' => 'Rejeição de Exame',
+            'exam_feedback' => 'Feedback de Exame',
+            'calibration' => 'Calibração',
             'machine' => 'Máquina',
             'user' => 'Usuário',
             'patient' => 'Paciente',
@@ -93,6 +95,7 @@ class ActivityLogTranslator
             'code' => 'Código',
             'location' => 'Localização',
             'notified' => 'Notificado',
+            'stored_at' => 'Armazenado em',
 
             // Anamnese
             'fasting' => 'Em Jejum',
@@ -131,11 +134,23 @@ class ActivityLogTranslator
             'exam_id' => 'Exame',
             'justification' => 'Justificativa',
 
+            // Feedback de Exame
+            'clarity' => 'Clareza das Explicações',
+            'cordiality' => 'Cordialidade da Equipe',
+            'waiting_time' => 'Tempo de Espera',
+            'result_speed' => 'Agilidade na Entrega do Resultado',
+            'confidence' => 'Confiança Transmitida',
+
             // Máquinas
             'model' => 'Modelo',
             'serial_number' => 'Número de Série',
             'calibration_range_min' => 'Faixa de Calibração Mínima',
             'calibration_range_max' => 'Faixa de Calibração Máxima',
+
+            // Calibração
+            'machine_id' => 'Máquina',
+            'calibration_date' => 'Data da Calibração',
+            'value' => 'Valor',
 
             default => ucfirst(str_replace('_', ' ', $fieldName)),
         };
@@ -245,7 +260,9 @@ class ActivityLogTranslator
 
             // Status de máquinas
             'active' => 'Ativo',
-            'calibrating' => 'Calibrando',
+            'maintenance' => 'Em manutenção',
+            // 'calibrating' foi substituído por 'maintenance'; mantido para logs antigos
+            'calibrating' => 'Em calibração',
             'inactive' => 'Inativo',
 
             default => ucfirst($status),
@@ -264,6 +281,8 @@ class ActivityLogTranslator
             'email_verified_at',
             'lgpd_consent_at',
             'recorded_at',
+            'calibration_date',
+            'stored_at',
             'date',
             'birthday',
         ];

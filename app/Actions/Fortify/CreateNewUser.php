@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Models\Address;
 use App\Models\Patient;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -63,34 +64,41 @@ class CreateNewUser implements CreatesNewUsers
         $validator = Validator::make($input, $rules);
         $validator->validate();
 
-        $user = User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'role' => 'patient',
-            'password' => Hash::make($input['password']),
-        ]);
+        $user = DB::transaction(function () use ($input): User {
+            $user = new User([
+                'name' => $input['name'],
+                'email' => $input['email'],
+                'password' => Hash::make($input['password']),
+            ]);
+            $user->role = 'patient';
+            $user->save();
 
-        $address = Address::create([
-            'street' => $input['street'],
-            'number' => $input['number'],
-            'complement' => $input['complement'] ?? null,
-            'neighborhood' => $input['neighborhood'],
-            'city' => $input['city'],
-            'state' => $input['state'],
-            'country' => $input['country'],
-            'zip_code' => $input['zip_code'],
-        ]);
+            $address = Address::create([
+                'street' => $input['street'],
+                'number' => $input['number'],
+                'complement' => $input['complement'] ?? null,
+                'neighborhood' => $input['neighborhood'],
+                'city' => $input['city'],
+                'state' => $input['state'],
+                'country' => $input['country'],
+                'zip_code' => $input['zip_code'],
+            ]);
 
-        $user->patient()->create([
-            'address_id' => $address->id,
-            'birthday' => $input['birthday'],
-            'ethnicity' => $input['ethnicity'],
-            'sex' => $input['sex'],
-            'cpf' => $input['cpf'],
-            'rg' => $input['rg'],
-            'phone' => $input['phone'],
-            'lgpd_consent_at' => now(),
-        ]);
+            $user->patient()->create([
+                'address_id' => $address->id,
+                'birthday' => $input['birthday'],
+                'ethnicity' => $input['ethnicity'],
+                'sex' => $input['sex'],
+                'cpf' => $input['cpf'],
+                'rg' => $input['rg'],
+                'phone' => $input['phone'],
+                'lgpd_consent_at' => now(),
+            ]);
+
+            return $user;
+        });
+
+        $user->sendEmailVerificationNotification();
 
         return $user;
     }

@@ -45,7 +45,8 @@ O sistema gerencia exames realizados por alunos no laboratório da Unicesumar, s
 ### Restrições
 
 - Web responsivo
-- Backend: Laravel
+- Backend: Laravel (API server-side via Inertia.js)
+- Frontend: React + TypeScript (SPA renderizado sobre o Laravel via Inertia)
 - Banco: MySQL
 - LGPD compliance
 
@@ -125,67 +126,93 @@ Para detalhes completos de cada caso de uso, consulte a seção de especificaç�
 
 - Docker e Docker Compose
 - Git
-- PHP 8.1+
+- PHP 8.2+
 - Composer
+- Node.js 20+ e npm (para o frontend Inertia + React/Vite)
 
 ### Passos
 
 1. Clone o repositório:
-	```bash
-	git clone git@github.com:L-R-Technologies/clinica-unicesumar.git
-	cd clinica-unicesumar
-	```
+
+    ```bash
+    git clone git@github.com:L-R-Technologies/clinica-unicesumar.git
+    cd clinica-unicesumar
+    ```
 
 2. Copie o arquivo de ambiente:
-	```bash
-	cp .env.example .env
-	```
+
+    ```bash
+    cp .env.example .env
+    ```
 
 3. Instale as dependências:
-	```bash
-	composer install
-	```
+
+    ```bash
+    composer install
+    ```
 
 4. Configure o pre-commit:
-	```bash
-	composer run setup-hooks
-	```
+
+    ```bash
+    composer run setup-hooks
+    ```
 
 5. Suba os containers Docker:
-	```bash
-	./vendor/bin/sail up -d
-	```
+
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
 6. Entre no container do app para rodar comandos:
-	```bash
-	docker exec -u sail -it clinica-unicesumar-app-1 bash
-	```
+
+    ```bash
+    docker exec -u sail -it clinica-unicesumar-app-1 bash
+    ```
 
 7. Instale/atualize dependências dentro do container:
-	```bash
-	composer install
-	```
+
+    ```bash
+    composer install
+    ```
 
 8. Gere a chave da aplicação:
-	```bash
-	php artisan key:generate
-	```
+
+    ```bash
+    php artisan key:generate
+    ```
 
 9. Execute as migrations:
-	```bash
-	php artisan migrate
-	```
+
+    ```bash
+    php artisan migrate
+    ```
 
 10. Execute as seeds:
-	```bash
-	php artisan db:seed
-	```
 
-10. Dar permissão de escrita:
+    ```bash
+    php artisan db:seed
+    ```
+
+11. Instale as dependências do frontend:
+
+    ```bash
+    npm install
+    ```
+
+12. Rode o servidor de desenvolvimento do Vite (mantenha rodando durante o desenvolvimento):
+
+    ```bash
+    npm run dev
+    ```
+
+    Para gerar os assets de produção, use `npm run build`.
+
+13. Dar permissão de escrita:
     ```bash
     chown -R sail:sail storage bootstrap/cache
     chmod -R 775 storage bootstrap/cache
     ```
+
 ---
 
 ## 7. Comandos Úteis
@@ -239,7 +266,29 @@ php artisan route:list
 php artisan migrate:fresh --seed
 ```
 
-### Qualidade de Código
+### Frontend (Inertia + React/Vite)
+
+```bash
+# Servidor de desenvolvimento com hot reload
+npm run dev
+
+# Gerar assets de produção
+npm run build
+
+# Checagem de tipos (TypeScript)
+npm run types
+
+# Análise estática do frontend (ESLint)
+npm run lint
+
+# Corrigir problemas de lint automaticamente
+npm run lint:fix
+
+# Formatar o código (Prettier)
+npm run format
+```
+
+### Qualidade de Código (Backend)
 
 ```bash
 # Verificar problemas de formatação e análise estática
@@ -270,14 +319,18 @@ php artisan test tests/Feature/ExampleTest.php
 # Criar teste
 php artisan make:test NomeTest
 ```
+
 ---
 
 ## 8. Tecnologias Utilizadas
 
-- **Backend:** Laravel
-- **Frontend:** Blade, Livewire
+- **Backend:** Laravel 12, Laravel Fortify (autenticação)
+- **Frontend:** Inertia.js v2, React 19, TypeScript, shadcn/ui, Tailwind CSS 4, Vite
 - **Banco de Dados:** MySQL
+- **Geração de PDF:** dompdf (barryvdh/laravel-dompdf)
+- **Auditoria:** spatie/laravel-activitylog
 - **Containerização:** Docker, Laravel Sail
+- **Qualidade de Código:** Laravel Pint, Larastan/PHPStan (backend); ESLint, Prettier (frontend)
 - **Testes:** PHPUnit
 
 ---
@@ -289,42 +342,49 @@ php artisan make:test NomeTest
 Se o container do MySQL não estiver subindo, pode ser que exista um arquivo `.lock` impedindo a inicialização. Siga estes passos para remover o arquivo com segurança:
 
 1. **Pare o serviço MySQL/Sail antes de manipular volumes.**
-	```bash
-	./vendor/bin/sail down
-	```
+
+    ```bash
+    ./vendor/bin/sail down
+    ```
 
 2. **Liste os volumes disponíveis:**
-	```bash
-	docker volume ls
-	```
+
+    ```bash
+    docker volume ls
+    ```
 
 3. **Identifique o nome do volume usado pelo serviço** (exemplo: `clinica-unicesumar_sail-mysql`).
 
 4. **Rode um container temporário com o volume montado:**
-	```bash
-	docker run --rm -it -v NOME_DO_VOLUME:/data alpine sh
-	```
-	Exemplo:
-	```bash
-	docker run --rm -it -v clinica-unicesumar_sail-mysql:/data alpine sh
-	```
+
+    ```bash
+    docker run --rm -it -v NOME_DO_VOLUME:/data alpine sh
+    ```
+
+    Exemplo:
+
+    ```bash
+    docker run --rm -it -v clinica-unicesumar_sail-mysql:/data alpine sh
+    ```
 
 5. **Dentro do shell do container, navegue até a pasta do volume e identifique arquivos `.lock`:**
-	```sh
-	cd /data
-	ls
-	```
+
+    ```sh
+    cd /data
+    ls
+    ```
 
 6. **Delete o arquivo de lock:**
-	```sh
-	rm -rf mysql.sock.lock
-	```
+
+    ```sh
+    rm -rf mysql.sock.lock
+    ```
 
 7. **Digite `exit` para sair do container.**
 
 8. **Tente subir o container novamente:**
-	```bash
-	./vendor/bin/sail up -d
-	```
+    ```bash
+    ./vendor/bin/sail up -d
+    ```
 
 > **Atenção:** Remova arquivos `.lock` apenas se tiver certeza que o serviço está parado e não há processos usando o volume, para evitar corrupção de dados.

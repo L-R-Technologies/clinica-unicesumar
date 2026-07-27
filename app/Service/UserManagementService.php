@@ -6,13 +6,15 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserManagementService
 {
-    public function getFilteredUsers(array $filters = [])
+    public function getFilteredUsers(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
         $query = User::with(['teacher', 'student'])
             ->whereIn('role', ['teacher', 'student'])
@@ -35,7 +37,7 @@ class UserManagementService
             $query->where('active', $active);
         }
 
-        return $query->orderBy('name')->get();
+        return $query->orderBy('name')->paginate($perPage)->withQueryString();
     }
 
     public function getUsersByRole(string $role)
@@ -59,19 +61,20 @@ class UserManagementService
         DB::beginTransaction();
 
         try {
-            $user = User::create([
+            $user = new User([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
                 'password' => Hash::make($userData['password']),
-                'role' => 'teacher',
                 'email_verified_at' => now(),
-                'active' => true,
             ]);
+            $user->role = 'teacher';
+            $user->active = true;
+            $user->save();
 
             Teacher::create([
                 'user_id' => $user->id,
                 'registration_number' => $teacherData['registration_number'],
-                'crbm' => $teacherData['crbm'] ?? null,
+                'professional_license' => $teacherData['professional_license'] ?? null,
             ]);
 
             DB::commit();
@@ -90,19 +93,21 @@ class UserManagementService
         DB::beginTransaction();
 
         try {
-            $user = User::create([
+            $user = new User([
                 'name' => $userData['name'],
                 'email' => $userData['email'],
                 'password' => Hash::make($userData['password']),
-                'role' => 'student',
                 'email_verified_at' => now(),
-                'active' => true,
             ]);
+            $user->role = 'student';
+            $user->active = true;
+            $user->save();
 
             Student::create([
                 'user_id' => $user->id,
                 'ra' => $studentData['ra'],
                 'course' => $studentData['course'],
+                'semester' => $studentData['semester'],
             ]);
 
             DB::commit();
@@ -135,7 +140,7 @@ class UserManagementService
                 if ($teacher) {
                     $teacher->update([
                         'registration_number' => $specificData['registration_number'],
-                        'crbm' => $specificData['crbm'] ?? $teacher->getAttribute('crbm'),
+                        'professional_license' => $specificData['professional_license'] ?? null,
                     ]);
                 }
             } elseif ($user->role === 'student' && ! empty($specificData)) {
@@ -143,7 +148,8 @@ class UserManagementService
                 if ($student) {
                     $student->update([
                         'ra' => $specificData['ra'],
-                        'course' => $specificData['course'] ?? $student->getAttribute('course'),
+                        'course' => $specificData['course'],
+                        'semester' => $specificData['semester'],
                     ]);
                 }
             }
@@ -159,17 +165,12 @@ class UserManagementService
 
     public function deleteUser(User $user)
     {
+        // ERS (UC013): usuários não são excluídos permanentemente, apenas
+        // desativados/removidos de forma reversível. Soft delete preserva o
+        // registro (e o perfil teacher/student) para eventual restauração.
         DB::beginTransaction();
 
         try {
-            if ($user->teacher) {
-                $user->teacher->delete();
-            }
-
-            if ($user->student) {
-                $user->student->delete();
-            }
-
             $user->delete();
 
             DB::commit();
@@ -199,7 +200,8 @@ class UserManagementService
         DB::beginTransaction();
 
         try {
-            $user->update(['active' => ! $user->active]);
+            $user->active = ! $user->active;
+            $user->save();
 
             DB::commit();
 
@@ -220,9 +222,11 @@ class UserManagementService
         $rules = [
             'name' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
             'email' => 'required|string|email|max:255|unique:users'.($userId ? ",email,{$userId}" : ''),
-            'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
+            'password' => $userId
+                ? ['nullable', 'string', Password::default()]
+                : ['required', 'string', Password::default()],
             'registration_number' => 'required|string|max:10|unique:teachers,registration_number'.($userId ? ",{$userId},user_id" : ''),
-            'crbm' => 'nullable|string|max:10',
+            'professional_license' => 'nullable|string|max:10',
         ];
 
         return validator($data, $rules)->validate();
@@ -233,9 +237,12 @@ class UserManagementService
         $rules = [
             'name' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
             'email' => 'required|string|email|max:255|unique:users'.($userId ? ",email,{$userId}" : ''),
-            'password' => $userId ? 'nullable|string|min:8' : 'required|string|min:8',
+            'password' => $userId
+                ? ['nullable', 'string', Password::default()]
+                : ['required', 'string', Password::default()],
             'ra' => 'required|string|max:9|unique:students,ra'.($userId ? ",{$userId},user_id" : ''),
             'course' => 'required|string|max:255',
+            'semester' => 'required|integer|min:1|max:20',
         ];
 
         return validator($data, $rules)->validate();

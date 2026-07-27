@@ -2,12 +2,10 @@ const CPF_MAX_DIGITS = 11;
 const PHONE_MAX_DIGITS = 11;
 const CEP_MAX_DIGITS = 8;
 
-/** Remove tudo que não for dígito. */
 export function stripDigits(value: string): string {
     return value.replace(/\D/g, '');
 }
 
-/** Formata um CPF como 000.000.000-00 enquanto o usuário digita. */
 export function formatCpf(value: string): string {
     const digits = stripDigits(value).slice(0, CPF_MAX_DIGITS);
 
@@ -17,7 +15,6 @@ export function formatCpf(value: string): string {
         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
 }
 
-/** Formata telefone como (00) 00000-0000 (celular) ou (00) 0000-0000 (fixo). */
 export function formatPhone(value: string): string {
     const digits = stripDigits(value).slice(0, PHONE_MAX_DIGITS);
 
@@ -32,7 +29,6 @@ export function formatPhone(value: string): string {
         .replace(/(\d{5})(\d{1,4})$/, '$1-$2');
 }
 
-/** Formata um CEP como 00000-000. */
 export function formatCep(value: string): string {
     const digits = stripDigits(value).slice(0, CEP_MAX_DIGITS);
 
@@ -46,10 +42,6 @@ export interface ViaCepAddress {
     state: string;
 }
 
-/**
- * Consulta o ViaCEP (CORS liberado) e retorna o endereço, ou null quando o CEP
- * é inválido/não encontrado. Nunca lança — o chamador segue com preenchimento manual.
- */
 export async function fetchAddressByCep(
     cep: string,
 ): Promise<ViaCepAddress | null> {

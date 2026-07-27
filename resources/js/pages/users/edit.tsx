@@ -20,7 +20,6 @@ const ROLE_LABELS: Record<string, string> = {
     patient: 'Paciente',
 };
 
-/** Gera uma senha temporária no cliente usando uma fonte de aleatoriedade segura. */
 function generateTemporaryPassword(): string {
     const randomValues = new Uint32Array(GENERATED_PASSWORD_LENGTH);
     crypto.getRandomValues(randomValues);

@@ -11,9 +11,6 @@ use Illuminate\Validation\ValidationException;
 
 class PatientHistoryService
 {
-    /**
-     * Valida todos os dados de uma anamnese.
-     */
     public function validateData(array $data): array
     {
         $validator = Validator::make($data, [
@@ -61,28 +58,18 @@ class PatientHistoryService
         return $validator->validated();
     }
 
-    /**
-     * Cria uma nova anamnese.
-     */
     public function create(array $data): PatientHistory
     {
         return PatientHistory::create($data);
     }
 
-    /**
-     * Atualiza uma anamnese existente.
-     */
     public function update(PatientHistory $anamnesis, array $data): bool
     {
         return $anamnesis->update($data);
     }
 
-    /**
-     * Exclui uma anamnese.
-     */
     public function delete(PatientHistory $anamnesis): bool
     {
-        // Verifica se a anamnese está vinculada a algum exame
         if ($anamnesis->exams()->count() > 0) {
             throw new \Exception('Não é possível excluir esta anamnese pois ela está vinculada a '.$anamnesis->exams()->count().' exame(s).');
         }

@@ -39,7 +39,6 @@ class Sample extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Relacionamentos
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);

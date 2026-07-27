@@ -29,7 +29,6 @@ export default function ExamTypeCreate() {
 
     function submit(event: FormEvent) {
         event.preventDefault();
-        // Ignora linhas totalmente vazias antes de enviar.
         transform((current) => ({
             ...current,
             fields: current.fields.filter(

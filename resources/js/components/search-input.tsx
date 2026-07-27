@@ -7,9 +7,7 @@ interface SearchInputProps {
     onChange: (value: string) => void;
     placeholder?: string;
     id?: string;
-    /** Nome acessível do campo. Padrão: o placeholder. */
     label?: string;
-    /** Sobrescreve a largura padrão (max-w-sm) — útil dentro de grids de filtro. */
     className?: string;
 }
 

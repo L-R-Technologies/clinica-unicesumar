@@ -16,11 +16,6 @@ function InfoItem({ label, value }: { label: string; value: ReactNode }) {
     );
 }
 
-/**
- * Detalhes clínicos completos de uma anamnese, em cards de leitura. Usado na
- * própria tela da anamnese e na tela de detalhes do exame vinculado a ela —
- * mantém as duas telas consistentes sem duplicar a formatação dos ~20 campos.
- */
 export function PatientHistorySummary({
     patientHistory,
 }: {

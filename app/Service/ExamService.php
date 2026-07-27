@@ -33,8 +33,6 @@ class ExamService
 
     public function validateExamData(array $data, $examId = null)
     {
-        // 'status' não é validado nem persistido aqui: a transição de status
-        // ocorre exclusivamente via approveExam()/rejectExam().
         $rules = [
             'patient_id' => 'required|exists:patients,id',
             'patient_history_id' => 'required|exists:patient_histories,id',
@@ -124,9 +122,6 @@ class ExamService
 
             $exam->update($examData);
 
-            // ERS (UC008): quando o ALUNO salva a edição, o exame é submetido
-            // para aprovação (pending/rejected -> pending_approval) e o professor
-            // supervisor é notificado (RF021).
             if ($actorRole === 'student'
                 && in_array($exam->status, [self::STATUS_PENDING, self::STATUS_REJECTED], true)) {
                 $exam->status = self::STATUS_PENDING_APPROVAL;
@@ -187,7 +182,6 @@ class ExamService
 
     public function deleteExam(Exam $exam)
     {
-        // ERS (UC009): exclusão permitida apenas para status Pendente ou Rejeitado.
         if (! in_array($exam->status, [self::STATUS_PENDING, self::STATUS_REJECTED], true)) {
             throw new Exception('Exame já validado. Não é possível excluir.');
         }
@@ -208,14 +202,12 @@ class ExamService
     {
         $query = Exam::with(['user', 'patient.user', 'patientHistory', 'sample', 'examType']);
 
-        // Filtrar por responsável se for aluno
         if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
             if ($filters['user_role'] === 'student') {
                 $query->where('user_id', $filters['user_id']);
             }
         }
 
-        // NOVO: filtrar pelo paciente logado (usado na área "Meus Exames")
         if (! empty($filters['patient_id'])) {
             $query->where('patient_id', $filters['patient_id']);
         }
@@ -259,9 +251,6 @@ class ExamService
         return $this->buildFilteredExamsQuery($filters)->paginate(20)->withQueryString();
     }
 
-    /**
-     * ERS (RF014): coleção completa (sem paginação) para exportação em Excel/CSV.
-     */
     public function getExamsForExport(array $filters)
     {
         return $this->buildFilteredExamsQuery($filters)->get();

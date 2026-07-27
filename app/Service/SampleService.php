@@ -100,12 +100,10 @@ class SampleService
     {
         $query = Sample::with(['patient.user', 'user', 'sampleType']);
 
-        // Filtrar por responsável se for aluno
         if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
             if ($filters['user_role'] === 'student') {
                 $query->where('user_id', $filters['user_id']);
             }
-            // Professores veem todas as amostras, então não aplicamos filtro
         }
 
         if (! empty($filters['search'])) {

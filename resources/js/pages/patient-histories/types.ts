@@ -1,15 +1,7 @@
 import type { PatientHistory } from '@/types';
 
-/**
- * Registro completo de anamnese (todos os campos do $fillable do model).
- * Alias do tipo central para manter os imports existentes deste domínio.
- */
 export type PatientHistoryRecord = PatientHistory;
 
-/**
- * Shape do formulário de anamnese. Campos numéricos ficam como string (valor
- * dos inputs); os booleanos habilitam seus respectivos campos de detalhe.
- */
 export interface PatientHistoryFormData {
     patient_id: string;
     recorded_at: string;

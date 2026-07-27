@@ -11,19 +11,10 @@ class PatientsSeeder extends Seeder
 {
     public function run(): void
     {
-        // Paciente 1
         $patient1 = $this->createPatientUser('Maria Silva Santos', 'maria.santos@email.com');
-
-        // Paciente 2
         $patient2 = $this->createPatientUser('João Carlos Oliveira', 'joao.oliveira@email.com');
-
-        // Paciente 3
         $patient3 = $this->createPatientUser('Ana Paula Costa', 'ana.costa@email.com');
-
-        // Paciente 4
         $patient4 = $this->createPatientUser('Carlos Eduardo Ferreira', 'carlos.ferreira@email.com');
-
-        // Paciente 5
         $patient5 = $this->createPatientUser('Fernanda Lima Silva', 'fernanda.lima@email.com');
 
         $address1 = Address::where('street', 'Rua Itajubá')->first();

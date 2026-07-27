@@ -3,7 +3,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Paginated, PaginationLink } from '@/types';
 
-/** Decodifica as entidades HTML que o Laravel coloca nos labels de paginação. */
 function decodeLabel(label: string): string {
     return label
         .replace(/&laquo;/g, '')
@@ -18,7 +17,6 @@ function isPreviousLink(label: string): boolean {
     return (
         label.includes('&laquo;') ||
         normalized.includes('anterior') ||
-        // Cobre a chave de tradução crua "pagination.previous"
         normalized.includes('previous')
     );
 }
@@ -29,7 +27,6 @@ function isNextLink(label: string): boolean {
         label.includes('&raquo;') ||
         normalized.includes('próximo') ||
         normalized.includes('proximo') ||
-        // Cobre "next" e a chave crua "pagination.next"
         normalized.includes('next')
     );
 }

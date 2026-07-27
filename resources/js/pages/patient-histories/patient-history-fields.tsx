@@ -19,7 +19,6 @@ interface PatientHistoryFieldsProps {
     data: PatientHistoryFormData;
     setData: SetDataAction<PatientHistoryFormData>;
     errors: Partial<Record<string, string>>;
-    /** Controle do paciente: Select no create, leitura no edit. */
     patientField: ReactNode;
 }
 
@@ -51,10 +50,6 @@ export function PatientHistoryFields({
     errors,
     patientField,
 }: PatientHistoryFieldsProps) {
-    /**
-     * Marca/desmarca o booleano e, ao desmarcar, limpa o campo de detalhe
-     * dependente (replica os updatedX do Livewire).
-     */
     function toggleWithDetail(
         field: string,
         detailField: string,

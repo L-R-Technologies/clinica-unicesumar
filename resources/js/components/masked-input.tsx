@@ -19,7 +19,6 @@ interface MaskedInputProps extends Omit<
     onValueChange: (value: string) => void;
 }
 
-/** Input controlado que aplica máscara de CPF, telefone ou CEP ao digitar. */
 export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
     ({ mask, value, onValueChange, ...props }, ref) => {
         return (

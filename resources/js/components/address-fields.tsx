@@ -20,15 +20,9 @@ interface AddressFieldsProps {
     values: AddressFieldValues;
     errors: Partial<Record<AddressFieldName, string>>;
     onChange: (field: AddressFieldName, value: string) => void;
-    /** Disparado ao sair do campo de CEP (usado para o preenchimento automático). */
     onCepBlur: () => void;
 }
 
-/**
- * Campos de endereço reutilizáveis (CEP, rua, número, complemento, bairro,
- * cidade, estado e país). O CEP usa máscara e aciona onCepBlur para permitir o
- * preenchimento automático via consulta de CEP no componente pai.
- */
 export function AddressFields({
     values,
     errors,

@@ -22,8 +22,6 @@ class Exam extends Model
 {
     use HasFactory, LogsActivity, SoftDeletes;
 
-    // A transição de status ocorre apenas via ExamService::approveExam/rejectExam
-    // (atribuição explícita + save), por isso 'status' não é mass assignable.
     protected $fillable = [
         'user_id',
         'patient_history_id',
@@ -42,7 +40,6 @@ class Exam extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Relacionamentos
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

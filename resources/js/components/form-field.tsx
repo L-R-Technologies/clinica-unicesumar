@@ -10,17 +10,12 @@ interface FormFieldProps {
     children: ReactNode;
 }
 
-/**
- * Atributos ARIA injetados no controle filho para que erros e obrigatoriedade
- * sejam anunciados por leitores de tela — não apenas indicados visualmente.
- */
 interface InjectedControlProps {
     'aria-invalid'?: boolean;
     'aria-describedby'?: string;
     'aria-required'?: boolean;
 }
 
-/** Agrupa Label + controle + mensagem de erro com espaçamento consistente. */
 export function FormField({
     id,
     label,

@@ -20,9 +20,7 @@ Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('p
 Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
-    // GRUPO: Apenas Professores (role: teacher)
     Route::middleware(['role:teacher'])->group(function () {
-        // Gerenciamento de Usuários
         Route::get('/user/management', [UserManagementController::class, 'index'])->name('user-management.index');
         Route::get('/user/management/create', [UserManagementController::class, 'create'])->name('user-management.create');
         Route::post('/user/management', [UserManagementController::class, 'store'])->name('user-management.store');
@@ -32,7 +30,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::delete('/user/management/{id}', [UserManagementController::class, 'destroy'])->name('user-management.destroy');
         Route::patch('/user/management/{id}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('user-management.toggle-status');
 
-        // Tipos de Exame
         Route::get('/exam-type', [ExamTypeController::class, 'index'])->name('exam-type.index');
         Route::get('/exam-type/create', [ExamTypeController::class, 'create'])->name('exam-type.create');
         Route::post('/exam-type', [ExamTypeController::class, 'store'])->name('exam-type.store');
@@ -42,7 +39,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::patch('/exam-type/{examType}/toggle-status', [ExamTypeController::class, 'toggleStatus'])->name('exam-type.toggle-status');
         Route::delete('/exam-type/{examType}', [ExamTypeController::class, 'destroy'])->name('exam-type.destroy');
 
-        // Tipos de Amostra
         Route::get('/sample-type', [SampleTypeController::class, 'index'])->name('sample-type.index');
         Route::get('/sample-type/create', [SampleTypeController::class, 'create'])->name('sample-type.create');
         Route::post('/sample-type', [SampleTypeController::class, 'store'])->name('sample-type.store');
@@ -52,7 +48,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::patch('/sample-type/{sampleType}/toggle-status', [SampleTypeController::class, 'toggleStatus'])->name('sample-type.toggle-status');
         Route::delete('/sample-type/{sampleType}', [SampleTypeController::class, 'destroy'])->name('sample-type.destroy');
 
-        // Gerenciamento de Máquinas
         Route::get('/machines', [MachineController::class, 'index'])->name('machines.index');
         Route::get('/machines/create', [MachineController::class, 'create'])->name('machines.create');
         Route::post('/machines', [MachineController::class, 'store'])->name('machines.store');
@@ -62,7 +57,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::put('/machines/{machine}', [MachineController::class, 'update'])->name('machines.update');
         Route::delete('/machines/{machine}', [MachineController::class, 'destroy'])->name('machines.destroy');
 
-        // Gerenciamento de Calibrações
         // A rota "export" precisa vir ANTES do wildcard {calibration}, senão o wildcard captura "export".
         Route::get('/calibrations', [CalibrationController::class, 'index'])->name('calibrations.index');
         Route::get('/calibrations/export', [CalibrationController::class, 'export'])->name('calibrations.export');
@@ -76,15 +70,12 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::resource('activity-logs', ActivityLogController::class);
     });
 
-    // Perfil do Usuário
     Route::post('/user/anonymize', [UserController::class, 'anonymize'])->name('user.anonymize');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{user}/address', [UserController::class, 'updateAddress'])->name('user.address.update');
 
-    // GRUPO: Professores e Alunos (role: teacher, student)
     Route::middleware(['role:teacher,student'])->group(function () {
-        // Histórico de Pacientes
         Route::get('/patient-histories', [PatientHistoryController::class, 'index'])->name('patient-histories.index');
         Route::get('/patient-histories/create', [PatientHistoryController::class, 'create'])->name('patient-histories.create');
         Route::post('/patient-histories', [PatientHistoryController::class, 'store'])->name('patient-histories.store');
@@ -93,7 +84,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::put('/patient-histories/{id}', [PatientHistoryController::class, 'update'])->name('patient-histories.update');
         Route::delete('/patient-histories/{id}', [PatientHistoryController::class, 'destroy'])->name('patient-histories.destroy');
 
-        // Amostras
         Route::get('/samples', [SampleController::class, 'index'])->name('samples.index');
         Route::get('/samples/create', [SampleController::class, 'create'])->name('samples.create');
         Route::post('/samples', [SampleController::class, 'store'])->name('samples.store');
@@ -102,7 +92,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::put('/samples/{id}', [SampleController::class, 'update'])->name('samples.update');
         Route::delete('/samples/{id}', [SampleController::class, 'destroy'])->name('samples.destroy');
 
-        // Exames
         Route::get('/exam', [ExamController::class, 'index'])->name('exam.index');
         Route::get('/exam/export/csv', [ExamController::class, 'exportCsv'])->name('exam.export-csv');
         Route::get('/exam/create', [ExamController::class, 'create'])->name('exam.create');

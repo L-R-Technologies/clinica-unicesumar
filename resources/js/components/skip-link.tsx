@@ -1,9 +1,5 @@
 const MAIN_CONTENT_ID = 'main-content';
 
-/**
- * Link "pular para o conteúdo": invisível até receber foco por teclado,
- * permite que usuários de teclado/leitor de tela saltem a navegação repetida.
- */
 export function SkipLink() {
     return (
         <a

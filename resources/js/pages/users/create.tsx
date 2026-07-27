@@ -20,7 +20,6 @@ const PASSWORD_ALPHABET =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 const GENERATED_PASSWORD_LENGTH = 12;
 
-/** Gera uma senha temporária no cliente usando uma fonte de aleatoriedade segura. */
 function generateTemporaryPassword(): string {
     const randomValues = new Uint32Array(GENERATED_PASSWORD_LENGTH);
     crypto.getRandomValues(randomValues);

@@ -39,15 +39,9 @@ export function createEmptyExamTypeField(): ExamTypeFieldRow {
 interface ExamTypeFieldsRepeaterProps {
     fields: ExamTypeFieldRow[];
     onChange: (fields: ExamTypeFieldRow[]) => void;
-    /** Erros do useForm, com chaves no formato `fields.0.name`. */
     errors: Partial<Record<string, string>>;
 }
 
-/**
- * Repeater de campos personalizados de um tipo de exame. Mantém a lista em
- * estado controlado pelo componente pai; a remoção simplesmente retira o campo
- * do array — o backend sincroniza pela diferença de ids.
- */
 export function ExamTypeFieldsRepeater({
     fields,
     onChange,

@@ -12,7 +12,6 @@ interface RatingScaleProps {
     error?: string;
 }
 
-/** Campo de avaliação de 1 a 5 usado nos formulários de feedback de exame. */
 export function RatingScale({
     id,
     question,
@@ -61,7 +60,6 @@ export function RatingScale({
     );
 }
 
-/** Exibição somente leitura de uma avaliação já enviada. */
 export function RatingScaleReadOnly({
     question,
     value,

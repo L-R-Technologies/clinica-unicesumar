@@ -30,7 +30,6 @@ interface NavItem {
     title: string;
     routeName: string;
     icon: LucideIcon;
-    /** Padrão Ziggy para marcar o item ativo (ex.: 'samples.*'). */
     activePattern: string;
     roles: UserRole[];
 }

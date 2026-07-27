@@ -9,9 +9,7 @@ import {
 } from '@/components/ui/table';
 
 export interface Column<T> {
-    /** Cabeçalho da coluna. */
     header: string;
-    /** Renderiza a célula a partir da linha. */
     cell: (row: T) => ReactNode;
     className?: string;
 }

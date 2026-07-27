@@ -5,13 +5,10 @@ import { Card, CardContent } from '@/components/ui/card';
 
 interface FiltersCardProps {
     children: ReactNode;
-    /** Chamado ao clicar em "Limpar filtros". Omitido = botão não aparece. */
     onClear?: () => void;
-    /** Só mostra o botão de limpar quando algum filtro estiver ativo. */
     hasActiveFilters?: boolean;
 }
 
-/** Card padrão que envolve a barra de filtros das telas de índice. */
 export function FiltersCard({
     children,
     onClear,

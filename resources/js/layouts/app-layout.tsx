@@ -46,15 +46,17 @@ export default function AppLayout({
             <SkipLink />
             <AppSidebar />
             <SidebarInset>
-                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-                    <SidebarTrigger className="-ml-1" />
+                <header className="sticky top-0 z-10 flex min-h-16 shrink-0 flex-wrap items-center gap-2 border-b bg-background px-4 py-2">
+                    <SidebarTrigger className="-ml-1 shrink-0" />
                     <Separator
                         orientation="vertical"
-                        className="mr-2 data-[orientation=vertical]:h-4"
+                        className="mr-2 shrink-0 data-[orientation=vertical]:h-4"
                     />
-                    <h1 className="text-base font-semibold">{title}</h1>
+                    <h1 className="min-w-0 flex-1 truncate text-base font-semibold">
+                        {title}
+                    </h1>
                     {actions && (
-                        <div className="ml-auto flex items-center gap-2">
+                        <div className="flex shrink-0 items-center gap-2">
                             {actions}
                         </div>
                     )}

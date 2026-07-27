@@ -4,14 +4,13 @@ namespace App\Service;
 
 use App\Models\Patient;
 use App\Models\PatientHistory;
+use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class PatientHistoryService
 {
-    /**
-     * Valida todos os dados de uma anamnese.
-     */
     public function validateData(array $data): array
     {
         $validator = Validator::make($data, [
@@ -59,28 +58,18 @@ class PatientHistoryService
         return $validator->validated();
     }
 
-    /**
-     * Cria uma nova anamnese.
-     */
     public function create(array $data): PatientHistory
     {
         return PatientHistory::create($data);
     }
 
-    /**
-     * Atualiza uma anamnese existente.
-     */
     public function update(PatientHistory $anamnesis, array $data): bool
     {
         return $anamnesis->update($data);
     }
 
-    /**
-     * Exclui uma anamnese.
-     */
     public function delete(PatientHistory $anamnesis): bool
     {
-        // Verifica se a anamnese está vinculada a algum exame
         if ($anamnesis->exams()->count() > 0) {
             throw new \Exception('Não é possível excluir esta anamnese pois ela está vinculada a '.$anamnesis->exams()->count().' exame(s).');
         }
@@ -89,10 +78,40 @@ class PatientHistoryService
     }
 
     /**
-     * Retorna todos os pacientes.
+     * Retorna as anamneses paginadas, aplicando escopo por papel e filtros.
+     * Alunos veem apenas as próprias; professores veem todas.
+     */
+    public function getFilteredHistories(User $user, array $filters = []): LengthAwarePaginator
+    {
+        $query = PatientHistory::with(['patient.user', 'user']);
+
+        if ($user->role === 'student') {
+            $query->where('user_id', $user->id);
+        }
+
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('patient.user', function ($patientQuery) use ($search) {
+                    $patientQuery->where('name', 'like', "%{$search}%");
+                })->orWhereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        if (! empty($filters['date'])) {
+            $query->whereDate('recorded_at', $filters['date']);
+        }
+
+        return $query->latest('recorded_at')->paginate(20)->withQueryString();
+    }
+
+    /**
+     * Retorna todos os pacientes ordenados por nome, reindexados para serialização.
      */
     public function getPatients()
     {
-        return Patient::with('user')->get()->sortBy('user.name');
+        return Patient::with('user')->get()->sortBy('user.name')->values();
     }
 }

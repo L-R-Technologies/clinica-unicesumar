@@ -8,7 +8,6 @@ use Illuminate\Notifications\Notification;
 
 class ExamApprovedNotification extends Notification
 {
-
     protected $exam;
 
     /**
@@ -34,7 +33,7 @@ class ExamApprovedNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Exame Aprovado - '.$this->exam->examType->name)
             ->greeting('Olá, '.$notifiable->name.'!')
             ->line('Seu exame foi **aprovado** com sucesso.')

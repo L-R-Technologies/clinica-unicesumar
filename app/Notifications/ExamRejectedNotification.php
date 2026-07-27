@@ -8,7 +8,6 @@ use Illuminate\Notifications\Notification;
 
 class ExamRejectedNotification extends Notification
 {
-
     protected $exam;
 
     protected $justification;
@@ -37,7 +36,7 @@ class ExamRejectedNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $message = (new MailMessage)
+        $message = (new MailMessage())
             ->subject('Exame Rejeitado - '.$this->exam->examType->name)
             ->greeting('Olá, '.$notifiable->name.'!')
             ->line('Seu exame foi **rejeitado** e precisa ser corrigido.')

@@ -18,8 +18,8 @@ class EmailVerificationNotificationTest extends TestCase
         $user = (new CreateNewUser())->create([
             'name' => 'Maria',
             'email' => 'maria@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Zx8kQwPmT3rL',
+            'password_confirmation' => 'Zx8kQwPmT3rL',
             'birthday' => '1990-01-01',
             'ethnicity' => 'Branca',
             'sex' => 'female',

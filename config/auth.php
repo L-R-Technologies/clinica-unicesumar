@@ -94,7 +94,8 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
+            // ERS (UC003): link de redefinição de senha expira em 30 minutos.
+            'expire' => 30,
             'throttle' => 60,
         ],
     ],

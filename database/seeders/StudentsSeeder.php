@@ -10,21 +10,23 @@ class StudentsSeeder extends Seeder
 {
     public function run(): void
     {
-        $student1 = User::create([
+        $student1 = new User([
             'name' => 'Lucas Henrique Souza',
             'email' => 'lucas.souza@email.com',
             'password' => bcrypt('123456789'),
-            'role' => 'student',
             'email_verified_at' => now(),
         ]);
+        $student1->role = 'student';
+        $student1->save();
 
-        $student2 = User::create([
+        $student2 = new User([
             'name' => 'Juliana Mendes Rocha',
             'email' => 'juliana.rocha@email.com',
             'password' => bcrypt('123456789'),
-            'role' => 'student',
             'email_verified_at' => now(),
         ]);
+        $student2->role = 'student';
+        $student2->save();
 
         Student::create([
             'user_id' => $student1->id,

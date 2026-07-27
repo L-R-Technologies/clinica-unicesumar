@@ -66,6 +66,6 @@ class MachineService
             $query->where('status', $filters['status']);
         }
 
-        return $query->orderBy('created_at', 'desc')->paginate(20);
+        return $query->orderBy('created_at', 'desc')->paginate(20)->withQueryString();
     }
 }

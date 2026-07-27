@@ -9,28 +9,45 @@
         th { background-color: #f2f2f2; }
         .approved { color: green; }
         .rejected { color: red; }
+        .machine-header { margin-top: 12px; padding: 12px; background-color: #f2f2f2; border-radius: 4px; }
+        .machine-header p { margin: 2px 0; }
     </style>
 </head>
 <body>
     <h2 style="text-align: center;">Histórico de Calibrações</h2>
+
+    @if ($machine)
+        <div class="machine-header">
+            <p><strong>Equipamento:</strong> {{ $machine->name }}</p>
+            <p><strong>Modelo:</strong> {{ $machine->model ?? '—' }}</p>
+            <p><strong>Nº de Série:</strong> {{ $machine->serial_number ?? '—' }}</p>
+        </div>
+    @endif
+
     <table>
         <thead>
             <tr>
-                <th>Equipamento</th>
+                @unless ($machine)
+                    <th>Equipamento</th>
+                @endunless
                 <th>Data</th>
                 <th>Valor</th>
                 <th>Status</th>
+                <th>Responsável</th>
             </tr>
         </thead>
         <tbody>
             @foreach($calibrations as $cal)
                 <tr>
-                    <td>{{ $cal->machine->name }}</td>
-                    <td>{{ $cal->calibration_date->format('d/m/Y') }}</td>
+                    @unless ($machine)
+                        <td>{{ $cal->machine->name }}</td>
+                    @endunless
+                    <td>{{ $cal->calibration_date->format('d/m/Y H:i') }}</td>
                     <td>{{ number_format($cal->value, 2, ',', '.') }}</td>
                     <td class="{{ $cal->status === 'approved' ? 'approved' : 'rejected' }}">
                         {{ $cal->status === 'approved' ? 'Aprovada' : 'Rejeitada' }}
                     </td>
+                    <td>{{ $cal->user->name ?? '—' }}</td>
                 </tr>
             @endforeach
         </tbody>

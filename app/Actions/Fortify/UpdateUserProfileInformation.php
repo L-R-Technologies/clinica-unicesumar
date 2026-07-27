@@ -33,7 +33,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
         if ($user->role === 'teacher') {
             $rules['registration_number'] = ['required', 'string', 'max:10'];
-            $rules['crbm'] = ['required', 'string', 'max:10'];
+            $rules['professional_license'] = ['required', 'string', 'max:10'];
         } elseif ($user->role === 'student') {
             $rules['ra'] = ['required', 'string', 'max:9', Rule::unique('students', 'ra')->ignore(optional($user->student)->id, 'id')];
             $rules['course'] = ['required', 'string', 'max:100'];
@@ -83,7 +83,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         if ($user->role === 'teacher' && $user->teacher) {
             $user->teacher->update([
                 'registration_number' => $input['registration_number'],
-                'crbm' => $input['crbm'],
+                'professional_license' => $input['professional_license'],
             ]);
         } elseif ($user->role === 'student' && $user->student) {
             $user->student->update([

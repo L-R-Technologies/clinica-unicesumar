@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -18,7 +20,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class Exam extends Model
 {
-    use LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -28,18 +30,16 @@ class Exam extends Model
         'sample_id',
         'date',
         'results',
-        'status',
         'observation',
     ];
 
     protected $casts = [
-        'date' => 'date',
+        'date' => 'datetime',
         'results' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
 
-    // Relacionamentos
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

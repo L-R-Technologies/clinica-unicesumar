@@ -100,12 +100,10 @@ class SampleService
     {
         $query = Sample::with(['patient.user', 'user', 'sampleType']);
 
-        // Filtrar por responsável se for aluno
         if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
             if ($filters['user_role'] === 'student') {
                 $query->where('user_id', $filters['user_id']);
             }
-            // Professores veem todas as amostras, então não aplicamos filtro
         }
 
         if (! empty($filters['search'])) {
@@ -116,6 +114,9 @@ class SampleService
                         $q->where('name', 'like', "%{$search}%");
                     })
                     ->orWhereHas('patient.user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('user', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%");
                     });
             });
@@ -141,7 +142,7 @@ class SampleService
             $query->whereDate('date', '<=', $filters['date_to']);
         }
 
-        return $query->orderBy('date', 'desc')->paginate(10);
+        return $query->orderBy('date', 'desc')->paginate(20)->withQueryString();
     }
 
     public function getPatients()

@@ -10,9 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 class ExamTypeService
 {
-    /**
-     * Valida os dados do tipo de exame
-     */
     public function validateExamTypeData(array $data, $examTypeId = null)
     {
         $rules = [
@@ -29,9 +26,6 @@ class ExamTypeService
         return $validator->validated();
     }
 
-    /**
-     * Valida os campos personalizados do tipo de exame
-     */
     public function validateFieldsData(array $fields)
     {
         $rules = [
@@ -50,9 +44,6 @@ class ExamTypeService
         return $validator->validated();
     }
 
-    /**
-     * Cria um novo tipo de exame com seus campos
-     */
     public function createExamType(array $data)
     {
         try {
@@ -61,7 +52,6 @@ class ExamTypeService
             $validated = $this->validateExamTypeData($data);
             $examType = ExamType::create($validated);
 
-            // Se houver campos personalizados
             if (! empty($data['fields'])) {
                 $validatedFields = $this->validateFieldsData($data['fields']);
 
@@ -79,9 +69,6 @@ class ExamTypeService
         }
     }
 
-    /**
-     * Atualiza um tipo de exame existente e seus campos
-     */
     public function updateExamType(ExamType $examType, array $data)
     {
         try {
@@ -90,11 +77,9 @@ class ExamTypeService
             $validated = $this->validateExamTypeData($data, $examType->id);
             $examType->update($validated);
 
-            // Atualiza os campos personalizados
             if (isset($data['fields'])) {
                 $validatedFields = $this->validateFieldsData($data['fields']);
 
-                // Apagar todos os campos e recriar (forma simples e segura)
                 $examType->fields()->delete();
 
                 foreach ($validatedFields as $fieldData) {
@@ -111,17 +96,11 @@ class ExamTypeService
         }
     }
 
-    /**
-     * Desativa um tipo de exame e seus campos
-     */
     public function deleteExamType(ExamType $examType)
     {
         $examType->update(['is_active' => false]);
     }
 
-    /**
-     * Alterna o status ativo/inativo
-     */
     public function toggleStatus(ExamType $examType)
     {
         $examType->update(['is_active' => ! $examType->is_active]);
@@ -129,12 +108,8 @@ class ExamTypeService
         return $examType;
     }
 
-    /**
-     * Retorna todos os tipos de exame cadastrados (com paginação e filtros)
-     */
     public function getFilteredExamTypes(array $filters = [])
     {
-        // Carrega os campos junto com os tipos de exame
         $query = ExamType::with('fields');
 
         if (! empty($filters['search'])) {
@@ -149,12 +124,9 @@ class ExamTypeService
             $query->where('id', $filters['exam_type_id']);
         }
 
-        return $query->orderBy('name')->paginate(10);
+        return $query->orderBy('name')->paginate(20)->withQueryString();
     }
 
-    /**
-     * Retorna todos os tipos de exame ativos (sem paginação)
-     */
     public function getAllExamTypes()
     {
         return ExamType::where('is_active', true)->orderBy('name')->get();

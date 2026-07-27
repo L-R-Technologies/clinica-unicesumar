@@ -7,11 +7,15 @@ use App\Mail\ExamPendingApproval;
 use App\Mail\ExamRejected;
 use App\Mail\ExamResultsAvailable;
 use App\Models\Exam;
+use App\Models\ExamRejection;
 use App\Models\ExamType;
 use App\Models\Patient;
 use App\Models\PatientHistory;
 use App\Models\Sample;
+use App\Notifications\ExamApprovedNotification;
+use App\Notifications\ExamRejectedNotification;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -19,6 +23,14 @@ use Illuminate\Validation\ValidationException;
 
 class ExamService
 {
+    public const STATUS_PENDING = 'pending';
+
+    public const STATUS_PENDING_APPROVAL = 'pending_approval';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_REJECTED = 'rejected';
+
     public function validateExamData(array $data, $examId = null)
     {
         $rules = [
@@ -29,7 +41,6 @@ class ExamService
             'date' => 'required|date|before_or_equal:today',
             'observation' => 'nullable|string',
             'results' => 'nullable|array',
-            'status' => 'nullable|in:pending,pending_approval,rejected,approved',
         ];
 
         $validator = Validator::make($data, $rules);
@@ -56,9 +67,10 @@ class ExamService
             DB::beginTransaction();
 
             $examData['user_id'] = $userId;
-            $examData['status'] = 'pending';
 
-            $exam = Exam::create($examData);
+            $exam = new Exam($examData);
+            $exam->status = self::STATUS_PENDING;
+            $exam->save();
 
             DB::commit();
 
@@ -69,16 +81,55 @@ class ExamService
         }
     }
 
-    public function updateExam(Exam $exam, array $examData)
+    public function approveExam(Exam $exam): Exam
+    {
+        return DB::transaction(function () use ($exam) {
+            $exam->status = self::STATUS_APPROVED;
+            $exam->save();
+
+            $exam->loadMissing('user');
+            $exam->user?->notify(new ExamApprovedNotification($exam));
+
+            $this->handleStatusChangeEmails($exam, self::STATUS_APPROVED);
+
+            return $exam;
+        });
+    }
+
+    public function rejectExam(Exam $exam, string $justification): Exam
+    {
+        return DB::transaction(function () use ($exam, $justification) {
+            $exam->status = self::STATUS_REJECTED;
+            $exam->save();
+
+            ExamRejection::create([
+                'exam_id' => $exam->id,
+                'user_id' => Auth::id(),
+                'justification' => $justification,
+            ]);
+
+            $exam->loadMissing('user');
+            $exam->user?->notify(new ExamRejectedNotification($exam, $justification));
+
+            return $exam;
+        });
+    }
+
+    public function updateExam(Exam $exam, array $examData, ?string $actorRole = null)
     {
         try {
             DB::beginTransaction();
 
             $exam->update($examData);
 
-            DB::commit();
+            if ($actorRole === 'student'
+                && in_array($exam->status, [self::STATUS_PENDING, self::STATUS_REJECTED], true)) {
+                $exam->status = self::STATUS_PENDING_APPROVAL;
+                $exam->save();
+                $this->handleStatusChangeEmails($exam, self::STATUS_PENDING_APPROVAL);
+            }
 
-            $this->handleStatusChangeEmails($exam, $exam->status);
+            DB::commit();
 
             return $exam->fresh();
         } catch (Exception $e) {
@@ -87,15 +138,15 @@ class ExamService
         }
     }
 
-    protected function handleStatusChangeEmails(Exam $exam, $status)
+    public function handleStatusChangeEmails(Exam $exam, $status)
     {
         $exam->load(['patient.user', 'user.student.supervisor', 'examType']);
 
-        if ($status === 'pending_approval') {
+        if ($status === self::STATUS_PENDING_APPROVAL) {
             $this->notifyTeachersForApproval($exam);
         }
 
-        if ($status === 'approved') {
+        if ($status === self::STATUS_APPROVED) {
             $user = $exam->user;
             if ($user && $user->role === 'student' && isset($user->email)) {
                 Mail::to($user->email)->send(new ExamApproved($exam));
@@ -106,7 +157,7 @@ class ExamService
             }
         }
 
-        if ($status === 'rejected') {
+        if ($status === self::STATUS_REJECTED) {
             $user = $exam->user;
             if (isset($user->email)) {
                 Mail::to($user->email)->send(new ExamRejected($exam));
@@ -131,6 +182,10 @@ class ExamService
 
     public function deleteExam(Exam $exam)
     {
+        if (! in_array($exam->status, [self::STATUS_PENDING, self::STATUS_REJECTED], true)) {
+            throw new Exception('Exame já validado. Não é possível excluir.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -143,24 +198,22 @@ class ExamService
         }
     }
 
-public function getFilteredExams(array $filters)
-{
-    $query = Exam::with(['user', 'patient.user', 'patientHistory', 'sample', 'examType']);
+    protected function buildFilteredExamsQuery(array $filters)
+    {
+        $query = Exam::with(['user', 'patient.user', 'patientHistory', 'sample', 'examType']);
 
-    // Filtrar por responsável se for aluno
-    if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
-        if ($filters['user_role'] === 'student') {
-            $query->where('user_id', $filters['user_id']);
+        if (! empty($filters['user_id']) && ! empty($filters['user_role'])) {
+            if ($filters['user_role'] === 'student') {
+                $query->where('user_id', $filters['user_id']);
+            }
         }
-    }
 
-    // NOVO: filtrar pelo paciente logado (usado na área "Meus Exames")
-    if (! empty($filters['patient_id'])) {
-        $query->where('patient_id', $filters['patient_id']);
-    }
+        if (! empty($filters['patient_id'])) {
+            $query->where('patient_id', $filters['patient_id']);
+        }
 
-    if (! empty($filters['search'])) {
-        $search = $filters['search'];
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->whereHas('examType', function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
@@ -190,7 +243,17 @@ public function getFilteredExams(array $filters)
             $query->whereDate('date', '<=', $filters['date_to']);
         }
 
-        return $query->orderBy('date', 'desc')->paginate(10);
+        return $query->orderBy('date', 'desc');
+    }
+
+    public function getFilteredExams(array $filters)
+    {
+        return $this->buildFilteredExamsQuery($filters)->paginate(20)->withQueryString();
+    }
+
+    public function getExamsForExport(array $filters)
+    {
+        return $this->buildFilteredExamsQuery($filters)->get();
     }
 
     public function getPatients()
@@ -218,10 +281,10 @@ public function getFilteredExams(array $filters)
     public function getStatusOptions()
     {
         return [
-            'pending' => 'Pendente',
-            'pending_approval' => 'Pendente de Aprovação',
-            'approved' => 'Aprovado',
-            'rejected' => 'Rejeitado',
+            self::STATUS_PENDING => 'Pendente',
+            self::STATUS_PENDING_APPROVAL => 'Pendente de Aprovação',
+            self::STATUS_APPROVED => 'Aprovado',
+            self::STATUS_REJECTED => 'Rejeitado',
         ];
     }
 
@@ -245,7 +308,4 @@ public function getFilteredExams(array $filters)
 
         return $query->orderBy('name')->get();
     }
-
-
-
 }

@@ -11,12 +11,14 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::table('calibrations', function (Blueprint $table) {
-            $table->dropColumn('calibration_date');
-        });
+        if (Schema::hasColumn('calibrations', 'calibration_date')) {
+            Schema::table('calibrations', function (Blueprint $table) {
+                $table->dropColumn('calibration_date');
+            });
+        }
 
         Schema::table('calibrations', function (Blueprint $table) {
-            $table->dateTime('calibration_date')->after('machine_id');
+            $table->dateTime('calibration_date')->nullable()->after('machine_id');
         });
     }
 
@@ -25,12 +27,14 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::table('calibrations', function (Blueprint $table) {
-            $table->dropColumn('calibration_date');
-        });
+        if (Schema::hasColumn('calibrations', 'calibration_date')) {
+            Schema::table('calibrations', function (Blueprint $table) {
+                $table->dropColumn('calibration_date');
+            });
+        }
 
         Schema::table('calibrations', function (Blueprint $table) {
-            $table->date('calibration_date')->after('machine_id');
+            $table->date('calibration_date')->nullable()->after('machine_id');
         });
     }
 };

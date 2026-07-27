@@ -117,12 +117,22 @@ class ExamService
         });
     }
 
-    public function updateExam(Exam $exam, array $examData)
+    public function updateExam(Exam $exam, array $examData, ?string $actorRole = null)
     {
         try {
             DB::beginTransaction();
 
             $exam->update($examData);
+
+            // ERS (UC008): quando o ALUNO salva a edição, o exame é submetido
+            // para aprovação (pending/rejected -> pending_approval) e o professor
+            // supervisor é notificado (RF021).
+            if ($actorRole === 'student'
+                && in_array($exam->status, [self::STATUS_PENDING, self::STATUS_REJECTED], true)) {
+                $exam->status = self::STATUS_PENDING_APPROVAL;
+                $exam->save();
+                $this->handleStatusChangeEmails($exam, self::STATUS_PENDING_APPROVAL);
+            }
 
             DB::commit();
 
@@ -177,6 +187,11 @@ class ExamService
 
     public function deleteExam(Exam $exam)
     {
+        // ERS (UC009): exclusão permitida apenas para status Pendente ou Rejeitado.
+        if (! in_array($exam->status, [self::STATUS_PENDING, self::STATUS_REJECTED], true)) {
+            throw new Exception('Exame já validado. Não é possível excluir.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -189,7 +204,7 @@ class ExamService
         }
     }
 
-    public function getFilteredExams(array $filters)
+    protected function buildFilteredExamsQuery(array $filters)
     {
         $query = Exam::with(['user', 'patient.user', 'patientHistory', 'sample', 'examType']);
 
@@ -236,7 +251,20 @@ class ExamService
             $query->whereDate('date', '<=', $filters['date_to']);
         }
 
-        return $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
+        return $query->orderBy('date', 'desc');
+    }
+
+    public function getFilteredExams(array $filters)
+    {
+        return $this->buildFilteredExamsQuery($filters)->paginate(20)->withQueryString();
+    }
+
+    /**
+     * ERS (RF014): coleção completa (sem paginação) para exportação em Excel/CSV.
+     */
+    public function getExamsForExport(array $filters)
+    {
+        return $this->buildFilteredExamsQuery($filters)->get();
     }
 
     public function getPatients()

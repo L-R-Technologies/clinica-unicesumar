@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
 
-Route::middleware(['auth', 'active', 'verified'])->group(function () {
+Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');
 
     // GRUPO: Apenas Professores (role: teacher)
@@ -104,9 +104,11 @@ Route::middleware(['auth', 'active', 'verified'])->group(function () {
 
         // Exames
         Route::get('/exam', [ExamController::class, 'index'])->name('exam.index');
+        Route::get('/exam/export/csv', [ExamController::class, 'exportCsv'])->name('exam.export-csv');
         Route::get('/exam/create', [ExamController::class, 'create'])->name('exam.create');
         Route::post('/exam', [ExamController::class, 'store'])->name('exam.store');
         Route::get('/exam/{id}', [ExamController::class, 'show'])->name('exam.show');
+        Route::get('/exam/{id}/pdf', [ExamController::class, 'exportPdf'])->name('exam.export-pdf');
         Route::get('/exam/{id}/edit', [ExamController::class, 'edit'])->name('exam.edit');
         Route::put('/exam/{id}', [ExamController::class, 'update'])->name('exam.update');
         Route::post('/exam/{id}/approve', [ExamController::class, 'approve'])->name('exam.approve');

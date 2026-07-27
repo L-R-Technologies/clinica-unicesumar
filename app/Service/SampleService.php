@@ -144,7 +144,7 @@ class SampleService
             $query->whereDate('date', '<=', $filters['date_to']);
         }
 
-        return $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
+        return $query->orderBy('date', 'desc')->paginate(20)->withQueryString();
     }
 
     public function getPatients()

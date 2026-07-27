@@ -1,5 +1,5 @@
 import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { Check, Pencil, X } from 'lucide-react';
+import { Check, Download, Pencil, X } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -66,25 +66,42 @@ export default function ExamsShow() {
                 <div className="flex flex-wrap items-center gap-2">
                     <BackButton href={route('exam.index')} />
                     <Button asChild variant="outline">
+                        <a
+                            href={route('exam.export-pdf', exam.id)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Download />
+                            Exportar PDF
+                        </a>
+                    </Button>
+                    <Button asChild variant="outline">
                         <Link href={route('exam.edit', exam.id)}>
                             <Pencil />
                             Editar
                         </Link>
                     </Button>
-                    {isTeacher && (
-                        <>
-                            <Button onClick={handleApprove}>
-                                <Check />
-                                Aprovar
-                            </Button>
-                            <RejectDialog examId={exam.id} />
-                        </>
+                    {isTeacher &&
+                        ['pending', 'pending_approval'].includes(
+                            exam.status,
+                        ) && (
+                            <>
+                                <Button onClick={handleApprove}>
+                                    <Check />
+                                    Aprovar
+                                </Button>
+                                <RejectDialog examId={exam.id} />
+                            </>
+                        )}
+                    {['pending', 'rejected'].includes(exam.status) && (
+                        <ConfirmDeleteDialog
+                            action={route('exam.destroy', exam.id)}
+                            description="O exame será removido permanentemente."
+                            trigger={
+                                <Button variant="destructive">Excluir</Button>
+                            }
+                        />
                     )}
-                    <ConfirmDeleteDialog
-                        action={route('exam.destroy', exam.id)}
-                        description="O exame será removido permanentemente."
-                        trigger={<Button variant="destructive">Excluir</Button>}
-                    />
                 </div>
             }
         >

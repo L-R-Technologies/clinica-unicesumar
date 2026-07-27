@@ -14,7 +14,7 @@ use Inertia\Response;
 
 class UserManagementController extends Controller
 {
-    private const USERS_PER_PAGE = 10;
+    private const USERS_PER_PAGE = 20;
 
     private const ROLE_OPTIONS = [
         'teacher' => 'Professor',

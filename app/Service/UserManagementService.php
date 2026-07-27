@@ -14,7 +14,7 @@ use Illuminate\Validation\Rules\Password;
 
 class UserManagementService
 {
-    public function getFilteredUsers(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    public function getFilteredUsers(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
         $query = User::with(['teacher', 'student'])
             ->whereIn('role', ['teacher', 'student'])
@@ -165,17 +165,12 @@ class UserManagementService
 
     public function deleteUser(User $user)
     {
+        // ERS (UC013): usuários não são excluídos permanentemente, apenas
+        // desativados/removidos de forma reversível. Soft delete preserva o
+        // registro (e o perfil teacher/student) para eventual restauração.
         DB::beginTransaction();
 
         try {
-            if ($user->teacher) {
-                $user->teacher->delete();
-            }
-
-            if ($user->student) {
-                $user->student->delete();
-            }
-
             $user->delete();
 
             DB::commit();

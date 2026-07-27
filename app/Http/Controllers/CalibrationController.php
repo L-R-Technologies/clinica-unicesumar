@@ -35,7 +35,7 @@ class CalibrationController extends Controller
             'calibrations' => $this->calibrationService
                 ->getFilteredCalibrationsQuery($filters)
                 ->latest('calibration_date')
-                ->paginate(10)
+                ->paginate(20)
                 ->withQueryString(),
             'machines' => Machine::where('status', 'active')->get(),
             'filters' => $filters,

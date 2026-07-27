@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckActiveUser;
+use App\Http\Middleware\CheckSessionTimeout;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => CheckUserRole::class,
             'active' => CheckActiveUser::class,
+            'session.timeout' => CheckSessionTimeout::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

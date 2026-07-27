@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Eye, Pencil, Plus } from 'lucide-react';
+import { Download, Eye, Pencil, Plus } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
@@ -111,10 +111,12 @@ export default function ExamsIndex() {
                     >
                         <Pencil className="size-4" />
                     </Link>
-                    <ConfirmDeleteDialog
-                        action={route('exam.destroy', row.id)}
-                        description="O exame será removido permanentemente."
-                    />
+                    {['pending', 'rejected'].includes(row.status) && (
+                        <ConfirmDeleteDialog
+                            action={route('exam.destroy', row.id)}
+                            description="O exame será removido permanentemente."
+                        />
+                    )}
                 </div>
             ),
         },
@@ -124,12 +126,20 @@ export default function ExamsIndex() {
         <AppLayout
             title="Exames"
             actions={
-                <Button asChild>
-                    <Link href={route('exam.create')}>
-                        <Plus />
-                        Novo exame
-                    </Link>
-                </Button>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button asChild variant="outline">
+                        <a href={route('exam.export-csv', filters)}>
+                            <Download />
+                            Exportar CSV
+                        </a>
+                    </Button>
+                    <Button asChild>
+                        <Link href={route('exam.create')}>
+                            <Plus />
+                            Novo exame
+                        </Link>
+                    </Button>
+                </div>
             }
         >
             <FiltersCard

@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Calibration extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'user_id',
         'machine_id',
@@ -17,11 +21,20 @@ class Calibration extends Model
     ];
 
     protected $casts = [
-        'calibration_date' => 'datetime',
+        'calibration_date' => 'date',
         'value' => 'float',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->useLogName('calibration');
+    }
 
     public function user(): BelongsTo
     {

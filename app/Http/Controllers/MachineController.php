@@ -124,7 +124,7 @@ class MachineController extends Controller
 
     private const STATUS_OPTIONS = [
         'active' => 'Ativa',
-        'inactive' => 'Inativa',
         'maintenance' => 'Em manutenção',
+        'inactive' => 'Inativa',
     ];
 }

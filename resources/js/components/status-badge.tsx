@@ -30,7 +30,7 @@ const STATUS_MAP: Record<string, StatusConfig> = {
     rejected: { label: 'Rejeitado', className: DANGER },
     active: { label: 'Ativo', className: SUCCESS },
     inactive: { label: 'Inativo', className: NEUTRAL },
-    maintenance: { label: 'Manutenção', className: WARNING },
+    maintenance: { label: 'Em manutenção', className: WARNING },
     'under review': { label: 'Em Análise', className: WARNING },
     stored: { label: 'Armazenada', className: SUCCESS },
     discarded: { label: 'Descartada', className: NEUTRAL },

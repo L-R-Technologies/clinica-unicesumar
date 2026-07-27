@@ -3,6 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ActivityLogTranslator;
+use App\Models\Address;
+use App\Models\Exam;
+use App\Models\ExamType;
+use App\Models\Machine;
+use App\Models\Patient;
+use App\Models\PatientHistory;
+use App\Models\Sample;
+use App\Models\SampleType;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,6 +22,19 @@ class ActivityLogController extends Controller
     private const LOGS_PER_PAGE = 20;
 
     private const HIDDEN_FIELDS = ['password', 'remember_token'];
+
+    private const REFERENCE_FIELDS = [
+        'user_id',
+        'supervisor_id',
+        'patient_id',
+        'machine_id',
+        'exam_type_id',
+        'sample_type_id',
+        'sample_id',
+        'address_id',
+        'exam_id',
+        'patient_history_id',
+    ];
 
     public function index(Request $request): Response
     {
@@ -174,8 +196,8 @@ class ActivityLogController extends Controller
 
             $items[] = [
                 'field' => ActivityLogTranslator::translateFieldName($key),
-                'old' => ActivityLogTranslator::translateFieldValue($key, $old[$key]),
-                'new' => ActivityLogTranslator::translateFieldValue($key, $newValue),
+                'old' => $this->displayValue($key, $old[$key]),
+                'new' => $this->displayValue($key, $newValue),
             ];
         }
 
@@ -196,11 +218,49 @@ class ActivityLogController extends Controller
 
             $items[] = [
                 'field' => ActivityLogTranslator::translateFieldName($key),
-                'value' => ActivityLogTranslator::translateFieldValue($key, $value),
+                'value' => $this->displayValue($key, $value),
             ];
         }
 
         return $items;
+    }
+
+    private function displayValue(string $field, mixed $value): string
+    {
+        if (in_array($field, self::REFERENCE_FIELDS, true) && $value !== null && $value !== '') {
+            return $this->resolveReference($field, (int) $value);
+        }
+
+        return ActivityLogTranslator::translateFieldValue($field, $value);
+    }
+
+    private function resolveReference(string $field, int $id): string
+    {
+        $label = match ($field) {
+            'user_id', 'supervisor_id' => User::find($id)?->name,
+            'patient_id' => Patient::find($id)?->user?->name,
+            'machine_id' => Machine::find($id)?->name,
+            'exam_type_id' => ExamType::find($id)?->name,
+            'sample_type_id' => SampleType::find($id)?->name,
+            'sample_id' => Sample::find($id)?->code,
+            'address_id' => $this->formatAddressLabel(Address::find($id)),
+            'exam_id' => Exam::whereKey($id)->exists() ? "Exame #{$id}" : null,
+            'patient_history_id' => PatientHistory::whereKey($id)->exists() ? "Anamnese #{$id}" : null,
+            default => null,
+        };
+
+        return $label ?? "#{$id}";
+    }
+
+    private function formatAddressLabel(?Address $address): ?string
+    {
+        if (! $address) {
+            return null;
+        }
+
+        $parts = array_filter([$address->street, $address->number]);
+
+        return $parts !== [] ? implode(', ', $parts) : null;
     }
 
     /**

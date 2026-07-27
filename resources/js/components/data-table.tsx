@@ -28,9 +28,9 @@ export function DataTable<T>({
     emptyMessage = 'Nenhum registro encontrado.',
 }: DataTableProps<T>) {
     return (
-        <div className="rounded-md border">
+        <div className="overflow-hidden rounded-md border bg-card">
             <Table>
-                <TableHeader>
+                <TableHeader className="bg-muted/50">
                     <TableRow>
                         {columns.map((column) => (
                             <TableHead

@@ -179,7 +179,7 @@ export interface PatientHistory {
     user?: User;
 }
 
-export type MachineStatus = 'active' | 'inactive' | 'maintenance';
+export type MachineStatus = 'active' | 'maintenance' | 'inactive';
 
 export interface Machine {
     id: number;

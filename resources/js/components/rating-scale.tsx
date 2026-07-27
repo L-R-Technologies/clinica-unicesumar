@@ -20,12 +20,18 @@ export function RatingScale({
     onChange,
     error,
 }: RatingScaleProps) {
+    const labelId = `${id}-label`;
+    const errorId = `${id}-error`;
+
     return (
         <div className="space-y-2">
-            <Label>{question}</Label>
+            <Label id={labelId}>{question}</Label>
             <RadioGroup
                 value={value ? String(value) : ''}
                 onValueChange={(next) => onChange(Number(next))}
+                aria-labelledby={labelId}
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? errorId : undefined}
                 className="grid grid-flow-col justify-start gap-6"
             >
                 {SCALE_VALUES.map((scaleValue) => (
@@ -46,7 +52,11 @@ export function RatingScale({
                     </div>
                 ))}
             </RadioGroup>
-            {error && <p className="text-sm text-destructive">{error}</p>}
+            {error && (
+                <p id={errorId} className="text-sm text-destructive">
+                    {error}
+                </p>
+            )}
         </div>
     );
 }

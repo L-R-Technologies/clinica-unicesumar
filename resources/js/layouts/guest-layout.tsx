@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { FlashToaster } from '@/components/flash-toaster';
+import { MAIN_CONTENT_ID, SkipLink } from '@/components/skip-link';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import type { PageProps } from '@/types';
@@ -16,6 +17,7 @@ export default function GuestLayout({ title, children }: GuestLayoutProps) {
     return (
         <div className="flex min-h-screen flex-col">
             <Head title={title} />
+            <SkipLink />
             <header className="flex h-20 items-center bg-primary px-6 text-primary-foreground">
                 <Link href="/home" className="flex items-center gap-3">
                     <img
@@ -48,7 +50,9 @@ export default function GuestLayout({ title, children }: GuestLayoutProps) {
                     )}
                 </nav>
             </header>
-            <main className="flex-1">{children}</main>
+            <main id={MAIN_CONTENT_ID} className="flex-1">
+                {children}
+            </main>
             <Toaster richColors position="bottom-right" />
             <FlashToaster />
         </div>

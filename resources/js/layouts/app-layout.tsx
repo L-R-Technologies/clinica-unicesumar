@@ -2,6 +2,7 @@ import { Head } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { AppSidebar } from '@/components/app-sidebar';
 import { FlashToaster } from '@/components/flash-toaster';
+import { MAIN_CONTENT_ID, SkipLink } from '@/components/skip-link';
 import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
@@ -42,6 +43,7 @@ export default function AppLayout({
     return (
         <SidebarProvider defaultOpen={getStoredSidebarOpen()}>
             <Head title={title} />
+            <SkipLink />
             <AppSidebar />
             <SidebarInset>
                 <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
@@ -57,7 +59,7 @@ export default function AppLayout({
                         </div>
                     )}
                 </header>
-                <main className="flex flex-1 flex-col p-4 sm:p-6">
+                <main id={MAIN_CONTENT_ID} className="flex flex-1 flex-col p-4 sm:p-6">
                     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4">
                         {children}
                     </div>

@@ -1,5 +1,6 @@
 import { useForm, usePage } from '@inertiajs/react';
-import type { FormEvent } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
 import AuthLayout from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,9 @@ interface ResetPasswordProps extends Record<string, unknown> {
 
 export default function ResetPassword() {
     const { email, token } = usePage<PageProps<ResetPasswordProps>>().props;
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirmation, setShowPasswordConfirmation] =
+        useState(false);
     const { data, setData, post, processing, errors, reset } = useForm({
         token,
         email,
@@ -51,14 +55,35 @@ export default function ResetPassword() {
 
                 <div className="space-y-2">
                     <Label htmlFor="password">Nova senha</Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        autoComplete="new-password"
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
+                    <div className="flex gap-2">
+                        <Input
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            autoComplete="new-password"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
+                            required
+                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            aria-label={
+                                showPassword ? 'Ocultar senha' : 'Mostrar senha'
+                            }
+                            onClick={() =>
+                                setShowPassword((current) => !current)
+                            }
+                        >
+                            {showPassword ? (
+                                <EyeOff className="size-4" />
+                            ) : (
+                                <Eye className="size-4" />
+                            )}
+                        </Button>
+                    </div>
                     {errors.password && (
                         <p className="text-sm text-destructive">
                             {errors.password}
@@ -70,16 +95,41 @@ export default function ResetPassword() {
                     <Label htmlFor="password_confirmation">
                         Confirmar nova senha
                     </Label>
-                    <Input
-                        id="password_confirmation"
-                        type="password"
-                        autoComplete="new-password"
-                        value={data.password_confirmation}
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                        required
-                    />
+                    <div className="flex gap-2">
+                        <Input
+                            id="password_confirmation"
+                            type={
+                                showPasswordConfirmation ? 'text' : 'password'
+                            }
+                            autoComplete="new-password"
+                            value={data.password_confirmation}
+                            onChange={(e) =>
+                                setData('password_confirmation', e.target.value)
+                            }
+                            required
+                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            aria-label={
+                                showPasswordConfirmation
+                                    ? 'Ocultar senha'
+                                    : 'Mostrar senha'
+                            }
+                            onClick={() =>
+                                setShowPasswordConfirmation(
+                                    (current) => !current,
+                                )
+                            }
+                        >
+                            {showPasswordConfirmation ? (
+                                <EyeOff className="size-4" />
+                            ) : (
+                                <Eye className="size-4" />
+                            )}
+                        </Button>
+                    </div>
                 </div>
 
                 <Button type="submit" className="w-full" disabled={processing}>

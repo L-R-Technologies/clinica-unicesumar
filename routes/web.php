@@ -72,6 +72,12 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
 
     Route::post('/user/anonymize', [UserController::class, 'anonymize'])->name('user.anonymize');
     Route::get('/user/password/{user}', [UserController::class, 'editPassword'])->name('user.password-edit');
+    Route::get('/user/two-factor', [UserController::class, 'editTwoFactor'])->name('two-factor.show');
+    // Sobrescreve a rota de desativação do Fortify para exigir um código
+    // válido do autenticador antes de desativar o 2FA.
+    Route::delete('/user/two-factor-authentication', [UserController::class, 'destroyTwoFactor'])
+        ->middleware('throttle:6,1')
+        ->name('two-factor.destroy');
     Route::get('/user/{user}', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/{user}/address', [UserController::class, 'updateAddress'])->name('user.address.update');
 

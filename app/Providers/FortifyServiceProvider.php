@@ -52,6 +52,8 @@ class FortifyServiceProvider extends ServiceProvider
             'status' => session('status'),
         ]));
 
+        Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));
+
         Fortify::registerView(fn () => Inertia::render('auth/register'));
 
         Fortify::verifyEmailView(fn () => Inertia::render('auth/verify-email', [

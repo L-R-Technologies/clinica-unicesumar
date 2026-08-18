@@ -3,6 +3,7 @@ import { ShieldCheck, ShieldOff, TriangleAlert } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { FormField } from '@/components/form-field';
+import { OtpInput } from '@/components/otp-input';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -19,7 +20,6 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import type { PageProps } from '@/types';
 
 interface TwoFactorProps extends Record<string, unknown> {
@@ -143,18 +143,11 @@ export default function ProfileTwoFactor() {
                                     error={confirmForm.errors.code}
                                     required
                                 >
-                                    <Input
+                                    <OtpInput
                                         id="code"
-                                        type="text"
-                                        inputMode="numeric"
-                                        autoComplete="one-time-code"
-                                        maxLength={6}
                                         value={confirmForm.data.code}
-                                        onChange={(e) =>
-                                            confirmForm.setData(
-                                                'code',
-                                                e.target.value,
-                                            )
+                                        onChange={(code) =>
+                                            confirmForm.setData('code', code)
                                         }
                                     />
                                 </FormField>
@@ -214,15 +207,11 @@ export default function ProfileTwoFactor() {
                             error={disableForm.errors.code}
                             required
                         >
-                            <Input
+                            <OtpInput
                                 id="disable_code"
-                                type="text"
-                                inputMode="numeric"
-                                autoComplete="one-time-code"
-                                maxLength={6}
                                 value={disableForm.data.code}
-                                onChange={(e) =>
-                                    disableForm.setData('code', e.target.value)
+                                onChange={(code) =>
+                                    disableForm.setData('code', code)
                                 }
                                 autoFocus
                             />

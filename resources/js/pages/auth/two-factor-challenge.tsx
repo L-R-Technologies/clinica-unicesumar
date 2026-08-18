@@ -1,6 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import { useState, type FormEvent } from 'react';
 import AuthLayout from '@/layouts/auth-layout';
+import { OtpInput } from '@/components/otp-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -56,20 +57,17 @@ export default function TwoFactorChallenge() {
                     </div>
                 ) : (
                     <div className="space-y-2">
-                        <Label htmlFor="code">Código de autenticação</Label>
-                        <Input
+                        <Label htmlFor="code" className="justify-center">
+                            Código de autenticação
+                        </Label>
+                        <OtpInput
                             id="code"
-                            type="text"
-                            inputMode="numeric"
-                            autoComplete="one-time-code"
-                            maxLength={6}
                             value={data.code}
-                            onChange={(e) => setData('code', e.target.value)}
+                            onChange={(code) => setData('code', code)}
                             autoFocus
-                            required
                         />
                         {errors.code && (
-                            <p className="text-sm text-destructive">
+                            <p className="text-center text-sm text-destructive">
                                 {errors.code}
                             </p>
                         )}

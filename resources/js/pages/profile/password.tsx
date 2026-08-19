@@ -58,8 +58,14 @@ export default function ProfilePassword() {
                                 onChange={(e) =>
                                     setData('password', e.target.value)
                                 }
+                                minLength={8}
                             />
                         </FormField>
+
+                        <p className="text-sm text-muted-foreground">
+                            Mínimo de 8 caracteres, com letras maiúsculas,
+                            minúsculas e números.
+                        </p>
 
                         <FormField
                             id="password_confirmation"

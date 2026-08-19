@@ -57,6 +57,7 @@ export default function SampleTypeCreate() {
                                 onChange={(e) =>
                                     setData('name', e.target.value)
                                 }
+                                maxLength={255}
                                 autoFocus
                             />
                         </FormField>
@@ -73,6 +74,7 @@ export default function SampleTypeCreate() {
                                     setData('description', e.target.value)
                                 }
                                 rows={4}
+                                maxLength={1000}
                             />
                         </FormField>
                     </form>

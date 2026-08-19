@@ -256,6 +256,7 @@ export default function ExamsCreate() {
                             <Input
                                 id="date"
                                 type="date"
+                                max={today()}
                                 value={data.date}
                                 onChange={(e) =>
                                     setData('date', e.target.value)
@@ -275,6 +276,7 @@ export default function ExamsCreate() {
                                     setData('observation', e.target.value)
                                 }
                                 rows={3}
+                                maxLength={1000}
                                 placeholder="Observações sobre o exame..."
                             />
                         </FormField>

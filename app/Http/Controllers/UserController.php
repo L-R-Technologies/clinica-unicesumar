@@ -28,12 +28,14 @@ class UserController extends Controller
     {
         abort_unless($user->id === Auth::id(), 403);
 
-        $user->load('patient.address');
+        $user->load('patient.address', 'teacher', 'student');
 
         return Inertia::render('profile/edit', [
             'profileUser' => $user,
             'patient' => $user->patient,
             'address' => $user->patient?->address,
+            'teacher' => $user->teacher,
+            'student' => $user->student,
         ]);
     }
 

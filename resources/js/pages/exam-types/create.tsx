@@ -76,6 +76,7 @@ export default function ExamTypeCreate() {
                                 onChange={(e) =>
                                     setData('name', e.target.value)
                                 }
+                                maxLength={255}
                                 autoFocus
                             />
                         </FormField>
@@ -92,6 +93,7 @@ export default function ExamTypeCreate() {
                                     setData('description', e.target.value)
                                 }
                                 rows={4}
+                                maxLength={1000}
                             />
                         </FormField>
 

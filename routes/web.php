@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\PatientExamController;
 use App\Http\Controllers\PatientHistoryController;
+use App\Http\Controllers\RegisterStepController;
 use App\Http\Controllers\SampleController;
 use App\Http\Controllers\SampleTypeController;
 use App\Http\Controllers\UserController;
@@ -16,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy-policy');
+
+Route::post('/register/validate-step/{step}', [RegisterStepController::class, 'validateStep'])
+    ->middleware(['guest', 'throttle:30,1'])
+    ->whereNumber('step')
+    ->name('register.validate-step');
 
 Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(function () {
     Route::get('/home', [HomeController::class, 'home'])->name('home');

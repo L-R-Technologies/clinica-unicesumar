@@ -64,6 +64,7 @@ export default function ResetPassword() {
                             onChange={(e) =>
                                 setData('password', e.target.value)
                             }
+                            minLength={8}
                             required
                         />
                         <Button
@@ -84,6 +85,10 @@ export default function ResetPassword() {
                             )}
                         </Button>
                     </div>
+                    <p className="text-sm text-muted-foreground">
+                        Mínimo de 8 caracteres, com letras maiúsculas,
+                        minúsculas e números.
+                    </p>
                     {errors.password && (
                         <p className="text-sm text-destructive">
                             {errors.password}

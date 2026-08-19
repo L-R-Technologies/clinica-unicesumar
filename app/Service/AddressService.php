@@ -48,11 +48,11 @@ class AddressService
         }
 
         $validator = Validator::make($input, [
-            'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
+            'street' => ['required', 'string', 'regex:/^[\pL\pN\s.,ºª°\'\-\/]+$/u', 'max:255'],
             'number' => ['required', 'string', 'max:20'],
             'complement' => ['nullable', 'string', 'max:100'],
-            'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'neighborhood' => ['required', 'string', 'regex:/^[\pL\pN\s.,ºª°\'\-\/]+$/u', 'max:100'],
+            'city' => ['required', 'string', 'regex:/^[\pL\pN\s.,ºª°\'\-\/]+$/u', 'max:100'],
             'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'zip_code' => ['required', 'string', 'min:8', 'max:8'],

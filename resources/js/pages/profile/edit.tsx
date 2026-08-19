@@ -25,7 +25,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { fetchAddressByCep, formatCep, stripDigits } from '@/lib/masks';
-import type { Address, PageProps, Patient, User } from '@/types';
+import type {
+    Address,
+    PageProps,
+    Patient,
+    Student,
+    Teacher,
+    User,
+} from '@/types';
 
 const CONFIRMATION_KEYWORD = 'CONFIRMAR';
 
@@ -33,20 +40,29 @@ interface ProfileEditProps extends Record<string, unknown> {
     profileUser: User;
     patient: Patient | null;
     address: Address | null;
+    teacher: Teacher | null;
+    student: Student | null;
 }
 
 export default function ProfileEdit() {
-    const { profileUser, patient, address } =
+    const { profileUser, patient, address, teacher, student } =
         usePage<PageProps<ProfileEditProps>>().props;
 
     const isPatient = profileUser.role === 'patient';
+    const isTeacher = profileUser.role === 'teacher';
+    const isStudent = profileUser.role === 'student';
 
     // O Fortify (UpdateUserProfileInformation) valida/atualiza TODOS os campos do
-    // paciente ao salvar o perfil. Reenviamos os valores atuais junto de name/email
-    // para que a edição não falhe na validação nem sobrescreva outros dados.
+    // perfil (paciente, professor ou aluno) ao salvar. Reenviamos os valores
+    // atuais junto de name/email para que a edição não falhe na validação nem
+    // sobrescreva outros dados.
     const basicForm = useForm({
         name: profileUser.name,
         email: profileUser.email,
+        registration_number: teacher?.registration_number ?? '',
+        professional_license: teacher?.professional_license ?? '',
+        ra: student?.ra ?? '',
+        course: student?.course ?? '',
         birthday: patient?.birthday ?? '',
         ethnicity: patient?.ethnicity ?? '',
         sex: patient?.sex ?? '',
@@ -149,7 +165,7 @@ export default function ProfileEdit() {
                     <CardHeader>
                         <CardTitle>Dados básicos</CardTitle>
                         <CardDescription>
-                            Atualize seu nome e e-mail de acesso.
+                            Atualize seus dados de acesso e cadastro.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -162,6 +178,7 @@ export default function ProfileEdit() {
                             >
                                 <Input
                                     id="name"
+                                    maxLength={255}
                                     value={basicForm.data.name}
                                     onChange={(e) =>
                                         basicForm.setData(
@@ -181,6 +198,7 @@ export default function ProfileEdit() {
                                 <Input
                                     id="email"
                                     type="email"
+                                    maxLength={255}
                                     value={basicForm.data.email}
                                     onChange={(e) =>
                                         basicForm.setData(
@@ -190,6 +208,101 @@ export default function ProfileEdit() {
                                     }
                                 />
                             </FormField>
+
+                            {isTeacher && (
+                                <>
+                                    <FormField
+                                        id="registration_number"
+                                        label="Número de registro"
+                                        error={
+                                            basicForm.errors
+                                                .registration_number
+                                        }
+                                        required
+                                    >
+                                        <Input
+                                            id="registration_number"
+                                            maxLength={10}
+                                            value={
+                                                basicForm.data
+                                                    .registration_number
+                                            }
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'registration_number',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+
+                                    <FormField
+                                        id="professional_license"
+                                        label="CRBM (opcional)"
+                                        error={
+                                            basicForm.errors
+                                                .professional_license
+                                        }
+                                    >
+                                        <Input
+                                            id="professional_license"
+                                            maxLength={10}
+                                            value={
+                                                basicForm.data
+                                                    .professional_license
+                                            }
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'professional_license',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                </>
+                            )}
+
+                            {isStudent && (
+                                <>
+                                    <FormField
+                                        id="ra"
+                                        label="RA (registro acadêmico)"
+                                        error={basicForm.errors.ra}
+                                        required
+                                    >
+                                        <Input
+                                            id="ra"
+                                            maxLength={9}
+                                            value={basicForm.data.ra}
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'ra',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+
+                                    <FormField
+                                        id="course"
+                                        label="Curso"
+                                        error={basicForm.errors.course}
+                                        required
+                                    >
+                                        <Input
+                                            id="course"
+                                            maxLength={255}
+                                            value={basicForm.data.course}
+                                            onChange={(e) =>
+                                                basicForm.setData(
+                                                    'course',
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </FormField>
+                                </>
+                            )}
 
                             <div className="flex justify-between gap-2">
                                 <Button variant="outline" asChild>

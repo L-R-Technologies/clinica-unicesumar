@@ -13,8 +13,16 @@ interface CalibrationEditProps extends Record<string, unknown> {
     calibration: Calibration;
 }
 
+/** Data/hora local no formato aceito pelo input datetime-local (YYYY-MM-DDTHH:mm). */
+function nowLocal(): string {
+    const now = new Date();
+    const pad = (value: number): string => String(value).padStart(2, '0');
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+
 export default function CalibrationEdit() {
     const { calibration } = usePage<PageProps<CalibrationEditProps>>().props;
+    const maxDateTime = nowLocal();
 
     const { data, setData, put, processing, errors } = useForm({
         calibration_date: calibration.calibration_date.slice(0, 16),
@@ -66,6 +74,7 @@ export default function CalibrationEdit() {
                             <Input
                                 id="calibration_date"
                                 type="datetime-local"
+                                max={maxDateTime}
                                 value={data.calibration_date}
                                 onChange={(e) =>
                                     setData('calibration_date', e.target.value)
@@ -102,6 +111,7 @@ export default function CalibrationEdit() {
                                     setData('observation', e.target.value)
                                 }
                                 rows={4}
+                                maxLength={1000}
                             />
                         </FormField>
                     </form>

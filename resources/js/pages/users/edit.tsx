@@ -8,30 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { generateTemporaryPassword } from '@/lib/password';
 import type { PageProps, Student, Teacher, User } from '@/types';
-
-const PASSWORD_ALPHABET =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-const GENERATED_PASSWORD_LENGTH = 12;
 
 const ROLE_LABELS: Record<string, string> = {
     teacher: 'Professor',
     student: 'Estudante',
     patient: 'Paciente',
 };
-
-function generateTemporaryPassword(): string {
-    const randomValues = new Uint32Array(GENERATED_PASSWORD_LENGTH);
-    crypto.getRandomValues(randomValues);
-
-    let password = '';
-    for (let i = 0; i < GENERATED_PASSWORD_LENGTH; i++) {
-        password +=
-            PASSWORD_ALPHABET[randomValues[i] % PASSWORD_ALPHABET.length];
-    }
-
-    return password;
-}
 
 interface UserEditProps extends Record<string, unknown> {
     user: User & { teacher?: Teacher | null; student?: Student | null };
@@ -100,6 +84,7 @@ export default function UserEdit() {
                         >
                             <Input
                                 id="name"
+                                maxLength={255}
                                 value={data.name}
                                 onChange={(e) =>
                                     setData('name', e.target.value)
@@ -117,6 +102,7 @@ export default function UserEdit() {
                             <Input
                                 id="email"
                                 type="email"
+                                maxLength={255}
                                 value={data.email}
                                 onChange={(e) =>
                                     setData('email', e.target.value)
@@ -133,6 +119,7 @@ export default function UserEdit() {
                                 <Input
                                     id="password"
                                     type={showPassword ? 'text' : 'password'}
+                                    minLength={8}
                                     value={data.password}
                                     onChange={(e) =>
                                         setData('password', e.target.value)
@@ -172,8 +159,9 @@ export default function UserEdit() {
                                 </Button>
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                Deixe em branco para manter a senha atual.
-                                Mínimo de 8 caracteres para alterar.
+                                Deixe em branco para manter a senha atual. Para
+                                alterar: mínimo de 8 caracteres, com letras
+                                maiúsculas, minúsculas e números.
                             </p>
                         </FormField>
 
@@ -187,6 +175,7 @@ export default function UserEdit() {
                                 >
                                     <Input
                                         id="registration_number"
+                                        maxLength={10}
                                         value={data.registration_number}
                                         onChange={(e) =>
                                             setData(
@@ -204,6 +193,7 @@ export default function UserEdit() {
                                 >
                                     <Input
                                         id="professional_license"
+                                        maxLength={10}
                                         value={data.professional_license}
                                         onChange={(e) =>
                                             setData(
@@ -226,6 +216,7 @@ export default function UserEdit() {
                                 >
                                     <Input
                                         id="ra"
+                                        maxLength={9}
                                         value={data.ra}
                                         onChange={(e) =>
                                             setData('ra', e.target.value)
@@ -241,6 +232,7 @@ export default function UserEdit() {
                                 >
                                     <Input
                                         id="course"
+                                        maxLength={255}
                                         value={data.course}
                                         onChange={(e) =>
                                             setData('course', e.target.value)

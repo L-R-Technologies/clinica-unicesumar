@@ -214,7 +214,22 @@ class UserManagementService
 
     public function generateTemporaryPassword(): string
     {
-        return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 12);
+        $lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $digits = '0123456789';
+        $alphabet = $lowercase.$uppercase.$digits;
+
+        // Garante os requisitos de Password::default(): ao menos uma
+        // minúscula, uma maiúscula e um número.
+        $password = $lowercase[random_int(0, strlen($lowercase) - 1)]
+            .$uppercase[random_int(0, strlen($uppercase) - 1)]
+            .$digits[random_int(0, strlen($digits) - 1)];
+
+        for ($i = strlen($password); $i < 12; $i++) {
+            $password .= $alphabet[random_int(0, strlen($alphabet) - 1)];
+        }
+
+        return str_shuffle($password);
     }
 
     public function validateTeacherData(array $data, $userId = null): array

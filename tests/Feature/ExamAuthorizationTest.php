@@ -84,7 +84,9 @@ class ExamAuthorizationTest extends TestCase
             ->put(route('exam.update', $exam->id), $payload)
             ->assertRedirect(route('exam.index'));
 
-        $this->assertSame(ExamService::STATUS_PENDING, $exam->fresh()->status);
+        // O status enviado no payload é descartado (não é validado nem mass
+        // assignable); a edição por aluno move o exame para re-aprovação.
+        $this->assertSame(ExamService::STATUS_PENDING_APPROVAL, $exam->fresh()->status);
     }
 
     public function test_non_teacher_cannot_approve_exam(): void

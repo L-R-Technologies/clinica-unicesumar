@@ -35,6 +35,7 @@ export interface Patient {
     rg: string | null;
     phone: string | null;
     lgpd_consent_at: string | null;
+    lgpd_term_path: string | null;
     user?: User;
     address?: Address;
 }
@@ -60,6 +61,23 @@ export interface Student {
 
 export type ExamFieldType = 'int' | 'float' | 'string' | 'boolean';
 
+/** Sexo ao qual um valor de referência se restringe (null = ambos). */
+export type ReferenceSex = 'male' | 'female';
+
+export interface ExamTypeFieldReference {
+    id: number;
+    exam_type_field_id: number;
+    sex: ReferenceSex | null;
+    age_min: number | null;
+    age_max: number | null;
+    min_value: number | null;
+    max_value: number | null;
+    /** Ex.: "Feminino, 18 a 59 anos" (montado no backend). */
+    criteria_label: string;
+    /** Ex.: "70 a 99" (montado no backend). */
+    range_label: string;
+}
+
 export interface ExamTypeField {
     id: number;
     exam_type_id: number;
@@ -67,6 +85,17 @@ export interface ExamTypeField {
     label: string;
     field_type: ExamFieldType;
     unit: string | null;
+    references?: ExamTypeFieldReference[];
+}
+
+/** Situação de um resultado frente ao valor de referência aplicável. */
+export type ReferenceStatus = 'within' | 'below' | 'above';
+
+export interface ResultReference {
+    criteria_label: string;
+    range_label: string;
+    status: ReferenceStatus | null;
+    status_label: string | null;
 }
 
 export interface ExamType {

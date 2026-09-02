@@ -19,6 +19,9 @@
         .badge-pending_approval { background: #0dcaf0; color:#000; }
         .badge-rejected { background: #dc3545; }
         .footer { margin-top: 30px; font-size: 10px; color: #777; text-align: center; }
+        .reference-criteria { display: block; font-size: 10px; color: #777; }
+        .status-within { color: #198754; }
+        .status-below, .status-above { color: #dc3545; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -60,10 +63,13 @@
 
     @if ($exam->results && is_array($exam->results))
         <div class="section-title">Resultados</div>
-        @php $fieldsMap = $exam->examType->fields->keyBy('name'); @endphp
+        @php
+            $fieldsMap = $exam->examType->fields->keyBy('name');
+            $resultReferences = $resultReferences ?? [];
+        @endphp
         <table>
             <thead>
-                <tr><th>Parâmetro</th><th>Resultado</th></tr>
+                <tr><th>Parâmetro</th><th>Resultado</th><th>Valores de referência</th><th>Situação</th></tr>
             </thead>
             <tbody>
                 @foreach ($exam->results as $key => $value)
@@ -71,10 +77,26 @@
                         $field = $fieldsMap->get($key);
                         $label = $field->label ?? ucfirst($key);
                         $unit = $field->unit ?? null;
+                        $reference = $resultReferences[$key] ?? null;
                     @endphp
                     <tr>
                         <td>{{ $label }} @if($unit) ({{ $unit }}) @endif</td>
-                        <td>{{ $value }}</td>
+                        <td>{{ is_bool($value) ? ($value ? 'Sim' : 'Não') : $value }}</td>
+                        <td>
+                            @if ($reference)
+                                {{ $reference['range_label'] }}
+                                <span class="reference-criteria">{{ $reference['criteria_label'] }}</span>
+                            @else
+                                —
+                            @endif
+                        </td>
+                        <td>
+                            @if ($reference && $reference['status'])
+                                <span class="status-{{ $reference['status'] }}">{{ $reference['status_label'] }}</span>
+                            @else
+                                —
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

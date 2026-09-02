@@ -4,11 +4,16 @@ import type {
     CalibrationStatus,
     ExamStatus,
     MachineStatus,
+    ReferenceStatus,
     SampleStatus,
 } from '@/types';
 
 type BadgeStatus =
-    ExamStatus | MachineStatus | CalibrationStatus | SampleStatus;
+    | ExamStatus
+    | MachineStatus
+    | CalibrationStatus
+    | SampleStatus
+    | ReferenceStatus;
 
 interface StatusConfig {
     label: string;
@@ -34,6 +39,9 @@ const STATUS_MAP: Record<string, StatusConfig> = {
     'under review': { label: 'Em Análise', className: WARNING },
     stored: { label: 'Armazenada', className: SUCCESS },
     discarded: { label: 'Descartada', className: NEUTRAL },
+    within: { label: 'Normal', className: SUCCESS },
+    below: { label: 'Abaixo', className: DANGER },
+    above: { label: 'Acima', className: DANGER },
 };
 
 export function StatusBadge({ status }: { status: BadgeStatus }) {

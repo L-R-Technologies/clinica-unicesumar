@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
+import type { ReactElement } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
@@ -11,6 +12,7 @@ import type {
     ExamFieldType,
     ExamType,
     ExamTypeField,
+    ExamTypeFieldReference,
     PageProps,
 } from '@/types';
 
@@ -24,6 +26,29 @@ const FIELD_TYPE_LABELS: Record<ExamFieldType, string> = {
     string: 'Texto',
     boolean: 'Booleano',
 };
+
+function ReferenceList({
+    references,
+}: {
+    references: ExamTypeFieldReference[];
+}): ReactElement {
+    if (references.length === 0) {
+        return <span className="text-muted-foreground">—</span>;
+    }
+
+    return (
+        <ul className="space-y-1">
+            {references.map((reference) => (
+                <li key={reference.id}>
+                    <span className="font-medium">{reference.range_label}</span>
+                    <span className="ml-1 text-muted-foreground">
+                        ({reference.criteria_label})
+                    </span>
+                </li>
+            ))}
+        </ul>
+    );
+}
 
 export default function ExamTypeShow() {
     const { examType } = usePage<PageProps<ExamTypeShowProps>>().props;
@@ -39,6 +64,10 @@ export default function ExamTypeShow() {
             header: 'Unidade',
             cell: (row) => row.unit || '—',
             className: 'text-muted-foreground',
+        },
+        {
+            header: 'Valores de referência',
+            cell: (row) => <ReferenceList references={row.references ?? []} />,
         },
     ];
 

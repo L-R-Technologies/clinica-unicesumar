@@ -6,6 +6,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MachineController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientExamController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\SampleController;
@@ -76,6 +77,14 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
     Route::put('/user/{user}/address', [UserController::class, 'updateAddress'])->name('user.address.update');
 
     Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
+        Route::get('/patients/create', [PatientController::class, 'create'])->name('patients.create');
+        Route::post('/patients', [PatientController::class, 'store'])->name('patients.store');
+        Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+        Route::get('/patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit');
+        Route::put('/patients/{patient}', [PatientController::class, 'update'])->name('patients.update');
+        Route::get('/patients/{patient}/lgpd-term', [PatientController::class, 'lgpdTerm'])->name('patients.lgpd-term');
+
         Route::get('/patient-histories', [PatientHistoryController::class, 'index'])->name('patient-histories.index');
         Route::get('/patient-histories/create', [PatientHistoryController::class, 'create'])->name('patient-histories.create');
         Route::post('/patient-histories', [PatientHistoryController::class, 'store'])->name('patient-histories.store');

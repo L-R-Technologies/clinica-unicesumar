@@ -11,6 +11,7 @@ import {
     Settings2,
     TestTubes,
     UserCog,
+    Users,
     type LucideIcon,
 } from 'lucide-react';
 import { NavUser } from '@/components/nav-user';
@@ -62,6 +63,13 @@ const NAV_GROUPS: readonly NavGroup[] = [
     {
         label: 'Atendimento',
         items: [
+            {
+                title: 'Pacientes',
+                routeName: 'patients.index',
+                icon: Users,
+                activePattern: 'patients.*',
+                roles: ['teacher', 'student'],
+            },
             {
                 title: 'Anamneses',
                 routeName: 'patient-histories.index',

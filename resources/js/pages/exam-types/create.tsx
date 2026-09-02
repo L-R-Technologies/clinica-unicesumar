@@ -5,6 +5,7 @@ import { BackButton } from '@/components/back-button';
 import {
     ExamTypeFieldsRepeater,
     createEmptyExamTypeField,
+    prepareExamTypeFieldsForSubmit,
     type ExamTypeFieldRow,
 } from '@/components/exam-type-fields-repeater';
 import { FormField } from '@/components/form-field';
@@ -31,9 +32,7 @@ export default function ExamTypeCreate() {
         event.preventDefault();
         transform((current) => ({
             ...current,
-            fields: current.fields.filter(
-                (field) => field.name !== '' || field.label !== '',
-            ),
+            fields: prepareExamTypeFieldsForSubmit(current.fields),
         }));
         post(route('exam-type.store'));
     }

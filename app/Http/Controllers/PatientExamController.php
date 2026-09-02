@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Exam;
 use App\Service\ExamFeedbackService;
+use App\Service\ExamReferenceService;
 use App\Service\ExamService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -20,12 +21,18 @@ class PatientExamController extends Controller
 
     protected $examFeedbackService;
 
-    public function __construct(ExamService $examService, ExamFeedbackService $examFeedbackService)
-    {
+    protected $examReferenceService;
+
+    public function __construct(
+        ExamService $examService,
+        ExamFeedbackService $examFeedbackService,
+        ExamReferenceService $examReferenceService,
+    ) {
         $this->middleware('auth');
         $this->middleware('role:patient');
         $this->examService = $examService;
         $this->examFeedbackService = $examFeedbackService;
+        $this->examReferenceService = $examReferenceService;
     }
 
     public function index(Request $request): Response
@@ -61,13 +68,14 @@ class PatientExamController extends Controller
         abort_if(! $patient, 403, 'Perfil de paciente não encontrado.');
 
         // Garante que o exame pertence ao paciente logado e já foi aprovado (defesa em profundidade)
-        $exam = Exam::with(['patient.user', 'sample.sampleType', 'examType.fields', 'feedback'])
+        $exam = Exam::with(['patient.user', 'sample.sampleType', 'examType.fields.references', 'feedback'])
             ->where('patient_id', $patient->id)
             ->where('status', 'approved')
             ->findOrFail($id);
 
         return Inertia::render('my-exams/show', [
             'exam' => $exam,
+            'resultReferences' => $this->examReferenceService->evaluateResults($exam),
         ]);
     }
 
@@ -78,12 +86,14 @@ class PatientExamController extends Controller
         abort_if(! $patient, 403, 'Perfil de paciente não encontrado.');
 
         // Garante que o exame pertence ao paciente logado e já foi aprovado (defesa em profundidade)
-        $exam = Exam::with(['patient.user', 'sample.sampleType', 'examType.fields'])
+        $exam = Exam::with(['patient.user', 'sample.sampleType', 'examType.fields.references'])
             ->where('patient_id', $patient->id)
             ->where('status', 'approved')
             ->findOrFail($id);
 
-        $pdf = Pdf::loadView('patient-exams.pdf', compact('exam'));
+        $resultReferences = $this->examReferenceService->evaluateResults($exam);
+
+        $pdf = Pdf::loadView('patient-exams.pdf', compact('exam', 'resultReferences'));
 
         return $pdf->stream("exame-{$exam->id}.pdf");
     }

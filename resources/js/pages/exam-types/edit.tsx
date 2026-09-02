@@ -4,6 +4,8 @@ import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import {
     ExamTypeFieldsRepeater,
+    mapExamTypeFieldToRow,
+    prepareExamTypeFieldsForSubmit,
     type ExamTypeFieldRow,
 } from '@/components/exam-type-fields-repeater';
 import { FormField } from '@/components/form-field';
@@ -30,22 +32,14 @@ export default function ExamTypeEdit() {
         useForm<ExamTypeForm>({
             name: examType.name,
             description: examType.description ?? '',
-            fields: (examType.fields ?? []).map((field) => ({
-                id: field.id,
-                name: field.name,
-                label: field.label,
-                field_type: field.field_type,
-                unit: field.unit ?? '',
-            })),
+            fields: (examType.fields ?? []).map(mapExamTypeFieldToRow),
         });
 
     function submit(event: FormEvent) {
         event.preventDefault();
         transform((current) => ({
             ...current,
-            fields: current.fields.filter(
-                (field) => field.name !== '' || field.label !== '',
-            ),
+            fields: prepareExamTypeFieldsForSubmit(current.fields),
         }));
         put(route('exam-type.update', examType.id));
     }

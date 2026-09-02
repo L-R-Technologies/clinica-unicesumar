@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property int $exam_id
+ * @property int $user_id
+ * @property string $justification
+ * @property-read Exam|null $exam
+ * @property-read User|null $user
+ */
 class ExamRejection extends Model
 {
     use LogsActivity;

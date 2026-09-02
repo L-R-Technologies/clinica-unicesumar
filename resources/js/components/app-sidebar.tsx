@@ -7,6 +7,7 @@ import {
     History,
     LayoutDashboard,
     ListChecks,
+    Megaphone,
     Microscope,
     Settings2,
     TestTubes,
@@ -134,6 +135,13 @@ const NAV_GROUPS: readonly NavGroup[] = [
                 routeName: 'user-management.index',
                 icon: UserCog,
                 activePattern: 'user-management.*',
+                roles: ['teacher'],
+            },
+            {
+                title: 'Campanhas de Saúde',
+                routeName: 'health-campaigns.index',
+                icon: Megaphone,
+                activePattern: 'health-campaigns.*',
                 roles: ['teacher'],
             },
             {

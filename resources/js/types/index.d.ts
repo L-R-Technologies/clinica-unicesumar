@@ -269,3 +269,68 @@ export type PageProps<
     flash: FlashMessages;
     errors: Record<string, string>;
 };
+
+export interface HealthAnalysisProblem {
+    problem: string;
+    affected_patients: number;
+    evidence: string;
+}
+
+export interface HealthAnalysis {
+    summary: string;
+    frequent_problems: HealthAnalysisProblem[];
+    main_problem: {
+        name: string;
+        description: string;
+        affected_share: string;
+    };
+    severity: string;
+    urgency: string;
+    risk_factors: string[];
+}
+
+export interface HealthCampaignAction {
+    title: string;
+    description: string;
+}
+
+export interface HealthCampaignPlan {
+    name: string;
+    objective: string;
+    target_audience: string;
+    actions: HealthCampaignAction[];
+    materials: string[];
+    partners: string[];
+    timeline: {
+        short_term: string[];
+        medium_term: string[];
+        long_term: string[];
+    };
+    success_indicators: string[];
+    key_messages: string[];
+}
+
+export type HealthCampaignStatus =
+    'pending' | 'processing' | 'completed' | 'failed';
+
+/**
+ * Campanha de saúde gerada por IA a partir de exames anonimizados. A geração
+ * roda em job: análise e campanha só existem quando o status é "completed".
+ */
+export interface HealthCampaign {
+    id: number;
+    user_id: number;
+    date_from: string | null;
+    date_to: string | null;
+    exam_type_ids: number[] | null;
+    patients_count: number;
+    exams_count: number;
+    dataset: string;
+    analysis: HealthAnalysis | null;
+    campaign: HealthCampaignPlan | null;
+    model: string | null;
+    status: HealthCampaignStatus;
+    error_message: string | null;
+    created_at: string;
+    user?: User;
+}

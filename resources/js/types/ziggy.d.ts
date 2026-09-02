@@ -193,6 +193,27 @@ declare module 'ziggy-js' {
             "binding": "id"
         }
     ],
+    "health-campaigns.index": [],
+    "health-campaigns.create": [],
+    "health-campaigns.store": [],
+    "health-campaigns.show": [
+        {
+            "name": "healthCampaign",
+            "required": true
+        }
+    ],
+    "health-campaigns.retry": [
+        {
+            "name": "healthCampaign",
+            "required": true
+        }
+    ],
+    "health-campaigns.destroy": [
+        {
+            "name": "healthCampaign",
+            "required": true
+        }
+    ],
     "patients.index": [],
     "patients.create": [],
     "patients.store": [],

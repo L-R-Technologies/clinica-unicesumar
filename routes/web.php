@@ -4,6 +4,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\CalibrationController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamTypeController;
+use App\Http\Controllers\HealthCampaignController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\PatientController;
@@ -69,6 +70,13 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::delete('/calibrations/{calibration}', [CalibrationController::class, 'destroy'])->name('calibrations.destroy');
 
         Route::resource('activity-logs', ActivityLogController::class);
+
+        Route::get('/health-campaigns', [HealthCampaignController::class, 'index'])->name('health-campaigns.index');
+        Route::get('/health-campaigns/create', [HealthCampaignController::class, 'create'])->name('health-campaigns.create');
+        Route::post('/health-campaigns', [HealthCampaignController::class, 'store'])->name('health-campaigns.store');
+        Route::get('/health-campaigns/{healthCampaign}', [HealthCampaignController::class, 'show'])->name('health-campaigns.show');
+        Route::post('/health-campaigns/{healthCampaign}/retry', [HealthCampaignController::class, 'retry'])->name('health-campaigns.retry');
+        Route::delete('/health-campaigns/{healthCampaign}', [HealthCampaignController::class, 'destroy'])->name('health-campaigns.destroy');
     });
 
     Route::post('/user/anonymize', [UserController::class, 'anonymize'])->name('user.anonymize');

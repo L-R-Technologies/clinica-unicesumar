@@ -17,6 +17,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { todayIsoDate } from '@/lib/date';
 import { formatDate } from '@/lib/format';
 import type { Exam, ExamTypeField, PageProps } from '@/types';
 
@@ -274,6 +275,7 @@ export default function ExamsEdit() {
                             <Input
                                 id="date"
                                 type="date"
+                                max={todayIsoDate()}
                                 value={data.date}
                                 onChange={(e) =>
                                     setData('date', e.target.value)
@@ -293,6 +295,7 @@ export default function ExamsEdit() {
                                     setData('observation', e.target.value)
                                 }
                                 rows={3}
+                                maxLength={1000}
                                 placeholder="Observações sobre o exame..."
                             />
                         </FormField>

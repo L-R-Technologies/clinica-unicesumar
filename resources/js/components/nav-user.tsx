@@ -1,5 +1,11 @@
 import { Link, router } from '@inertiajs/react';
-import { ChevronsUpDown, KeyRound, LogOut, UserPen } from 'lucide-react';
+import {
+    ChevronsUpDown,
+    KeyRound,
+    LogOut,
+    ShieldCheck,
+    UserPen,
+} from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
     DropdownMenu,
@@ -96,6 +102,12 @@ export function NavUser({ user }: { user: User }) {
                             >
                                 <KeyRound />
                                 Editar Senha
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={route('two-factor.show')}>
+                                <ShieldCheck />
+                                Verificação em Duas Etapas
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

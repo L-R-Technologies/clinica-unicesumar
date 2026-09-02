@@ -114,6 +114,7 @@ export default function CalibrationCreate() {
                                     setData('observation', e.target.value)
                                 }
                                 rows={4}
+                                maxLength={1000}
                             />
                         </FormField>
                     </form>

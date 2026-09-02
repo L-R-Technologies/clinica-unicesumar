@@ -17,15 +17,17 @@ class MachineService
             'serial_number' => [
                 'required',
                 'string',
+                'max:255',
                 Rule::unique('machines')->ignore($id),
             ],
             'location' => 'required|string|max:255',
             'calibration_range_min' => 'nullable|numeric',
-            'calibration_range_max' => 'nullable|numeric',
-            'status' => 'sometimes|string',
+            'calibration_range_max' => 'nullable|numeric|gte:calibration_range_min',
+            'status' => 'sometimes|string|in:active,maintenance,inactive',
         ], [
             'required' => 'Preencha este campo obrigatório',
             'serial_number.unique' => 'Número de série já registrado.',
+            'calibration_range_max.gte' => 'O limite máximo deve ser maior ou igual ao limite mínimo.',
         ])->validate();
     }
 

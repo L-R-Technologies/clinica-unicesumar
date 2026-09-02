@@ -63,6 +63,7 @@ export default function SampleTypeEdit() {
                                 onChange={(e) =>
                                     setData('name', e.target.value)
                                 }
+                                maxLength={255}
                                 autoFocus
                             />
                         </FormField>
@@ -79,6 +80,7 @@ export default function SampleTypeEdit() {
                                     setData('description', e.target.value)
                                 }
                                 rows={4}
+                                maxLength={1000}
                             />
                         </FormField>
                     </form>

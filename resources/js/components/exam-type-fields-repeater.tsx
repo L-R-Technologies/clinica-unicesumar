@@ -109,6 +109,7 @@ export function ExamTypeFieldsRepeater({
                                             e.target.value,
                                         )
                                     }
+                                    maxLength={255}
                                 />
                             </FormField>
 
@@ -128,6 +129,7 @@ export function ExamTypeFieldsRepeater({
                                             e.target.value,
                                         )
                                     }
+                                    maxLength={255}
                                 />
                             </FormField>
 
@@ -177,6 +179,7 @@ export function ExamTypeFieldsRepeater({
                                             e.target.value,
                                         )
                                     }
+                                    maxLength={50}
                                     placeholder="Ex.: mg/dL"
                                 />
                             </FormField>

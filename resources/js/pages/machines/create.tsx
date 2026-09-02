@@ -60,6 +60,7 @@ export default function MachineCreate() {
                                 onChange={(e) =>
                                     setData('name', e.target.value)
                                 }
+                                maxLength={255}
                                 autoFocus
                             />
                         </FormField>
@@ -76,6 +77,7 @@ export default function MachineCreate() {
                                 onChange={(e) =>
                                     setData('model', e.target.value)
                                 }
+                                maxLength={255}
                             />
                         </FormField>
 
@@ -91,6 +93,7 @@ export default function MachineCreate() {
                                 onChange={(e) =>
                                     setData('serial_number', e.target.value)
                                 }
+                                maxLength={255}
                             />
                         </FormField>
 
@@ -106,6 +109,7 @@ export default function MachineCreate() {
                                 onChange={(e) =>
                                     setData('location', e.target.value)
                                 }
+                                maxLength={255}
                             />
                         </FormField>
 

@@ -13,6 +13,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { todayIsoDate } from '@/lib/date';
 import { MENSTRUAL_PERIOD_OPTIONS, type PatientHistoryFormData } from './types';
 
 interface PatientHistoryFieldsProps {
@@ -78,6 +79,7 @@ export function PatientHistoryFields({
                         <Input
                             id="recorded_at"
                             type="date"
+                            max={todayIsoDate()}
                             value={data.recorded_at}
                             onChange={(e) =>
                                 setData('recorded_at', e.target.value)
@@ -163,6 +165,7 @@ export function PatientHistoryFields({
                                 onChange={(e) =>
                                     setData('medications', e.target.value)
                                 }
+                                maxLength={255}
                             />
                         </FormField>
                     )}
@@ -191,6 +194,7 @@ export function PatientHistoryFields({
                                 onChange={(e) =>
                                     setData('supplements', e.target.value)
                                 }
+                                maxLength={255}
                             />
                         </FormField>
                     )}
@@ -230,6 +234,7 @@ export function PatientHistoryFields({
                                         e.target.value,
                                     )
                                 }
+                                maxLength={255}
                             />
                         </FormField>
                     )}
@@ -261,6 +266,7 @@ export function PatientHistoryFields({
                                         e.target.value,
                                     )
                                 }
+                                maxLength={255}
                             />
                         </FormField>
                     )}
@@ -297,6 +303,7 @@ export function PatientHistoryFields({
                                 onChange={(e) =>
                                     setData('surgery_details', e.target.value)
                                 }
+                                maxLength={255}
                             />
                         </FormField>
                     )}
@@ -325,6 +332,7 @@ export function PatientHistoryFields({
                                 onChange={(e) =>
                                     setData('allergy_details', e.target.value)
                                 }
+                                maxLength={255}
                             />
                         </FormField>
                     )}
@@ -443,6 +451,7 @@ export function PatientHistoryFields({
                                 setData('observation', e.target.value)
                             }
                             rows={4}
+                            maxLength={1000}
                         />
                     </FormField>
                 </CardContent>

@@ -3,25 +3,19 @@ import { FileText } from 'lucide-react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
+import { ExamResultsCard } from '@/components/exam-results-card';
 import { RatingScale, RatingScaleReadOnly } from '@/components/rating-scale';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { formatDate, formatResultValue } from '@/lib/format';
+import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import type { Exam, ExamTypeField, PageProps } from '@/types';
+import type { Exam, PageProps, ResultReference } from '@/types';
 
 interface MyExamsShowProps extends Record<string, unknown> {
     exam: Exam;
+    resultReferences: Record<string, ResultReference>;
 }
 
 const FEEDBACK_QUESTIONS = [
@@ -57,11 +51,8 @@ function DetailItem({ label, value }: { label: string; value: string }) {
 }
 
 export default function MyExamsShow() {
-    const { exam } = usePage<PageProps<MyExamsShowProps>>().props;
-
-    const fields: ExamTypeField[] = exam.exam_type?.fields ?? [];
-    const fieldMap = new Map(fields.map((field) => [field.name, field]));
-    const resultEntries = exam.results ? Object.entries(exam.results) : [];
+    const { exam, resultReferences } =
+        usePage<PageProps<MyExamsShowProps>>().props;
 
     return (
         <AppLayout
@@ -128,47 +119,7 @@ export default function MyExamsShow() {
                 </Card>
             )}
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Resultados do Exame</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {resultEntries.length > 0 ? (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Parâmetro</TableHead>
-                                    <TableHead>Resultado</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {resultEntries.map(([key, value]) => {
-                                    const field = fieldMap.get(key);
-                                    return (
-                                        <TableRow key={key}>
-                                            <TableCell className="font-medium">
-                                                {field?.label ?? key}
-                                                {field?.unit && (
-                                                    <span className="ml-1 text-muted-foreground">
-                                                        ({field.unit})
-                                                    </span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatResultValue(value)}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    ) : (
-                        <p className="text-sm text-muted-foreground">
-                            Este exame ainda não possui resultados cadastrados.
-                        </p>
-                    )}
-                </CardContent>
-            </Card>
+            <ExamResultsCard exam={exam} resultReferences={resultReferences} />
 
             <FeedbackSection exam={exam} />
         </AppLayout>

@@ -20,6 +20,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string $cpf
  * @property string $rg
  * @property string $phone
+ * @property string|null $lgpd_term_path
  */
 class Patient extends Model
 {
@@ -35,6 +36,7 @@ class Patient extends Model
         'rg',
         'phone',
         'lgpd_consent_at',
+        'lgpd_term_path',
     ];
 
     protected $casts = [

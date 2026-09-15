@@ -57,7 +57,6 @@ export default function ExamsCreate() {
         observation: '',
     });
 
-    // Ao trocar o paciente, recarrega histórico/amostras via partial reload do Inertia.
     function handlePatientChange(value: string): void {
         setData((previous) => ({
             ...previous,

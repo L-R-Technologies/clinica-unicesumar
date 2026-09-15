@@ -1,9 +1,9 @@
 import { useForm } from '@inertiajs/react';
-import { Eye, EyeOff, RefreshCw } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
+import { PasswordField } from '@/components/password-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { generateTemporaryPassword } from '@/lib/password';
 import type { UserType } from '@/types';
 
 type UserCreateForm = {
@@ -30,7 +29,6 @@ type UserCreateForm = {
 };
 
 export default function UserCreate() {
-    const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors } = useForm<UserCreateForm>(
         {
             user_type: 'teacher',
@@ -150,60 +148,12 @@ export default function UserCreate() {
                             />
                         </FormField>
 
-                        <FormField
-                            id="password"
-                            label="Senha"
+                        <PasswordField
+                            value={data.password}
+                            onChange={(value) => setData('password', value)}
                             error={errors.password}
                             required
-                        >
-                            <div className="flex gap-2">
-                                <Input
-                                    id="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    minLength={8}
-                                    value={data.password}
-                                    onChange={(e) =>
-                                        setData('password', e.target.value)
-                                    }
-                                />
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    aria-label={
-                                        showPassword
-                                            ? 'Ocultar senha'
-                                            : 'Mostrar senha'
-                                    }
-                                    onClick={() =>
-                                        setShowPassword((current) => !current)
-                                    }
-                                >
-                                    {showPassword ? (
-                                        <EyeOff className="size-4" />
-                                    ) : (
-                                        <Eye className="size-4" />
-                                    )}
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() =>
-                                        setData(
-                                            'password',
-                                            generateTemporaryPassword(),
-                                        )
-                                    }
-                                >
-                                    <RefreshCw className="size-4" />
-                                    Gerar
-                                </Button>
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                                Mínimo de 8 caracteres, com letras maiúsculas,
-                                minúsculas e números.
-                            </p>
-                        </FormField>
+                        />
 
                         {data.user_type === 'teacher' && (
                             <>

@@ -165,9 +165,6 @@ class UserManagementService
 
     public function deleteUser(User $user)
     {
-        // ERS (UC013): usuários não são excluídos permanentemente, apenas
-        // desativados/removidos de forma reversível. Soft delete preserva o
-        // registro (e o perfil teacher/student) para eventual restauração.
         DB::beginTransaction();
 
         try {

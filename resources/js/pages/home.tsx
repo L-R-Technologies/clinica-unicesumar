@@ -1,27 +1,28 @@
 import { usePage } from '@inertiajs/react';
+import type { ReactElement } from 'react';
 import AppLayout from '@/layouts/app-layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import type { PageProps } from '@/types';
-
-interface Stat {
-    label: string;
-    value: number;
-    tone: 'primary' | 'success' | 'warning';
-}
-
-const TONE_CLASSES: Record<Stat['tone'], string> = {
-    primary: 'text-primary',
-    success: 'text-emerald-600 dark:text-emerald-400',
-    warning: 'text-amber-600 dark:text-amber-400',
-};
+import { StudentDashboard } from './dashboard/student-dashboard';
+import { TeacherDashboard } from './dashboard/teacher-dashboard';
+import type {
+    StudentDashboardData,
+    TeacherDashboardData,
+} from './dashboard/types';
 
 interface HomeProps extends Record<string, unknown> {
-    stats: Stat[];
+    teacherDashboard: TeacherDashboardData | null;
+    studentDashboard: StudentDashboardData | null;
 }
 
-export default function Home() {
-    const { auth, stats } = usePage<PageProps<HomeProps>>().props;
+export default function Home(): ReactElement {
+    const { auth, teacherDashboard, studentDashboard } =
+        usePage<PageProps<HomeProps>>().props;
+
+    const description = teacherDashboard
+        ? 'Panorama dos exames de todo o laboratório.'
+        : studentDashboard
+          ? 'Acompanhamento dos exames que você realizou.'
+          : 'Resumo da sua atividade na Clínica Unicesumar.';
 
     return (
         <AppLayout title="Dashboard">
@@ -29,34 +30,11 @@ export default function Home() {
                 <h2 className="text-2xl font-bold">
                     Bem-vindo{auth.user ? `, ${auth.user.name}` : ''}!
                 </h2>
-                <p className="text-muted-foreground">
-                    Resumo da sua atividade na Clínica Unicesumar.
-                </p>
+                <p className="text-muted-foreground">{description}</p>
             </div>
 
-            {stats.length > 0 && (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {stats.map((stat) => (
-                        <Card key={stat.label}>
-                            <CardHeader className="pb-2">
-                                <CardTitle className="text-sm font-medium text-muted-foreground">
-                                    {stat.label}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p
-                                    className={cn(
-                                        'text-4xl font-bold',
-                                        TONE_CLASSES[stat.tone],
-                                    )}
-                                >
-                                    {stat.value}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-            )}
+            {teacherDashboard && <TeacherDashboard data={teacherDashboard} />}
+            {studentDashboard && <StudentDashboard data={studentDashboard} />}
         </AppLayout>
     );
 }

@@ -52,10 +52,6 @@ export default function ProfileEdit() {
     const isTeacher = profileUser.role === 'teacher';
     const isStudent = profileUser.role === 'student';
 
-    // O Fortify (UpdateUserProfileInformation) valida/atualiza TODOS os campos do
-    // perfil (paciente, professor ou aluno) ao salvar. Reenviamos os valores
-    // atuais junto de name/email para que a edição não falhe na validação nem
-    // sobrescreva outros dados.
     const basicForm = useForm({
         name: profileUser.name,
         email: profileUser.email,
@@ -124,8 +120,6 @@ export default function ProfileEdit() {
         addressForm.put(route('user.address.update', profileUser.id), {
             preserveScroll: true,
             onSuccess: () => {
-                // Mantém o form de dados básicos em sincronia, pois o Fortify
-                // reenvia o endereço ao atualizar name/email.
                 basicForm.setData((previous) => ({
                     ...previous,
                     street: addressForm.data.street,
@@ -215,8 +209,7 @@ export default function ProfileEdit() {
                                         id="registration_number"
                                         label="Número de registro"
                                         error={
-                                            basicForm.errors
-                                                .registration_number
+                                            basicForm.errors.registration_number
                                         }
                                         required
                                     >

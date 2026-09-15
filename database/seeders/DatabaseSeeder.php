@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             SampleTypesSeeder::class,
             ExamTypesSeeder::class,
             ExamTypeFieldsSeeder::class,
+            ExamTypeFieldReferencesSeeder::class,
             SamplesSeeder::class,
             ExamsSeeder::class,
             ExamRejectionsSeeder::class,

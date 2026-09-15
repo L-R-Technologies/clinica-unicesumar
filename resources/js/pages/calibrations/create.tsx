@@ -13,7 +13,6 @@ interface CalibrationCreateProps extends Record<string, unknown> {
     machine: Machine;
 }
 
-/** Data/hora local no formato aceito pelo input datetime-local (YYYY-MM-DDTHH:mm). */
 function nowLocal(): string {
     const now = new Date();
     const pad = (value: number) => String(value).padStart(2, '0');

@@ -3,12 +3,19 @@ import { cn } from '@/lib/utils';
 import type {
     CalibrationStatus,
     ExamStatus,
+    HealthCampaignStatus,
     MachineStatus,
+    ReferenceStatus,
     SampleStatus,
 } from '@/types';
 
 type BadgeStatus =
-    ExamStatus | MachineStatus | CalibrationStatus | SampleStatus;
+    | ExamStatus
+    | MachineStatus
+    | CalibrationStatus
+    | SampleStatus
+    | ReferenceStatus
+    | HealthCampaignStatus;
 
 interface StatusConfig {
     label: string;
@@ -34,6 +41,12 @@ const STATUS_MAP: Record<string, StatusConfig> = {
     'under review': { label: 'Em Análise', className: WARNING },
     stored: { label: 'Armazenada', className: SUCCESS },
     discarded: { label: 'Descartada', className: NEUTRAL },
+    processing: { label: 'Processando', className: WARNING },
+    completed: { label: 'Concluída', className: SUCCESS },
+    failed: { label: 'Falhou', className: DANGER },
+    within: { label: 'Normal', className: SUCCESS },
+    below: { label: 'Abaixo', className: DANGER },
+    above: { label: 'Acima', className: DANGER },
 };
 
 export function StatusBadge({ status }: { status: BadgeStatus }) {

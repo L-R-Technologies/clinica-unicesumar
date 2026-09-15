@@ -7,13 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * ERS (RF023): encerra automaticamente sessões inativas após o tempo limite.
- *
- * Diferente do SESSION_LIFETIME (que apenas expira o cookie), este middleware
- * força o logout no servidor quando o usuário fica inativo por mais tempo que
- * o limite configurado em session.idle_timeout (minutos).
- */
 class CheckSessionTimeout
 {
     private const LAST_ACTIVITY_KEY = 'last_activity_at';

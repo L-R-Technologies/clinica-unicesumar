@@ -1,9 +1,9 @@
 import { useForm } from '@inertiajs/react';
-import { Eye, EyeOff, RefreshCw } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import { FormField } from '@/components/form-field';
+import { PasswordField } from '@/components/password-field';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,23 +15,6 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import type { UserType } from '@/types';
-
-const PASSWORD_ALPHABET =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-const GENERATED_PASSWORD_LENGTH = 12;
-
-function generateTemporaryPassword(): string {
-    const randomValues = new Uint32Array(GENERATED_PASSWORD_LENGTH);
-    crypto.getRandomValues(randomValues);
-
-    let password = '';
-    for (let i = 0; i < GENERATED_PASSWORD_LENGTH; i++) {
-        password +=
-            PASSWORD_ALPHABET[randomValues[i] % PASSWORD_ALPHABET.length];
-    }
-
-    return password;
-}
 
 type UserCreateForm = {
     user_type: UserType;
@@ -46,7 +29,6 @@ type UserCreateForm = {
 };
 
 export default function UserCreate() {
-    const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors } = useForm<UserCreateForm>(
         {
             user_type: 'teacher',
@@ -164,58 +146,12 @@ export default function UserCreate() {
                             />
                         </FormField>
 
-                        <FormField
-                            id="password"
-                            label="Senha"
+                        <PasswordField
+                            value={data.password}
+                            onChange={(value) => setData('password', value)}
                             error={errors.password}
                             required
-                        >
-                            <div className="flex gap-2">
-                                <Input
-                                    id="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    value={data.password}
-                                    onChange={(e) =>
-                                        setData('password', e.target.value)
-                                    }
-                                />
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="icon"
-                                    aria-label={
-                                        showPassword
-                                            ? 'Ocultar senha'
-                                            : 'Mostrar senha'
-                                    }
-                                    onClick={() =>
-                                        setShowPassword((current) => !current)
-                                    }
-                                >
-                                    {showPassword ? (
-                                        <EyeOff className="size-4" />
-                                    ) : (
-                                        <Eye className="size-4" />
-                                    )}
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() =>
-                                        setData(
-                                            'password',
-                                            generateTemporaryPassword(),
-                                        )
-                                    }
-                                >
-                                    <RefreshCw className="size-4" />
-                                    Gerar
-                                </Button>
-                            </div>
-                            <p className="text-sm text-muted-foreground">
-                                Mínimo de 8 caracteres.
-                            </p>
-                        </FormField>
+                        />
 
                         {data.user_type === 'teacher' && (
                             <>

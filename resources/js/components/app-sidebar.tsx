@@ -7,10 +7,12 @@ import {
     History,
     LayoutDashboard,
     ListChecks,
+    Megaphone,
     Microscope,
     Settings2,
     TestTubes,
     UserCog,
+    Users,
     type LucideIcon,
 } from 'lucide-react';
 import { NavUser } from '@/components/nav-user';
@@ -62,6 +64,13 @@ const NAV_GROUPS: readonly NavGroup[] = [
     {
         label: 'Atendimento',
         items: [
+            {
+                title: 'Pacientes',
+                routeName: 'patients.index',
+                icon: Users,
+                activePattern: 'patients.*',
+                roles: ['teacher', 'student'],
+            },
             {
                 title: 'Anamneses',
                 routeName: 'patient-histories.index',
@@ -126,6 +135,13 @@ const NAV_GROUPS: readonly NavGroup[] = [
                 routeName: 'user-management.index',
                 icon: UserCog,
                 activePattern: 'user-management.*',
+                roles: ['teacher'],
+            },
+            {
+                title: 'Campanhas de Saúde',
+                routeName: 'health-campaigns.index',
+                icon: Megaphone,
+                activePattern: 'health-campaigns.*',
                 roles: ['teacher'],
             },
             {

@@ -36,6 +36,26 @@ class AddressService
     }
 
     /**
+     * Regras de validação dos campos de endereço, compartilhadas com os fluxos
+     * que cadastram o endereço junto do paciente.
+     *
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
+    {
+        return [
+            'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
+            'number' => ['required', 'string', 'max:20'],
+            'complement' => ['nullable', 'string', 'max:100'],
+            'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+            'zip_code' => ['required', 'string', 'min:8', 'max:8'],
+        ];
+    }
+
+    /**
      * @param  array<string, mixed>  $input
      * @return array<string, mixed>
      *
@@ -47,16 +67,7 @@ class AddressService
             $input['zip_code'] = preg_replace('/\D/', '', (string) $input['zip_code']);
         }
 
-        $validator = Validator::make($input, [
-            'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
-            'number' => ['required', 'string', 'max:20'],
-            'complement' => ['nullable', 'string', 'max:100'],
-            'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-            'zip_code' => ['required', 'string', 'min:8', 'max:8'],
-        ]);
+        $validator = Validator::make($input, $this->rules());
 
         if ($validator->fails()) {
             throw new ValidationException($validator);

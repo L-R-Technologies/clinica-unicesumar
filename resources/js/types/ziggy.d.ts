@@ -193,6 +193,58 @@ declare module 'ziggy-js' {
             "binding": "id"
         }
     ],
+    "health-campaigns.index": [],
+    "health-campaigns.create": [],
+    "health-campaigns.store": [],
+    "health-campaigns.show": [
+        {
+            "name": "healthCampaign",
+            "required": true
+        }
+    ],
+    "health-campaigns.retry": [
+        {
+            "name": "healthCampaign",
+            "required": true
+        }
+    ],
+    "health-campaigns.destroy": [
+        {
+            "name": "healthCampaign",
+            "required": true
+        }
+    ],
+    "patients.index": [],
+    "patients.create": [],
+    "patients.store": [],
+    "patients.show": [
+        {
+            "name": "patient",
+            "required": true,
+            "binding": "id"
+        }
+    ],
+    "patients.edit": [
+        {
+            "name": "patient",
+            "required": true,
+            "binding": "id"
+        }
+    ],
+    "patients.update": [
+        {
+            "name": "patient",
+            "required": true,
+            "binding": "id"
+        }
+    ],
+    "patients.lgpd-term": [
+        {
+            "name": "patient",
+            "required": true,
+            "binding": "id"
+        }
+    ],
     "patient-histories.index": [],
     "patient-histories.create": [],
     "patient-histories.store": [],

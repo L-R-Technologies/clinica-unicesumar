@@ -1,6 +1,5 @@
 export type UserRole = 'teacher' | 'student' | 'patient';
 
-/** Perfis que representam usuários internos do laboratório (não pacientes). */
 export type UserType = Exclude<UserRole, 'patient'>;
 
 export interface User {
@@ -35,6 +34,7 @@ export interface Patient {
     rg: string | null;
     phone: string | null;
     lgpd_consent_at: string | null;
+    lgpd_term_path: string | null;
     user?: User;
     address?: Address;
 }
@@ -60,6 +60,20 @@ export interface Student {
 
 export type ExamFieldType = 'int' | 'float' | 'string' | 'boolean';
 
+export type ReferenceSex = 'male' | 'female';
+
+export interface ExamTypeFieldReference {
+    id: number;
+    exam_type_field_id: number;
+    sex: ReferenceSex | null;
+    age_min: number | null;
+    age_max: number | null;
+    min_value: number | null;
+    max_value: number | null;
+    criteria_label: string;
+    range_label: string;
+}
+
 export interface ExamTypeField {
     id: number;
     exam_type_id: number;
@@ -67,6 +81,16 @@ export interface ExamTypeField {
     label: string;
     field_type: ExamFieldType;
     unit: string | null;
+    references?: ExamTypeFieldReference[];
+}
+
+export type ReferenceStatus = 'within' | 'below' | 'above';
+
+export interface ResultReference {
+    criteria_label: string;
+    range_label: string;
+    status: ReferenceStatus | null;
+    status_label: string | null;
 }
 
 export interface ExamType {
@@ -240,3 +264,64 @@ export type PageProps<
     flash: FlashMessages;
     errors: Record<string, string>;
 };
+
+export interface HealthAnalysisProblem {
+    problem: string;
+    affected_patients: number;
+    evidence: string;
+}
+
+export interface HealthAnalysis {
+    summary: string;
+    frequent_problems: HealthAnalysisProblem[];
+    main_problem: {
+        name: string;
+        description: string;
+        affected_share: string;
+    };
+    severity: string;
+    urgency: string;
+    risk_factors: string[];
+}
+
+export interface HealthCampaignAction {
+    title: string;
+    description: string;
+}
+
+export interface HealthCampaignPlan {
+    name: string;
+    objective: string;
+    target_audience: string;
+    actions: HealthCampaignAction[];
+    materials: string[];
+    partners: string[];
+    timeline: {
+        short_term: string[];
+        medium_term: string[];
+        long_term: string[];
+    };
+    success_indicators: string[];
+    key_messages: string[];
+}
+
+export type HealthCampaignStatus =
+    'pending' | 'processing' | 'completed' | 'failed';
+
+export interface HealthCampaign {
+    id: number;
+    user_id: number;
+    date_from: string | null;
+    date_to: string | null;
+    exam_type_ids: number[] | null;
+    patients_count: number;
+    exams_count: number;
+    dataset: string;
+    analysis: HealthAnalysis | null;
+    campaign: HealthCampaignPlan | null;
+    model: string | null;
+    status: HealthCampaignStatus;
+    error_message: string | null;
+    created_at: string;
+    user?: User;
+}

@@ -27,7 +27,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Sessão expirada em visita Inertia — recarrega a página em vez de exibir erro 419
         $exceptions->respond(function (Response $response, Throwable $exception, Illuminate\Http\Request $request) {
             if ($response->getStatusCode() === 419) {
                 return back()->with('error', 'Sua sessão expirou. Tente novamente.');

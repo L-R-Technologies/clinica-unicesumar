@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
+import { ExamResultsCard } from '@/components/exam-results-card';
 import { PatientHistorySummary } from '@/components/patient-history-summary';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -17,21 +18,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { FormField } from '@/components/form-field';
-import { formatDate, formatResultValue } from '@/lib/format';
-import type { Exam, ExamTypeField, PageProps } from '@/types';
+import { formatDate } from '@/lib/format';
+import type { Exam, PageProps, ResultReference } from '@/types';
 
 interface ExamsShowProps extends Record<string, unknown> {
     exam: Exam;
+    resultReferences: Record<string, ResultReference>;
 }
 
 function DetailItem({ label, value }: { label: string; value: string }) {
@@ -44,12 +38,9 @@ function DetailItem({ label, value }: { label: string; value: string }) {
 }
 
 export default function ExamsShow() {
-    const { exam, auth } = usePage<PageProps<ExamsShowProps>>().props;
+    const { exam, auth, resultReferences } =
+        usePage<PageProps<ExamsShowProps>>().props;
     const isTeacher = auth.user?.role === 'teacher';
-
-    const fields: ExamTypeField[] = exam.exam_type?.fields ?? [];
-    const fieldMap = new Map(fields.map((field) => [field.name, field]));
-    const resultEntries = exam.results ? Object.entries(exam.results) : [];
 
     function handleApprove(): void {
         router.post(
@@ -183,47 +174,7 @@ export default function ExamsShow() {
                 </Card>
             )}
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Resultados do Exame</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {resultEntries.length > 0 ? (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Parâmetro</TableHead>
-                                    <TableHead>Resultado</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {resultEntries.map(([key, value]) => {
-                                    const field = fieldMap.get(key);
-                                    return (
-                                        <TableRow key={key}>
-                                            <TableCell className="font-medium">
-                                                {field?.label ?? key}
-                                                {field?.unit && (
-                                                    <span className="ml-1 text-muted-foreground">
-                                                        ({field.unit})
-                                                    </span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {formatResultValue(value)}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    ) : (
-                        <p className="text-sm text-muted-foreground">
-                            Este exame ainda não possui resultados cadastrados.
-                        </p>
-                    )}
-                </CardContent>
-            </Card>
+            <ExamResultsCard exam={exam} resultReferences={resultReferences} />
 
             {exam.rejections && exam.rejections.length > 0 && (
                 <Card className="border-destructive/50">

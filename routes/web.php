@@ -4,8 +4,10 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\CalibrationController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamTypeController;
+use App\Http\Controllers\HealthCampaignController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MachineController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientExamController;
 use App\Http\Controllers\PatientHistoryController;
 use App\Http\Controllers\SampleController;
@@ -57,7 +59,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::put('/machines/{machine}', [MachineController::class, 'update'])->name('machines.update');
         Route::delete('/machines/{machine}', [MachineController::class, 'destroy'])->name('machines.destroy');
 
-        // A rota "export" precisa vir ANTES do wildcard {calibration}, senão o wildcard captura "export".
         Route::get('/calibrations', [CalibrationController::class, 'index'])->name('calibrations.index');
         Route::get('/calibrations/export', [CalibrationController::class, 'export'])->name('calibrations.export');
         Route::get('/calibrations/create/{machine}', [CalibrationController::class, 'create'])->name('calibrations.create');
@@ -68,6 +69,13 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::delete('/calibrations/{calibration}', [CalibrationController::class, 'destroy'])->name('calibrations.destroy');
 
         Route::resource('activity-logs', ActivityLogController::class);
+
+        Route::get('/health-campaigns', [HealthCampaignController::class, 'index'])->name('health-campaigns.index');
+        Route::get('/health-campaigns/create', [HealthCampaignController::class, 'create'])->name('health-campaigns.create');
+        Route::post('/health-campaigns', [HealthCampaignController::class, 'store'])->name('health-campaigns.store');
+        Route::get('/health-campaigns/{healthCampaign}', [HealthCampaignController::class, 'show'])->name('health-campaigns.show');
+        Route::post('/health-campaigns/{healthCampaign}/retry', [HealthCampaignController::class, 'retry'])->name('health-campaigns.retry');
+        Route::delete('/health-campaigns/{healthCampaign}', [HealthCampaignController::class, 'destroy'])->name('health-campaigns.destroy');
     });
 
     Route::post('/user/anonymize', [UserController::class, 'anonymize'])->name('user.anonymize');
@@ -76,6 +84,14 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
     Route::put('/user/{user}/address', [UserController::class, 'updateAddress'])->name('user.address.update');
 
     Route::middleware(['role:teacher,student'])->group(function () {
+        Route::get('/patients', [PatientController::class, 'index'])->name('patients.index');
+        Route::get('/patients/create', [PatientController::class, 'create'])->name('patients.create');
+        Route::post('/patients', [PatientController::class, 'store'])->name('patients.store');
+        Route::get('/patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+        Route::get('/patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit');
+        Route::put('/patients/{patient}', [PatientController::class, 'update'])->name('patients.update');
+        Route::get('/patients/{patient}/lgpd-term', [PatientController::class, 'lgpdTerm'])->name('patients.lgpd-term');
+
         Route::get('/patient-histories', [PatientHistoryController::class, 'index'])->name('patient-histories.index');
         Route::get('/patient-histories/create', [PatientHistoryController::class, 'create'])->name('patient-histories.create');
         Route::post('/patient-histories', [PatientHistoryController::class, 'store'])->name('patient-histories.store');

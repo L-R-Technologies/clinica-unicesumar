@@ -9,7 +9,6 @@ class GeminiClient implements TextGenerator
 {
     private const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 
-    /** Temperatura baixa: análise clínica pede respostas consistentes, não criativas. */
     private const TEMPERATURE = 0.4;
 
     private readonly string $apiKey;

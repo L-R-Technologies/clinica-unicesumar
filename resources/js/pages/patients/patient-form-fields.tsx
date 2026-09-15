@@ -38,7 +38,6 @@ interface PatientFormFieldsProps {
     setField: SetPatientFormField;
     sexOptions: Record<string, string>;
     isEditing?: boolean;
-    /** URL do termo já anexado (apenas na edição). */
     currentTermUrl?: string | null;
 }
 

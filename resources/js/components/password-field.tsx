@@ -32,10 +32,6 @@ interface PasswordFieldProps {
     hint?: string;
 }
 
-/**
- * Campo de senha com botões de exibir/ocultar e de gerar senha temporária,
- * usado nos cadastros feitos pela equipe (usuários internos e pacientes).
- */
 export function PasswordField({
     id = 'password',
     label = 'Senha',

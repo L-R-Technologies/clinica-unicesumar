@@ -9,11 +9,6 @@ use App\Models\Patient;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 
-/**
- * Cruza os resultados de um exame com os valores de referência do tipo de
- * exame, escolhendo para cada campo a referência mais específica que se
- * aplica ao sexo e à idade do paciente na data do exame.
- */
 class ExamReferenceService
 {
     public const STATUS_WITHIN = 'within';

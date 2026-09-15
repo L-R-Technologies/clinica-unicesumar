@@ -13,12 +13,10 @@ import {
 } from '@/components/ui/select';
 import type { ExamTypeFieldReference, ReferenceSex } from '@/types';
 
-/** Valor sentinela do <Select> de sexo: a referência vale para ambos os sexos. */
 export const ANY_SEX_VALUE = 'any';
 
 export type ReferenceSexOption = ReferenceSex | typeof ANY_SEX_VALUE;
 
-/** Linha do formulário (inputs controlados guardam texto). */
 export interface ExamTypeFieldReferenceRow {
     id?: number;
     sex: ReferenceSexOption;
@@ -28,7 +26,6 @@ export interface ExamTypeFieldReferenceRow {
     max_value: string;
 }
 
-/** Formato enviado ao backend: o sentinela de sexo vira null. */
 export interface ExamTypeFieldReferencePayload {
     id?: number;
     sex: ReferenceSex | null;

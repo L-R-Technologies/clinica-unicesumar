@@ -306,7 +306,6 @@ export default function HealthCampaignsShow(): ReactElement {
     const isInProgress =
         campaign.status === 'pending' || campaign.status === 'processing';
 
-    // Polling enquanto o job roda: recarrega só a prop da campanha.
     useEffect(() => {
         if (!isInProgress) {
             return;

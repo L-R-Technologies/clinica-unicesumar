@@ -93,7 +93,6 @@ class PatientHistoryController extends Controller
         $this->authorize('update', $patientHistory);
 
         try {
-            // Paciente e responsável não são editáveis: preserva os valores originais.
             $data = array_merge($request->all(), [
                 'patient_id' => $patientHistory->patient_id,
                 'user_id' => $patientHistory->user_id,

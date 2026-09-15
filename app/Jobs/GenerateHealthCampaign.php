@@ -11,11 +11,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
 
-/**
- * Executa as chamadas à IA (análise e campanha) fora da requisição HTTP.
- * Não faz retry automático: uma falha fica registrada na campanha e o
- * professor decide se reprocessa.
- */
 class GenerateHealthCampaign implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

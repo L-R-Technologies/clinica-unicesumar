@@ -116,7 +116,6 @@ class ExamController extends Controller
 
         $this->authorize('update', $exam);
 
-        // Ao trocar o paciente (partial reload), recarrega histórico/amostras daquele paciente.
         $patientId = $request->input('patient_id', $exam->patient_id);
 
         return Inertia::render('exams/edit', [
@@ -211,9 +210,6 @@ class ExamController extends Controller
         }
     }
 
-    /**
-     * ERS (RF014): exporta um exame individual em PDF (professor ou aluno).
-     */
     public function exportPdf($id)
     {
         $exam = Exam::with(['user', 'patient.user', 'sample.sampleType', 'examType.fields.references'])
@@ -228,9 +224,6 @@ class ExamController extends Controller
         return $pdf->stream("exame-{$exam->id}.pdf");
     }
 
-    /**
-     * ERS (RF014): exporta a lista de exames (com os filtros atuais) em CSV/Excel.
-     */
     public function exportCsv(Request $request): StreamedResponse
     {
         $filters = [
@@ -249,7 +242,6 @@ class ExamController extends Controller
 
         return response()->streamDownload(function () use ($exams, $statusLabels) {
             $handle = fopen('php://output', 'w');
-            // BOM para acentuação correta ao abrir no Excel.
             fwrite($handle, "\xEF\xBB\xBF");
             fputcsv($handle, ['ID', 'Paciente', 'Tipo de Exame', 'Responsável', 'Data', 'Status', 'Observação']);
 

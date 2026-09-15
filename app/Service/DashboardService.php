@@ -12,10 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Monta os dados do dashboard. O professor monitora os exames de todo o
- * sistema; o aluno monitora apenas os exames que ele mesmo realizou.
- */
 class DashboardService
 {
     private const RECENT_MONTHS = 6;
@@ -30,7 +26,6 @@ class DashboardService
 
     private const PERCENT = 100;
 
-    /** Ordem fixa de exibição dos status. */
     private const STATUS_ORDER = [
         ExamService::STATUS_APPROVED,
         ExamService::STATUS_PENDING_APPROVAL,

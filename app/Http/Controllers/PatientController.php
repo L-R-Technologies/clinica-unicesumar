@@ -103,9 +103,6 @@ class PatientController extends Controller
         }
     }
 
-    /**
-     * Exibe o termo LGPD assinado (imagem ou PDF) armazenado no disco privado.
-     */
     public function lgpdTerm(Patient $patient): StreamedResponse
     {
         $disk = Storage::disk(PatientService::LGPD_TERM_DISK);

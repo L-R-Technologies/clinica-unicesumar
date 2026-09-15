@@ -22,11 +22,7 @@ class HomeController extends Controller
             'updatedAt' => now()->format('d/m/Y'),
         ]);
     }
-
-    /**
-     * Professor acompanha os exames de todo o sistema; aluno acompanha os
-     * exames que ele mesmo realizou. Outros papéis veem só a saudação.
-     */
+    
     public function home(Request $request): Response
     {
         $user = $request->user();

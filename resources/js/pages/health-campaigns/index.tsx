@@ -34,7 +34,6 @@ export default function HealthCampaignsIndex(): ReactElement {
             campaign.status === 'pending' || campaign.status === 'processing',
     );
 
-    // Enquanto houver campanha na fila, recarrega a lista para refletir o job.
     useEffect(() => {
         if (!hasCampaignInProgress) {
             return;

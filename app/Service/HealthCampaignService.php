@@ -11,11 +11,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-/**
- * Orquestra a geração de campanhas de saúde: monta o dataset anonimizado e
- * registra a campanha na hora; a análise clínica e a campanha em si são
- * pedidas à IA em job (GenerateHealthCampaign), fora da requisição.
- */
 class HealthCampaignService
 {
     private const CAMPAIGNS_PER_PAGE = 20;

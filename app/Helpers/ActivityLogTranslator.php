@@ -47,13 +47,11 @@ class ActivityLogTranslator
     public static function translateFieldName(string $fieldName): string
     {
         return match ($fieldName) {
-            // Campos comuns
             'id' => 'ID',
             'created_at' => 'Criado em',
             'updated_at' => 'Atualizado em',
             'deleted_at' => 'Excluído em',
 
-            // Usuários
             'name' => 'Nome',
             'email' => 'E-mail',
             'password' => 'Senha',
@@ -61,7 +59,6 @@ class ActivityLogTranslator
             'active' => 'Ativo',
             'email_verified_at' => 'E-mail verificado em',
 
-            // Pacientes
             'user_id' => 'Usuário',
             'address_id' => 'Endereço',
             'birthday' => 'Data de Nascimento',
@@ -72,7 +69,6 @@ class ActivityLogTranslator
             'phone' => 'Telefone',
             'lgpd_consent_at' => 'Consentimento LGPD',
 
-            // Estudantes/Professores
             'supervisor_id' => 'Supervisor',
             'ra' => 'RA',
             'course' => 'Curso',
@@ -80,7 +76,6 @@ class ActivityLogTranslator
             'registration_number' => 'Número de Registro',
             'professional_license' => 'Licença Profissional',
 
-            // Exames
             'patient_history_id' => 'Anamnese',
             'patient_id' => 'Paciente',
             'exam_type_id' => 'Tipo de Exame',
@@ -90,14 +85,12 @@ class ActivityLogTranslator
             'status' => 'Status',
             'observation' => 'Observação',
 
-            // Amostras
             'sample_type_id' => 'Tipo de Amostra',
             'code' => 'Código',
             'location' => 'Localização',
             'notified' => 'Notificado',
             'stored_at' => 'Armazenado em',
 
-            // Anamnese
             'fasting' => 'Em Jejum',
             'fasting_hours' => 'Horas de Jejum',
             'alcohol_last_24h' => 'Álcool nas últimas 24h',
@@ -121,33 +114,27 @@ class ActivityLogTranslator
             'recent_fever_or_flu' => 'Febre ou Gripe Recente',
             'recorded_at' => 'Registrado em',
 
-            // Tipos de Exame
             'description' => 'Descrição',
             'is_active' => 'Ativo',
 
-            // Campos de Tipo de Exame
             'label' => 'Rótulo',
             'field_type' => 'Tipo de Campo',
             'unit' => 'Unidade',
 
-            // Rejeição de Exame
             'exam_id' => 'Exame',
             'justification' => 'Justificativa',
 
-            // Feedback de Exame
             'clarity' => 'Clareza das Explicações',
             'cordiality' => 'Cordialidade da Equipe',
             'waiting_time' => 'Tempo de Espera',
             'result_speed' => 'Agilidade na Entrega do Resultado',
             'confidence' => 'Confiança Transmitida',
 
-            // Máquinas
             'model' => 'Modelo',
             'serial_number' => 'Número de Série',
             'calibration_range_min' => 'Faixa de Calibração Mínima',
             'calibration_range_max' => 'Faixa de Calibração Máxima',
 
-            // Calibração
             'machine_id' => 'Máquina',
             'calibration_date' => 'Data da Calibração',
             'value' => 'Valor',
@@ -173,12 +160,10 @@ class ActivityLogTranslator
             return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         }
 
-        // Formatar timestamps
         if (self::isTimestampField($fieldName)) {
             return self::formatTimestamp($value);
         }
 
-        // Traduções específicas por campo
         return match ($fieldName) {
             'role' => match ($value) {
                 'teacher' => 'Professor',
@@ -243,7 +228,6 @@ class ActivityLogTranslator
     private static function translateStatus(string $status): string
     {
         return match ($status) {
-            // Status gerais
             'pending' => 'Pendente',
             'pending_approval' => 'Pendente de Aprovação',
             'approved' => 'Aprovado',
@@ -253,15 +237,12 @@ class ActivityLogTranslator
             'canceled' => 'Cancelado',
             'cancelled' => 'Cancelado',
 
-            // Status de amostras
             'under review' => 'Em Análise',
             'stored' => 'Armazenado',
             'discarded' => 'Descartado',
 
-            // Status de máquinas
             'active' => 'Ativo',
             'maintenance' => 'Em manutenção',
-            // 'calibrating' foi substituído por 'maintenance'; mantido para logs antigos
             'calibrating' => 'Em calibração',
             'inactive' => 'Inativo',
 
@@ -296,18 +277,14 @@ class ActivityLogTranslator
     private static function formatTimestamp(string $value): string
     {
         try {
-            // Tenta parsear a data
             $date = new \DateTime($value);
 
-            // Se tiver hora (não é meia-noite), mostra data e hora
             if ($date->format('H:i:s') !== '00:00:00') {
                 return $date->format('d/m/Y H:i:s');
             }
 
-            // Se for meia-noite, mostra apenas a data
             return $date->format('d/m/Y');
         } catch (\Exception $e) {
-            // Se não conseguir parsear, retorna o valor original
             return $value;
         }
     }

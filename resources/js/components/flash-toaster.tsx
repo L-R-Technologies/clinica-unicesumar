@@ -13,8 +13,6 @@ export function FlashToaster() {
         if (flash.error) {
             toast.error(flash.error);
         }
-        // O objeto flash é recriado a cada visita Inertia, então mensagens
-        // repetidas em ações consecutivas ainda disparam um novo toast.
     }, [flash]);
 
     return null;

@@ -14,18 +14,9 @@ import { Toaster } from '@/components/ui/sonner';
 interface AppLayoutProps {
     title: string;
     children: ReactNode;
-    /** Ações opcionais renderizadas à direita do header (ex.: botão "Novo"). */
     actions?: ReactNode;
 }
 
-/**
- * Cada página Inertia remonta o AppLayout (não há layout persistente aqui),
- * então o estado da sidebar não sobrevive à navegação por si só. O componente
- * shadcn já grava o cookie `sidebar_state` ao expandir/colapsar, mas nunca o lê
- * de volta (ele espera um Server Component lendo o cookie, o que não existe
- * numa SPA Inertia). Lendo o cookie aqui e usando como `defaultOpen`, o estado
- * visual é restaurado a cada novo mount.
- */
 function getStoredSidebarOpen(): boolean {
     if (typeof document === 'undefined') {
         return true;

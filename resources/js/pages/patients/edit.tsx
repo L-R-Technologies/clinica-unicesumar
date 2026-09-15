@@ -13,10 +13,6 @@ interface PatientsEditProps extends Record<string, unknown> {
     sexOptions: Record<string, string>;
 }
 
-/**
- * Upload de arquivo via PUT não é suportado pelo PHP (multipart só chega em
- * POST), então o formulário envia POST com _method=put (method spoofing).
- */
 type PatientEditFormData = PatientFormData & { _method: 'put' };
 
 const ISO_DATE_LENGTH = 10;

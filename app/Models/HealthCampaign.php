@@ -71,7 +71,6 @@ class HealthCampaign extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        // Análise, campanha e dataset são grandes: o log guarda só os metadados.
         return LogOptions::defaults()
             ->logOnly(['user_id', 'date_from', 'date_to', 'exam_type_ids', 'patients_count', 'exams_count', 'model', 'status'])
             ->logOnlyDirty()

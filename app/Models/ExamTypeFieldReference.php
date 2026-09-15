@@ -59,11 +59,6 @@ class ExamTypeFieldReference extends Model
         return $this->belongsTo(ExamTypeField::class);
     }
 
-    /**
-     * Indica se a referência se aplica a um paciente com o sexo e a idade informados.
-     * Critérios nulos na referência aceitam qualquer valor; já um paciente sem
-     * sexo/idade conhecidos só se encaixa em referências sem esse critério.
-     */
     public function appliesTo(?string $sex, ?int $age): bool
     {
         if ($this->sex !== null && $this->sex !== $sex) {
@@ -81,9 +76,6 @@ class ExamTypeFieldReference extends Model
         return true;
     }
 
-    /**
-     * Quanto mais critérios definidos, mais específica (e prioritária) é a referência.
-     */
     public function specificity(): int
     {
         return (int) ($this->sex !== null)

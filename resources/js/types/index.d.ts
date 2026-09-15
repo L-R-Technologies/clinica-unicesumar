@@ -1,6 +1,5 @@
 export type UserRole = 'teacher' | 'student' | 'patient';
 
-/** Perfis que representam usuários internos do laboratório (não pacientes). */
 export type UserType = Exclude<UserRole, 'patient'>;
 
 export interface User {
@@ -61,7 +60,6 @@ export interface Student {
 
 export type ExamFieldType = 'int' | 'float' | 'string' | 'boolean';
 
-/** Sexo ao qual um valor de referência se restringe (null = ambos). */
 export type ReferenceSex = 'male' | 'female';
 
 export interface ExamTypeFieldReference {
@@ -72,9 +70,7 @@ export interface ExamTypeFieldReference {
     age_max: number | null;
     min_value: number | null;
     max_value: number | null;
-    /** Ex.: "Feminino, 18 a 59 anos" (montado no backend). */
     criteria_label: string;
-    /** Ex.: "70 a 99" (montado no backend). */
     range_label: string;
 }
 
@@ -88,7 +84,6 @@ export interface ExamTypeField {
     references?: ExamTypeFieldReference[];
 }
 
-/** Situação de um resultado frente ao valor de referência aplicável. */
 export type ReferenceStatus = 'within' | 'below' | 'above';
 
 export interface ResultReference {
@@ -313,10 +308,6 @@ export interface HealthCampaignPlan {
 export type HealthCampaignStatus =
     'pending' | 'processing' | 'completed' | 'failed';
 
-/**
- * Campanha de saúde gerada por IA a partir de exames anonimizados. A geração
- * roda em job: análise e campanha só existem quando o status é "completed".
- */
 export interface HealthCampaign {
     id: number;
     user_id: number;

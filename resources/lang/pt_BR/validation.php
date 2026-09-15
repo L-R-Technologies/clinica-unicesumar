@@ -173,7 +173,6 @@ return [
         'user_type' => 'tipo de usuário',
         'user_id' => 'usuário',
 
-        // Paciente / endereço
         'birthday' => 'data de nascimento',
         'sex' => 'sexo',
         'cpf' => 'CPF',
@@ -192,7 +191,6 @@ return [
         'address_id' => 'endereço',
         'lgpd_consent' => 'consentimento LGPD',
 
-        // Professor / aluno
         'registration_number' => 'matrícula funcional',
         'crbm' => 'registro profissional',
         'ra' => 'RA',
@@ -200,7 +198,6 @@ return [
         'semester' => 'semestre',
         'supervisor_id' => 'supervisor',
 
-        // Anamnese (patient history)
         'patient_id' => 'paciente',
         'patient_history_id' => 'anamnese',
         'recorded_at' => 'data do registro',
@@ -226,7 +223,6 @@ return [
         'recent_fever_or_flu' => 'febre ou gripe recente',
         'observation' => 'observação',
 
-        // Amostras / exames
         'sample_id' => 'amostra',
         'sample_type_id' => 'tipo de amostra',
         'exam_type_id' => 'tipo de exame',
@@ -241,7 +237,6 @@ return [
         'fields' => 'campos',
         'label' => 'rótulo',
 
-        // Máquinas / calibrações
         'machine_id' => 'máquina',
         'model' => 'modelo',
         'calibration_date' => 'data da calibração',
@@ -249,7 +244,6 @@ return [
         'calibration_range_max' => 'faixa máxima de calibração',
         'value' => 'valor',
 
-        // Feedback de exame
         'clarity' => 'clareza',
         'cordiality' => 'cordialidade',
         'waiting_time' => 'tempo de espera',

@@ -30,8 +30,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // ERS (RNF006): dados sensíveis criptografados em trânsito.
-        // Força HTTPS fora do ambiente local (produção/homologação).
         if (! $this->app->environment('local')) {
             URL::forceScheme('https');
         }

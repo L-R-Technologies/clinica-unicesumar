@@ -59,7 +59,6 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::put('/machines/{machine}', [MachineController::class, 'update'])->name('machines.update');
         Route::delete('/machines/{machine}', [MachineController::class, 'destroy'])->name('machines.destroy');
 
-        // A rota "export" precisa vir ANTES do wildcard {calibration}, senão o wildcard captura "export".
         Route::get('/calibrations', [CalibrationController::class, 'index'])->name('calibrations.index');
         Route::get('/calibrations/export', [CalibrationController::class, 'export'])->name('calibrations.export');
         Route::get('/calibrations/create/{machine}', [CalibrationController::class, 'create'])->name('calibrations.create');

@@ -77,10 +77,6 @@ class PatientHistoryService
         return $anamnesis->delete();
     }
 
-    /**
-     * Retorna as anamneses paginadas, aplicando escopo por papel e filtros.
-     * Alunos veem apenas as próprias; professores veem todas.
-     */
     public function getFilteredHistories(User $user, array $filters = []): LengthAwarePaginator
     {
         $query = PatientHistory::with(['patient.user', 'user']);
@@ -107,9 +103,6 @@ class PatientHistoryService
         return $query->latest('recorded_at')->paginate(20)->withQueryString();
     }
 
-    /**
-     * Retorna todos os pacientes ordenados por nome, reindexados para serialização.
-     */
     public function getPatients()
     {
         return Patient::with('user')->get()->sortBy('user.name')->values();

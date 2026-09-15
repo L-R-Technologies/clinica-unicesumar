@@ -7,15 +7,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-/**
- * Monta o conjunto de dados enviado à IA a partir dos exames aprovados.
- * Nada que identifique o paciente sai daqui: sem nome, CPF, e-mail, endereço,
- * telefone ou datas exatas. Cada paciente vira "Paciente N" com sexo e faixa
- * etária; cada resultado leva rótulo, valor, unidade, referência e situação.
- */
 class AnonymizedExamDatasetService
 {
-    /** Limite de pacientes por análise, para manter o prompt em tamanho razoável. */
     public const MAX_PATIENTS = 150;
 
     private const AGE_BAND_SIZE = 10;

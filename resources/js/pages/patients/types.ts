@@ -15,7 +15,6 @@ export type PatientFormData = {
     city: string;
     state: string;
     country: string;
-    /** Foto ou PDF do termo LGPD assinado; obrigatório no cadastro. */
     lgpd_term: File | null;
 };
 

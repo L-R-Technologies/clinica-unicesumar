@@ -48,7 +48,6 @@ const FIELD_TYPE_OPTIONS: readonly FieldTypeOption[] = [
     { value: 'boolean', label: 'Booleano' },
 ];
 
-/** Só campos numéricos aceitam valores de referência. */
 const NUMERIC_FIELD_TYPES: readonly ExamFieldType[] = ['int', 'float'];
 
 export function isNumericFieldType(fieldType: ExamFieldType): boolean {
@@ -80,7 +79,6 @@ export function mapExamTypeFieldToRow(field: ExamTypeField): ExamTypeFieldRow {
     };
 }
 
-/** Descarta linhas vazias e converte as referências para o formato do backend. */
 export function prepareExamTypeFieldsForSubmit(
     fields: ExamTypeFieldRow[],
 ): ExamTypeFieldPayload[] {
@@ -120,8 +118,6 @@ export function ExamTypeFieldsRepeater({
             return;
         }
 
-        // Referências só valem para campos numéricos: ao trocar para texto ou
-        // booleano, descarta as que existiam.
         onChange(
             fields.map((field, currentIndex) =>
                 currentIndex === index

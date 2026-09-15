@@ -8,10 +8,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator as ValidatorInstance;
 
-/**
- * Validação e sincronização dos campos personalizados de um tipo de exame e
- * dos seus valores de referência (faixa esperada por sexo e/ou idade).
- */
 class ExamTypeFieldService
 {
     public const NUMERIC_FIELD_TYPES = ['int', 'float'];
@@ -103,8 +99,6 @@ class ExamTypeFieldService
      */
     private function syncReferences(ExamTypeField $field, array $references): void
     {
-        // Referências só fazem sentido para campos numéricos; ao mudar o tipo
-        // do campo para texto/booleano, as referências antigas são descartadas.
         if (! in_array($field->field_type, self::NUMERIC_FIELD_TYPES, true)) {
             $field->references()->delete();
 

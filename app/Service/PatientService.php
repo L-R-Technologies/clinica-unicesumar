@@ -20,10 +20,6 @@ use RuntimeException;
 
 class PatientService
 {
-    /**
-     * O termo LGPD contém dados pessoais: fica no disco privado e é servido
-     * apenas por rota autenticada (nunca pelo disco "public").
-     */
     public const LGPD_TERM_DISK = 'local';
 
     public const LGPD_TERM_DIRECTORY = 'lgpd-terms';

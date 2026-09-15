@@ -35,7 +35,6 @@ export default function PatientsCreate(): ReactElement {
             zip_code: stripDigits(formData.zip_code),
         }));
 
-        // Há upload de arquivo: força multipart/form-data.
         post(route('patients.store'), { forceFormData: true });
     }
 

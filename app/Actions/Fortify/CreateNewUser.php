@@ -32,7 +32,6 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
-            // Campos do paciente
             'birthday' => ['required', 'date'],
             'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
             'sex' => ['required', 'in:male,female,other'],
@@ -40,7 +39,6 @@ class CreateNewUser implements CreatesNewUsers
             'rg' => ['required', 'string', 'max:20'],
             'phone' => ['required', 'string', 'min:11', 'max:11'],
             'lgpd_consent' => ['required', 'accepted'],
-            // Campos do endereço
             'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
             'number' => ['required', 'string', 'max:20'],
             'complement' => ['nullable', 'string', 'max:100'],

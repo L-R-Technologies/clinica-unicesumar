@@ -16,11 +16,9 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface ConfirmDeleteDialogProps {
-    /** URL da rota DELETE (ex.: route('samples.destroy', id)). */
     action: string;
     title?: string;
     description?: string;
-    /** Elemento que dispara o diálogo. Um botão-lixeira padrão, se omitido. */
     trigger?: ReactNode;
 }
 

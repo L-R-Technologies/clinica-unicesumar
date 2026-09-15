@@ -16,15 +16,9 @@ const EMPTY_PLACEHOLDER = '—';
 
 interface ExamResultsCardProps {
     exam: Exam;
-    /** Referência aplicável a cada parâmetro (chave = nome do campo), já avaliada pelo backend. */
     resultReferences: Record<string, ResultReference>;
 }
 
-/**
- * Tabela de resultados do exame com os valores de referência do tipo de exame
- * (filtrados por sexo/idade do paciente) e a situação de cada parâmetro.
- * Compartilhada entre a visão da equipe e a visão do paciente.
- */
 export function ExamResultsCard({
     exam,
     resultReferences,

@@ -20,10 +20,6 @@ const TONE_TEXT_CLASSES: Record<StatTone, string> = {
     danger: 'text-red-600 dark:text-red-400',
 };
 
-/**
- * Cores de estado (mesma paleta dos badges de status). Reservadas para status:
- * as barras de magnitude usam sempre a cor primária.
- */
 const STATUS_BAR_CLASSES: Record<ExamStatus, string> = {
     approved: 'bg-emerald-500 dark:bg-emerald-400',
     pending_approval: 'bg-amber-500 dark:bg-amber-400',
@@ -101,9 +97,7 @@ export interface BarListItem {
     key: string;
     label: string;
     value: number;
-    /** Texto exibido à direita (padrão: o valor formatado). */
     display?: string;
-    /** Texto do tooltip nativo ao passar o mouse. */
     title?: string;
     status?: ExamStatus;
 }
@@ -113,10 +107,6 @@ interface BarListProps {
     emptyMessage: string;
 }
 
-/**
- * Gráfico de barras horizontais em CSS: uma barra fina por linha, largura
- * proporcional ao maior valor, rótulo e valor sempre em texto (nunca só cor).
- */
 export function BarList({ items, emptyMessage }: BarListProps): ReactElement {
     if (items.length === 0) {
         return <EmptyState>{emptyMessage}</EmptyState>;

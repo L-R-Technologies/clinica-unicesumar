@@ -3,24 +3,10 @@ import { useState, type ReactElement } from 'react';
 import { FormField } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { generateTemporaryPassword } from '@/lib/password';
 
-const PASSWORD_ALPHABET =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-const GENERATED_PASSWORD_LENGTH = 12;
-const DEFAULT_HINT = 'Mínimo de 8 caracteres.';
-
-export function generateTemporaryPassword(): string {
-    const randomValues = new Uint32Array(GENERATED_PASSWORD_LENGTH);
-    crypto.getRandomValues(randomValues);
-
-    let password = '';
-    for (let i = 0; i < GENERATED_PASSWORD_LENGTH; i++) {
-        password +=
-            PASSWORD_ALPHABET[randomValues[i] % PASSWORD_ALPHABET.length];
-    }
-
-    return password;
-}
+const DEFAULT_HINT =
+    'Mínimo de 8 caracteres, com letras maiúsculas, minúsculas e números.';
 
 interface PasswordFieldProps {
     id?: string;
@@ -49,6 +35,7 @@ export function PasswordField({
                 <Input
                     id={id}
                     type={showPassword ? 'text' : 'password'}
+                    minLength={8}
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     autoComplete="new-password"

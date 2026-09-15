@@ -52,6 +52,7 @@ export function AddressFields({
                     id="street"
                     value={values.street}
                     onChange={(e) => onChange('street', e.target.value)}
+                    maxLength={255}
                 />
             </FormField>
 
@@ -65,6 +66,7 @@ export function AddressFields({
                     id="number"
                     value={values.number}
                     onChange={(e) => onChange('number', e.target.value)}
+                    maxLength={20}
                 />
             </FormField>
 
@@ -77,6 +79,7 @@ export function AddressFields({
                     id="complement"
                     value={values.complement}
                     onChange={(e) => onChange('complement', e.target.value)}
+                    maxLength={100}
                 />
             </FormField>
 
@@ -90,6 +93,7 @@ export function AddressFields({
                     id="neighborhood"
                     value={values.neighborhood}
                     onChange={(e) => onChange('neighborhood', e.target.value)}
+                    maxLength={100}
                 />
             </FormField>
 
@@ -98,6 +102,7 @@ export function AddressFields({
                     id="city"
                     value={values.city}
                     onChange={(e) => onChange('city', e.target.value)}
+                    maxLength={100}
                 />
             </FormField>
 
@@ -106,6 +111,7 @@ export function AddressFields({
                     id="state"
                     value={values.state}
                     onChange={(e) => onChange('state', e.target.value)}
+                    maxLength={100}
                 />
             </FormField>
 
@@ -119,6 +125,7 @@ export function AddressFields({
                     id="country"
                     value={values.country}
                     onChange={(e) => onChange('country', e.target.value)}
+                    maxLength={100}
                 />
             </FormField>
         </div>

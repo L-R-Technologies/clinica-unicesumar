@@ -14,6 +14,7 @@ interface InjectedControlProps {
     'aria-invalid'?: boolean;
     'aria-describedby'?: string;
     'aria-required'?: boolean;
+    required?: boolean;
 }
 
 export function FormField({
@@ -31,6 +32,7 @@ export function FormField({
               'aria-invalid': error ? true : undefined,
               'aria-describedby': error ? errorId : undefined,
               'aria-required': required ? true : undefined,
+              required: required ? true : undefined,
           })
         : children;
 

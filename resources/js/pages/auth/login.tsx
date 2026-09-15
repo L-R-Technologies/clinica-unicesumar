@@ -1,8 +1,8 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
-import type { FormEvent } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
 import AuthLayout from '@/layouts/auth-layout';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { PageProps } from '@/types';
@@ -13,10 +13,10 @@ interface LoginProps extends Record<string, unknown> {
 
 export default function Login() {
     const { status } = usePage<PageProps<LoginProps>>().props;
+    const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
-        remember: false,
     });
 
     function submit(event: FormEvent) {
@@ -58,14 +58,35 @@ export default function Login() {
 
                 <div className="space-y-2">
                     <Label htmlFor="password">Senha</Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        autoComplete="current-password"
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
+                    <div className="flex gap-2">
+                        <Input
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            autoComplete="current-password"
+                            value={data.password}
+                            onChange={(e) =>
+                                setData('password', e.target.value)
+                            }
+                            required
+                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            aria-label={
+                                showPassword ? 'Ocultar senha' : 'Mostrar senha'
+                            }
+                            onClick={() =>
+                                setShowPassword((current) => !current)
+                            }
+                        >
+                            {showPassword ? (
+                                <EyeOff className="size-4" />
+                            ) : (
+                                <Eye className="size-4" />
+                            )}
+                        </Button>
+                    </div>
                     {errors.password && (
                         <p className="text-sm text-destructive">
                             {errors.password}
@@ -73,16 +94,7 @@ export default function Login() {
                     )}
                 </div>
 
-                <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-sm">
-                        <Checkbox
-                            checked={data.remember}
-                            onCheckedChange={(checked) =>
-                                setData('remember', checked === true)
-                            }
-                        />
-                        Lembrar-me
-                    </label>
+                <div className="flex justify-end">
                     <Link
                         href={route('password.request')}
                         className="text-sm text-primary hover:underline"

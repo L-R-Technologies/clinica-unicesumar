@@ -13,6 +13,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { todayIsoDate } from '@/lib/date';
 import type { PageProps, Patient, Sample, SampleType } from '@/types';
 
 interface SampleEditProps extends Record<string, unknown> {
@@ -138,6 +139,7 @@ export default function SampleEdit() {
                             <Input
                                 id="date"
                                 type="date"
+                                max={todayIsoDate()}
                                 value={data.date}
                                 onChange={(e) =>
                                     setData('date', e.target.value)
@@ -186,6 +188,7 @@ export default function SampleEdit() {
                                 onChange={(e) =>
                                     setData('location', e.target.value)
                                 }
+                                maxLength={255}
                                 placeholder="Ex.: Geladeira 2, prateleira B"
                             />
                         </FormField>

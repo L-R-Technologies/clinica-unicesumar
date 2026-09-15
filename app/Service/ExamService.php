@@ -39,7 +39,7 @@ class ExamService
             'sample_id' => 'nullable|exists:samples,id',
             'exam_type_id' => 'required|exists:exam_types,id',
             'date' => 'required|date|before_or_equal:today',
-            'observation' => 'nullable|string',
+            'observation' => 'nullable|string|max:1000',
             'results' => 'nullable|array',
         ];
 

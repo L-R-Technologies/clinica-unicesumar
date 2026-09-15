@@ -133,6 +133,7 @@ export default function SampleCreate() {
                             <Input
                                 id="date"
                                 type="date"
+                                max={today()}
                                 value={data.date}
                                 onChange={(e) =>
                                     setData('date', e.target.value)
@@ -181,6 +182,7 @@ export default function SampleCreate() {
                                 onChange={(e) =>
                                     setData('location', e.target.value)
                                 }
+                                maxLength={255}
                                 placeholder="Ex.: Geladeira 2, prateleira B"
                             />
                         </FormField>

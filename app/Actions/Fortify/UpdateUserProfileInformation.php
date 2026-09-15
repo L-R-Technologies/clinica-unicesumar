@@ -33,10 +33,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 
         if ($user->role === 'teacher') {
             $rules['registration_number'] = ['required', 'string', 'max:10'];
-            $rules['professional_license'] = ['required', 'string', 'max:10'];
+            $rules['professional_license'] = ['nullable', 'string', 'max:10'];
         } elseif ($user->role === 'student') {
             $rules['ra'] = ['required', 'string', 'max:9', Rule::unique('students', 'ra')->ignore(optional($user->student)->id, 'id')];
-            $rules['course'] = ['required', 'string', 'max:100'];
+            $rules['course'] = ['required', 'string', 'max:255'];
             $messages['ra.unique'] = 'Este RA já está cadastrado no sistema.';
         } elseif ($user->role === 'patient') {
             if (isset($input['cpf'])) {
@@ -50,17 +50,17 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             }
 
             $rules = array_merge($rules, [
-                'birthday' => ['required', 'date'],
+                'birthday' => ['required', 'date', 'before_or_equal:today'],
                 'ethnicity' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'sex' => ['required', 'in:male,female,other'],
                 'cpf' => ['required', 'cpf', 'string', 'min:11', 'max:11', Rule::unique('patients', 'cpf')->ignore(optional($user->patient)->id, 'id')],
                 'rg' => ['required', 'string', 'max:20'],
-                'phone' => ['required', 'string', 'min:11', 'max:11'],
-                'street' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:255'],
+                'phone' => ['required', 'string', 'min:10', 'max:11'],
+                'street' => ['required', 'string', 'regex:/^[\pL\pN\s.,ºª°\'\-\/]+$/u', 'max:255'],
                 'number' => ['required', 'string', 'max:20'],
                 'complement' => ['nullable', 'string', 'max:100'],
-                'neighborhood' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
-                'city' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
+                'neighborhood' => ['required', 'string', 'regex:/^[\pL\pN\s.,ºª°\'\-\/]+$/u', 'max:100'],
+                'city' => ['required', 'string', 'regex:/^[\pL\pN\s.,ºª°\'\-\/]+$/u', 'max:100'],
                 'state' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'country' => ['required', 'string', 'regex:/^[\pL\s]+$/u', 'max:100'],
                 'zip_code' => ['required', 'string', 'min:8', 'max:8'],
@@ -83,7 +83,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         if ($user->role === 'teacher' && $user->teacher) {
             $user->teacher->update([
                 'registration_number' => $input['registration_number'],
-                'professional_license' => $input['professional_license'],
+                'professional_license' => $input['professional_license'] ?? null,
             ]);
         } elseif ($user->role === 'student' && $user->student) {
             $user->student->update([

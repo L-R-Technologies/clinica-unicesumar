@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { todayIsoDate } from '@/lib/date';
 import { fetchAddressByCep, stripDigits } from '@/lib/masks';
 
 type RegisterForm = {
@@ -79,6 +80,7 @@ function AccountStep({ data, errors, setField }: StepProps): ReactElement {
                     id="name"
                     value={data.name}
                     onChange={(e) => setField('name', e.target.value)}
+                    maxLength={255}
                     autoFocus
                 />
             </FormField>
@@ -88,6 +90,7 @@ function AccountStep({ data, errors, setField }: StepProps): ReactElement {
                     type="email"
                     value={data.email}
                     onChange={(e) => setField('email', e.target.value)}
+                    maxLength={255}
                 />
             </FormField>
             <FormField id="password" label="Senha" error={errors.password}>
@@ -96,8 +99,13 @@ function AccountStep({ data, errors, setField }: StepProps): ReactElement {
                     type="password"
                     value={data.password}
                     onChange={(e) => setField('password', e.target.value)}
+                    minLength={8}
                 />
             </FormField>
+            <p className="text-sm text-muted-foreground">
+                Mínimo de 8 caracteres, com letras maiúsculas, minúsculas e
+                números.
+            </p>
             <FormField
                 id="password_confirmation"
                 label="Confirmar senha"
@@ -127,6 +135,7 @@ function PersonalDataStep({ data, errors, setField }: StepProps): ReactElement {
                 <Input
                     id="birthday"
                     type="date"
+                    max={todayIsoDate()}
                     value={data.birthday}
                     onChange={(e) => setField('birthday', e.target.value)}
                 />
@@ -160,6 +169,7 @@ function PersonalDataStep({ data, errors, setField }: StepProps): ReactElement {
                     id="rg"
                     value={data.rg}
                     onChange={(e) => setField('rg', e.target.value)}
+                    maxLength={20}
                 />
             </FormField>
             <FormField id="ethnicity" label="Etnia" error={errors.ethnicity}>
@@ -167,6 +177,7 @@ function PersonalDataStep({ data, errors, setField }: StepProps): ReactElement {
                     id="ethnicity"
                     value={data.ethnicity}
                     onChange={(e) => setField('ethnicity', e.target.value)}
+                    maxLength={100}
                 />
             </FormField>
             <FormField id="phone" label="Telefone" error={errors.phone}>
@@ -292,15 +303,36 @@ export default function Register(): ReactElement {
         }
     }
 
-    function submit(event: FormEvent): void {
-        event.preventDefault();
-
+    function applySubmitTransform(): void {
         transform((formData) => ({
             ...formData,
             cpf: stripDigits(formData.cpf),
             phone: stripDigits(formData.phone),
             zip_code: stripDigits(formData.zip_code),
         }));
+    }
+
+    // Valida no servidor apenas os campos da etapa atual (mesmas regras do
+    // cadastro final) antes de avançar.
+    function validateCurrentStep(): void {
+        applySubmitTransform();
+
+        post(route('register.validate-step', step), {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => setStep((s) => s + 1),
+        });
+    }
+
+    function submit(event: FormEvent): void {
+        event.preventDefault();
+
+        if (step < TOTAL_STEPS) {
+            validateCurrentStep();
+            return;
+        }
+
+        applySubmitTransform();
 
         post(route('register'), {
             onError: (formErrors) => goToFirstStepWithError(formErrors),
@@ -364,10 +396,7 @@ export default function Register(): ReactElement {
                     )}
 
                     {step < TOTAL_STEPS ? (
-                        <Button
-                            type="button"
-                            onClick={() => setStep((s) => s + 1)}
-                        >
+                        <Button type="submit" disabled={processing}>
                             Próximo
                         </Button>
                     ) : (

@@ -122,6 +122,7 @@ export default function UserCreate() {
                         >
                             <Input
                                 id="name"
+                                maxLength={255}
                                 value={data.name}
                                 onChange={(e) =>
                                     setData('name', e.target.value)
@@ -139,6 +140,7 @@ export default function UserCreate() {
                             <Input
                                 id="email"
                                 type="email"
+                                maxLength={255}
                                 value={data.email}
                                 onChange={(e) =>
                                     setData('email', e.target.value)
@@ -163,6 +165,7 @@ export default function UserCreate() {
                                 >
                                     <Input
                                         id="registration_number"
+                                        maxLength={10}
                                         value={data.registration_number}
                                         onChange={(e) =>
                                             setData(
@@ -180,6 +183,7 @@ export default function UserCreate() {
                                 >
                                     <Input
                                         id="professional_license"
+                                        maxLength={10}
                                         value={data.professional_license}
                                         onChange={(e) =>
                                             setData(
@@ -202,6 +206,7 @@ export default function UserCreate() {
                                 >
                                     <Input
                                         id="ra"
+                                        maxLength={9}
                                         value={data.ra}
                                         onChange={(e) =>
                                             setData('ra', e.target.value)
@@ -217,6 +222,7 @@ export default function UserCreate() {
                                 >
                                     <Input
                                         id="course"
+                                        maxLength={255}
                                         value={data.course}
                                         onChange={(e) =>
                                             setData('course', e.target.value)

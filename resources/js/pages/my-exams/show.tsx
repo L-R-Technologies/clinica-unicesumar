@@ -223,6 +223,7 @@ function FeedbackForm({ examId }: { examId: number }) {
                                 setData('observation', e.target.value)
                             }
                             rows={4}
+                            maxLength={2000}
                             placeholder="Conte um pouco mais sobre sua experiência..."
                         />
                         {errors.observation && (

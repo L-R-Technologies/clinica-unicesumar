@@ -1,0 +1,69 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        VITE_APP_NAME: ${VITE_APP_NAME:-Clínica Unicesumar}
+    image: clinica-unicesumar:latest
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - storage-data:/var/www/html/storage
+    networks:
+      - web
+      - database
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=web
+      - traefik.http.routers.clinica.rule=Host(`${APP_HOST}`)
+      - traefik.http.routers.clinica.entrypoints=websecure
+      - traefik.http.routers.clinica.tls=true
+      - traefik.http.routers.clinica.tls.certresolver=letsencrypt
+      - traefik.http.services.clinica.loadbalancer.server.port=80
+
+  queue:
+    build:
+      context: .
+      args:
+        VITE_APP_NAME: ${VITE_APP_NAME:-Clínica Unicesumar}
+    image: clinica-unicesumar:latest
+    restart: unless-stopped
+    env_file: .env
+    entrypoint: ["php", "artisan", "queue:work", "--tries=1", "--sleep=3", "--max-time=3600"]
+    healthcheck:
+      disable: true
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - storage-data:/var/www/html/storage
+    networks:
+      - database
+
+  scheduler:
+    build:
+      context: .
+      args:
+        VITE_APP_NAME: ${VITE_APP_NAME:-Clínica Unicesumar}
+    image: clinica-unicesumar:latest
+    restart: unless-stopped
+    env_file: .env
+    entrypoint: ["php", "artisan", "schedule:work"]
+    healthcheck:
+      disable: true
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - storage-data:/var/www/html/storage
+    networks:
+      - database
+
+networks:
+  web:
+    external: true
+  database:
+    external: true
+
+volumes:
+  storage-data:

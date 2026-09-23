@@ -6,7 +6,8 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN --mount=type=cache,target=/tmp/cache composer install \
       --no-dev --no-scripts --no-autoloader \
-      --prefer-dist --no-interaction --no-progress
+      --prefer-dist --no-interaction --no-progress \
+      --ignore-platform-req=php
 COPY . .
 RUN composer dump-autoload --no-dev --optimize --classmap-authoritative
 

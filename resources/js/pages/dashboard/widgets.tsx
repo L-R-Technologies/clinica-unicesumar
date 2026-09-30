@@ -100,6 +100,8 @@ export interface BarListItem {
     display?: string;
     title?: string;
     status?: ExamStatus;
+    /** Cor da barra quando o item não representa um status de exame. */
+    barClassName?: string;
 }
 
 interface BarListProps {
@@ -135,9 +137,10 @@ export function BarList({ items, emptyMessage }: BarListProps): ReactElement {
                         <div
                             className={cn(
                                 'h-2 rounded-sm',
-                                item.status
-                                    ? STATUS_BAR_CLASSES[item.status]
-                                    : 'bg-primary',
+                                item.barClassName ??
+                                    (item.status
+                                        ? STATUS_BAR_CLASSES[item.status]
+                                        : 'bg-primary'),
                             )}
                             style={{
                                 width: `${(item.value / maxValue) * FULL_WIDTH_PERCENT}%`,

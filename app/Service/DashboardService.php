@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Models\Exam;
 use App\Models\ExamRejection;
 use App\Models\ExamType;
+use App\Models\Machine;
 use App\Models\Patient;
 use App\Models\User;
 use Carbon\CarbonInterface;
@@ -35,7 +36,14 @@ class DashboardService
 
     private const MONTH_ABBREVIATIONS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
-    public function __construct(private readonly ExamService $examService) {}
+    private const MACHINE_STATUS_ACTIVE = 'active';
+
+    private const SAMPLE_STATUS_STORED = 'stored';
+
+    public function __construct(
+        private readonly ExamService $examService,
+        private readonly LabOperationsService $labOperations,
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -43,21 +51,80 @@ class DashboardService
     public function buildTeacherDashboard(): array
     {
         $statusCounts = $this->countByStatus(Exam::query());
+        $samples = $this->labOperations->samplesOverview();
+        $machines = $this->labOperations->machinesOverview();
+        $startOfMonth = now()->startOfMonth();
 
         return [
             'stats' => [
-                $this->stat('Exames no mês', Exam::where('date', '>=', now()->startOfMonth())->count(), 'primary', 'desde '.now()->startOfMonth()->format('d/m')),
+                $this->stat('Exames no mês', Exam::where('date', '>=', $startOfMonth)->count(), 'primary', 'desde '.$startOfMonth->format('d/m')),
                 $this->stat('Aguardando aprovação', $statusCounts[ExamService::STATUS_PENDING_APPROVAL] ?? 0, 'warning', 'enviados por alunos'),
                 $this->stat('Taxa de aprovação', $this->approvalRate($statusCounts), 'success', 'aprovados ÷ (aprovados + rejeitados)', '%'),
-                $this->stat('Pacientes cadastrados', Patient::count(), 'primary'),
+                $this->stat('Pacientes cadastrados', Patient::count(), 'primary', $this->newPatientsHint($startOfMonth)),
+                $this->activeStudentsStat(),
+                $this->storedSamplesStat($samples),
+                $this->activeMachinesStat($machines),
+                $this->stat('Alunos sem exames', $this->inactiveStudentsQuery()->count(), 'warning', 'há mais de '.self::INACTIVE_STUDENT_DAYS.' dias'),
             ],
+            'approvalQueue' => $this->approvalQueue(),
+            'staleApprovalsCount' => $this->staleApprovalsCount(),
             'statusDistribution' => $this->statusDistribution($statusCounts),
             'monthlyVolume' => $this->monthlyVolume(Exam::query()),
             'rejectionRateByExamType' => $this->rejectionRateByExamType(),
-            'staleApprovals' => $this->staleApprovals(),
             'rejectionRanking' => $this->rejectionRanking(),
+            'topExamTypes' => $this->topExamTypes(),
+            'activeStudents' => $this->activeStudents(),
             'inactiveStudents' => $this->inactiveStudents(),
+            'samples' => $samples,
+            'machines' => $machines,
         ];
+    }
+
+    private function newPatientsHint(CarbonInterface $startOfMonth): string
+    {
+        $newPatients = Patient::where('created_at', '>=', $startOfMonth)->count();
+
+        return $newPatients === 1 ? '1 novo no mês' : "{$newPatients} novos no mês";
+    }
+
+    /**
+     * @return array{label: string, value: int|float, tone: string, hint: string|null, suffix: string|null}
+     */
+    private function activeStudentsStat(): array
+    {
+        $total = User::where('role', 'student')->where('active', true)->count();
+
+        return $this->stat('Alunos ativos', $total, 'primary', 'com acesso ao sistema');
+    }
+
+    /**
+     * @param  array{distribution: array<int, array{status: string, label: string, count: int}>, overdueInFreezer: array<int, mixed>}  $samples
+     * @return array{label: string, value: int|float, tone: string, hint: string|null, suffix: string|null}
+     */
+    private function storedSamplesStat(array $samples): array
+    {
+        $stored = collect($samples['distribution'])->firstWhere('status', self::SAMPLE_STATUS_STORED)['count'] ?? 0;
+        $overdue = count($samples['overdueInFreezer']);
+        $hint = $overdue === 0
+            ? 'nenhuma acima de '.LabOperationsService::FREEZER_ALERT_DAYS.' dias'
+            : "{$overdue} há mais de ".LabOperationsService::FREEZER_ALERT_DAYS.' dias no freezer';
+
+        return $this->stat('Amostras armazenadas', $stored, $overdue === 0 ? 'success' : 'warning', $hint);
+    }
+
+    /**
+     * @param  array<int, array{status: string, is_calibration_due: bool}>  $machines
+     * @return array{label: string, value: int|float, tone: string, hint: string|null, suffix: string|null}
+     */
+    private function activeMachinesStat(array $machines): array
+    {
+        $active = Machine::where('status', self::MACHINE_STATUS_ACTIVE)->count();
+        $due = count(array_filter($machines, fn (array $machine) => $machine['is_calibration_due']));
+        $hint = $due === 0
+            ? 'calibrações em dia'
+            : "{$due} sem calibração há ".LabOperationsService::CALIBRATION_DUE_DAYS.' dias';
+
+        return $this->stat('Equipamentos ativos', $active, $due === 0 ? 'primary' : 'warning', $hint);
     }
 
     /**
@@ -188,15 +255,17 @@ class DashboardService
     }
 
     /**
-     * Exames aguardando aprovação há mais tempo que o limite (alerta).
+     * Fila de exames aguardando aprovação, dos mais antigos para os mais
+     * recentes. Os que passaram do limite de espera vêm sinalizados.
      *
-     * @return array<int, array{id: int, student: string, exam_type: string, patient: string, waiting_hours: int}>
+     * @return array<int, array{id: int, student: string, exam_type: string, patient: string, submitted_at: string, waiting_hours: int, is_stale: bool}>
      */
-    private function staleApprovals(): array
+    private function approvalQueue(): array
     {
-        return Exam::with(['user', 'examType', 'patient.user'])
-            ->where('status', ExamService::STATUS_PENDING_APPROVAL)
-            ->where('updated_at', '<=', now()->subHours(self::STALE_APPROVAL_HOURS))
+        $staleSince = now()->subHours(self::STALE_APPROVAL_HOURS);
+
+        return $this->pendingApprovalQuery()
+            ->with(['user', 'examType', 'patient.user'])
             ->orderBy('updated_at')
             ->limit(self::LIST_LIMIT)
             ->get()
@@ -205,8 +274,64 @@ class DashboardService
                 'student' => $exam->user->name ?? '—',
                 'exam_type' => $exam->examType->name ?? '—',
                 'patient' => $exam->patient->user->name ?? '—',
+                'submitted_at' => $exam->updated_at->toIso8601String(),
                 'waiting_hours' => (int) $exam->updated_at->diffInHours(now()),
+                'is_stale' => $exam->updated_at->lte($staleSince),
             ])
+            ->all();
+    }
+
+    private function staleApprovalsCount(): int
+    {
+        return $this->pendingApprovalQuery()
+            ->where('updated_at', '<=', now()->subHours(self::STALE_APPROVAL_HOURS))
+            ->count();
+    }
+
+    /**
+     * @return Builder<Exam>
+     */
+    private function pendingApprovalQuery(): Builder
+    {
+        return Exam::where('status', ExamService::STATUS_PENDING_APPROVAL);
+    }
+
+    /**
+     * Tipos de exame mais realizados (acumulado).
+     *
+     * @return array<int, array{label: string, total: int}>
+     */
+    private function topExamTypes(): array
+    {
+        return ExamType::whereHas('exams')
+            ->withCount('exams')
+            ->orderByDesc('exams_count')
+            ->orderBy('name')
+            ->limit(self::RANKING_LIMIT)
+            ->get()
+            ->map(fn (ExamType $examType) => ['label' => $examType->name, 'total' => (int) $examType->exams_count])
+            ->all();
+    }
+
+    /**
+     * Alunos que mais registraram exames no período recente.
+     *
+     * @return array<int, array{name: string, total: int}>
+     */
+    private function activeStudents(): array
+    {
+        $since = now()->subDays(self::INACTIVE_STUDENT_DAYS);
+
+        $recentExams = fn (Builder $query) => $query->where('created_at', '>=', $since);
+
+        return User::where('role', 'student')
+            ->whereHas('exams', $recentExams)
+            ->withCount(['exams' => $recentExams])
+            ->orderByDesc('exams_count')
+            ->orderBy('name')
+            ->limit(self::RANKING_LIMIT)
+            ->get()
+            ->map(fn (User $student) => ['name' => $student->name, 'total' => (int) $student->exams_count])
             ->all();
     }
 
@@ -238,13 +363,21 @@ class DashboardService
      */
     private function inactiveStudents(): array
     {
-        return User::where('role', 'student')
-            ->where('active', true)
-            ->whereDoesntHave('exams', fn (Builder $query) => $query->where('created_at', '>=', now()->subDays(self::INACTIVE_STUDENT_DAYS)))
+        return $this->inactiveStudentsQuery()
             ->orderBy('name')
             ->limit(self::LIST_LIMIT)
             ->pluck('name')
             ->all();
+    }
+
+    /**
+     * @return Builder<User>
+     */
+    private function inactiveStudentsQuery(): Builder
+    {
+        return User::where('role', 'student')
+            ->where('active', true)
+            ->whereDoesntHave('exams', fn (Builder $query) => $query->where('created_at', '>=', now()->subDays(self::INACTIVE_STUDENT_DAYS)));
     }
 
     /**

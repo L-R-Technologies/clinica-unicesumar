@@ -1,4 +1,9 @@
-import type { ExamStatus } from '@/types';
+import type {
+    CalibrationStatus,
+    ExamStatus,
+    MachineStatus,
+    SampleStatus,
+} from '@/types';
 
 export type StatTone = 'primary' | 'success' | 'warning' | 'danger';
 
@@ -28,12 +33,14 @@ export interface ExamTypeRejectionRate {
     total: number;
 }
 
-export interface StaleApproval {
+export interface ApprovalQueueItem {
     id: number;
     student: string;
     exam_type: string;
     patient: string;
+    submitted_at: string;
     waiting_hours: number;
+    is_stale: boolean;
 }
 
 export interface RankedStudent {
@@ -41,14 +48,51 @@ export interface RankedStudent {
     total: number;
 }
 
+export interface ExamTypeVolume {
+    label: string;
+    total: number;
+}
+
+export interface SampleStatusCount {
+    status: SampleStatus;
+    label: string;
+    count: number;
+}
+
+export interface OverdueSample {
+    id: number;
+    code: string;
+    patient: string;
+    days: number;
+}
+
+export interface SamplesOverview {
+    distribution: SampleStatusCount[];
+    overdueInFreezer: OverdueSample[];
+}
+
+export interface MachineOverview {
+    id: number;
+    name: string;
+    status: MachineStatus;
+    last_calibration_at: string | null;
+    last_calibration_status: CalibrationStatus | null;
+    is_calibration_due: boolean;
+}
+
 export interface TeacherDashboardData {
     stats: DashboardStat[];
+    approvalQueue: ApprovalQueueItem[];
+    staleApprovalsCount: number;
     statusDistribution: StatusCount[];
     monthlyVolume: MonthlyCount[];
     rejectionRateByExamType: ExamTypeRejectionRate[];
-    staleApprovals: StaleApproval[];
     rejectionRanking: RankedStudent[];
+    topExamTypes: ExamTypeVolume[];
+    activeStudents: RankedStudent[];
     inactiveStudents: string[];
+    samples: SamplesOverview;
+    machines: MachineOverview[];
 }
 
 export interface ActionRequiredExam {

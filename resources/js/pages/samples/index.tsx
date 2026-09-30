@@ -20,6 +20,7 @@ import {
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
 import { useTableFilters } from '@/hooks/use-table-filters';
 import { ALL_FILTER_VALUE } from '@/lib/constants';
+import { todayIsoDate } from '@/lib/date';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps, Sample } from '@/types';
@@ -169,6 +170,7 @@ export default function SamplesIndex() {
                     <Input
                         id="date"
                         type="date"
+                        max={todayIsoDate()}
                         value={filters.date}
                         onChange={(e) => applyFilters({ date: e.target.value })}
                     />

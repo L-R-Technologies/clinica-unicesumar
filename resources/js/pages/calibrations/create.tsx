@@ -1,4 +1,5 @@
 import { useForm, usePage } from '@inertiajs/react';
+import { nowLocalDateTime } from '@/lib/date';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -13,15 +14,9 @@ interface CalibrationCreateProps extends Record<string, unknown> {
     machine: Machine;
 }
 
-function nowLocal(): string {
-    const now = new Date();
-    const pad = (value: number) => String(value).padStart(2, '0');
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-}
-
 export default function CalibrationCreate() {
     const { machine } = usePage<PageProps<CalibrationCreateProps>>().props;
-    const maxDateTime = nowLocal();
+    const maxDateTime = nowLocalDateTime();
 
     const { data, setData, post, processing, errors } = useForm({
         machine_id: String(machine.id),

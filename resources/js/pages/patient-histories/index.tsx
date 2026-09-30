@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
 import { useTableFilters } from '@/hooks/use-table-filters';
+import { todayIsoDate } from '@/lib/date';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Paginated, PageProps } from '@/types';
@@ -133,6 +134,7 @@ export default function PatientHistoriesIndex() {
                     <Input
                         id="date"
                         type="date"
+                        max={todayIsoDate()}
                         value={date}
                         onChange={(e) => handleDateChange(e.target.value)}
                         className="sm:w-48"

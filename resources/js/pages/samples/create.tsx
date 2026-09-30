@@ -13,16 +13,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { todayIsoDate } from '@/lib/date';
 import type { PageProps, Patient, SampleType } from '@/types';
 
 interface SampleCreateProps extends Record<string, unknown> {
     patients: Patient[];
     sampleTypes: SampleType[];
     statusOptions: Record<string, string>;
-}
-
-function today(): string {
-    return new Date().toISOString().slice(0, 10);
 }
 
 export default function SampleCreate() {
@@ -32,7 +29,7 @@ export default function SampleCreate() {
     const { data, setData, post, processing, errors } = useForm({
         patient_id: '',
         sample_type_id: '',
-        date: today(),
+        date: todayIsoDate(),
         status: 'under review',
         location: '',
     });
@@ -133,7 +130,7 @@ export default function SampleCreate() {
                             <Input
                                 id="date"
                                 type="date"
-                                max={today()}
+                                max={todayIsoDate()}
                                 value={data.date}
                                 onChange={(e) =>
                                     setData('date', e.target.value)

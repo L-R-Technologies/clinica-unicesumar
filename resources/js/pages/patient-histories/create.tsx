@@ -11,16 +11,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { todayIsoDate } from '@/lib/date';
 import type { Patient, PageProps } from '@/types';
 import { PatientHistoryFields } from './patient-history-fields';
 import type { PatientHistoryFormData } from './types';
 
 interface PatientHistoriesCreateProps extends Record<string, unknown> {
     patients: Patient[];
-}
-
-function todayIsoDate(): string {
-    return new Date().toISOString().slice(0, 10);
 }
 
 const INITIAL_FORM_DATA: PatientHistoryFormData = {

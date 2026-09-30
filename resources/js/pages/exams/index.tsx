@@ -20,6 +20,7 @@ import {
 import { useDebouncedSearch } from '@/hooks/use-debounced-search';
 import { useTableFilters } from '@/hooks/use-table-filters';
 import { ALL_FILTER_VALUE } from '@/lib/constants';
+import { todayIsoDate } from '@/lib/date';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { Exam, ExamType, Paginated, PageProps } from '@/types';
@@ -220,6 +221,7 @@ export default function ExamsIndex() {
                     <Input
                         id="date_from"
                         type="date"
+                        max={todayIsoDate()}
                         value={filters.date_from}
                         onChange={(e) =>
                             applyFilters({ date_from: e.target.value })
@@ -232,6 +234,7 @@ export default function ExamsIndex() {
                     <Input
                         id="date_to"
                         type="date"
+                        max={todayIsoDate()}
                         value={filters.date_to}
                         onChange={(e) =>
                             applyFilters({ date_to: e.target.value })

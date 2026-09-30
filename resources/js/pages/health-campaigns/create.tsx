@@ -15,6 +15,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { todayIsoDate } from '@/lib/date';
 import type { ExamType, PageProps } from '@/types';
 
 interface HealthCampaignsCreateProps extends Record<string, unknown> {
@@ -117,6 +118,7 @@ export default function HealthCampaignsCreate(): ReactElement {
                                 <Input
                                     id="date_from"
                                     type="date"
+                                    max={todayIsoDate()}
                                     value={data.date_from}
                                     onChange={(e) =>
                                         setData('date_from', e.target.value)
@@ -131,6 +133,7 @@ export default function HealthCampaignsCreate(): ReactElement {
                                 <Input
                                     id="date_to"
                                     type="date"
+                                    max={todayIsoDate()}
                                     value={data.date_to}
                                     onChange={(e) =>
                                         setData('date_to', e.target.value)

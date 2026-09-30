@@ -14,6 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { todayIsoDate } from '@/lib/date';
 import { formatDate } from '@/lib/format';
 import type { ExamType, PageProps } from '@/types';
 
@@ -40,10 +41,6 @@ interface ExamsCreateProps extends Record<string, unknown> {
     samples: SampleOption[];
 }
 
-function today(): string {
-    return new Date().toISOString().slice(0, 10);
-}
-
 export default function ExamsCreate() {
     const { patients, examTypes, histories, samples } =
         usePage<PageProps<ExamsCreateProps>>().props;
@@ -53,7 +50,7 @@ export default function ExamsCreate() {
         patient_history_id: '',
         sample_id: '',
         exam_type_id: '',
-        date: today(),
+        date: todayIsoDate(),
         observation: '',
     });
 
@@ -255,7 +252,7 @@ export default function ExamsCreate() {
                             <Input
                                 id="date"
                                 type="date"
-                                max={today()}
+                                max={todayIsoDate()}
                                 value={data.date}
                                 onChange={(e) =>
                                     setData('date', e.target.value)

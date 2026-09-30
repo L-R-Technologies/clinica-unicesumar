@@ -1,4 +1,5 @@
 import { useForm, usePage } from '@inertiajs/react';
+import { nowLocalDateTime } from '@/lib/date';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
@@ -13,16 +14,9 @@ interface CalibrationEditProps extends Record<string, unknown> {
     calibration: Calibration;
 }
 
-/** Data/hora local no formato aceito pelo input datetime-local (YYYY-MM-DDTHH:mm). */
-function nowLocal(): string {
-    const now = new Date();
-    const pad = (value: number): string => String(value).padStart(2, '0');
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
-}
-
 export default function CalibrationEdit() {
     const { calibration } = usePage<PageProps<CalibrationEditProps>>().props;
-    const maxDateTime = nowLocal();
+    const maxDateTime = nowLocalDateTime();
 
     const { data, setData, put, processing, errors } = useForm({
         calibration_date: calibration.calibration_date.slice(0, 16),

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\PatientAccountEmailFailedException;
 use App\Models\Patient;
 use App\Service\PatientService;
 use Exception;
@@ -56,6 +57,12 @@ class PatientController extends Controller
             return back()
                 ->withErrors($e->errors())
                 ->withInput();
+        } catch (PatientAccountEmailFailedException $e) {
+            Log::error('Paciente cadastrado, mas o e-mail com a senha temporária falhou', ['patient_id' => $e->patient->id, 'exception' => $e]);
+
+            return redirect()
+                ->route('patients.show', $e->patient->id)
+                ->with('error', 'Paciente cadastrado, mas não foi possível enviar o e-mail com a senha temporária. Oriente o paciente a usar "Esqueci minha senha".');
         } catch (Exception $e) {
             Log::error('Erro ao cadastrar paciente', ['exception' => $e]);
 

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Exceptions\PatientAccountEmailFailedException;
 use App\Mail\PatientAccountCreated;
 use App\Models\Address;
 use App\Models\Patient;
@@ -17,6 +18,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
+use Throwable;
 
 class PatientService
 {
@@ -96,7 +98,7 @@ class PatientService
             'ethnicity' => ['nullable', 'string', 'regex:/^[\pL\s]+$/u', 'max:50'],
             'sex' => ['required', Rule::in(array_keys(self::SEX_OPTIONS))],
             'cpf' => ['required', 'string', 'size:11', 'cpf', Rule::unique(Patient::class)->ignore($patient?->id)],
-            'rg' => ['required', 'string', 'max:20'],
+            'rg' => ['nullable', 'string', 'max:20'],
             'phone' => ['nullable', 'string', 'size:11'],
             'lgpd_term' => [
                 $isCreating ? 'required' : 'nullable',
@@ -121,6 +123,8 @@ class PatientService
      * e-mail somente após a transação ser confirmada.
      *
      * @param  array<string, mixed>  $data  Dados já validados.
+     *
+     * @throws PatientAccountEmailFailedException quando o cadastro foi salvo mas o e-mail não pôde ser enviado.
      */
     public function createPatient(array $data, UploadedFile $lgpdTerm): Patient
     {
@@ -153,7 +157,14 @@ class PatientService
             return $patient->setRelation('user', $user);
         });
 
-        Mail::to($patient->user->email)->send(new PatientAccountCreated($patient->user, $temporaryPassword));
+        // Falha no envio (SMTP fora, credenciais inválidas...) não pode desfazer
+        // o cadastro já confirmado nem ser tratada como erro genérico: o paciente
+        // existe e pode recuperar a senha pelo fluxo "esqueci minha senha".
+        try {
+            Mail::to($patient->user->email)->send(new PatientAccountCreated($patient->user, $temporaryPassword));
+        } catch (Throwable $exception) {
+            throw new PatientAccountEmailFailedException($patient, $exception);
+        }
 
         return $patient;
     }

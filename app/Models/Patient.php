@@ -18,7 +18,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string $ethnicity
  * @property string $sex
  * @property string $cpf
- * @property string $rg
+ * @property string|null $rg
  * @property string $phone
  * @property string|null $lgpd_term_path
  */

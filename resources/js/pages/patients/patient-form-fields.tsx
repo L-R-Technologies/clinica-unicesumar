@@ -19,6 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { todayIsoDate } from '@/lib/date';
 import { fetchAddressByCep } from '@/lib/masks';
 import { cn } from '@/lib/utils';
 import type {
@@ -129,6 +130,7 @@ export function PatientFormFields({
                         <Input
                             id="birthday"
                             type="date"
+                            max={todayIsoDate()}
                             value={data.birthday}
                             onChange={(e) =>
                                 setField('birthday', e.target.value)
@@ -171,7 +173,7 @@ export function PatientFormFields({
                         />
                     </FormField>
 
-                    <FormField id="rg" label="RG" error={errors.rg} required>
+                    <FormField id="rg" label="RG" error={errors.rg}>
                         <Input
                             id="rg"
                             value={data.rg}

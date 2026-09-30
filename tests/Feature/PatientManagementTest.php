@@ -98,6 +98,30 @@ class PatientManagementTest extends TestCase
         Mail::assertNothingSent();
     }
 
+    public function test_rg_is_optional_when_registering(): void
+    {
+        $teacher = User::factory()->teacher()->create();
+
+        $this->actingAs($teacher)
+            ->post(route('patients.store'), $this->validPatientPayload(['rg' => '']))
+            ->assertRedirect(route('patients.index'));
+
+        $this->assertDatabaseHas('patients', ['cpf' => self::VALID_CPF_DIGITS, 'rg' => null]);
+    }
+
+    public function test_registration_survives_temporary_password_email_failure(): void
+    {
+        $teacher = User::factory()->teacher()->create();
+        Mail::shouldReceive('to')->once()->andThrow(new \RuntimeException('SMTP indisponível'));
+
+        $this->actingAs($teacher)
+            ->post(route('patients.store'), $this->validPatientPayload())
+            ->assertRedirect(route('patients.show', Patient::where('cpf', self::VALID_CPF_DIGITS)->firstOrFail()->id))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('users', ['email' => 'maria.silva@example.com', 'role' => 'patient']);
+    }
+
     public function test_student_can_register_patient(): void
     {
         $patient = $this->registerPatientAs(User::factory()->student()->create());

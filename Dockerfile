@@ -21,7 +21,7 @@ ENV VITE_APP_NAME=${VITE_APP_NAME}
 RUN npm run build
 
 # ---------- runtime (PHP-FPM + Nginx + Supervisor) ----------
-FROM php:8.4-fpm-alpine AS runtime
+FROM php:8.4.27-fpm-alpine AS runtime
 
 COPY --from=ghcr.io/mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
 RUN install-php-extensions \

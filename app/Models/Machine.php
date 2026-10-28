@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
@@ -10,7 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Machine extends Model
 {
-    use LogsActivity;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'name', 'model', 'serial_number', 'location',
@@ -25,6 +26,14 @@ class Machine extends Model
     public function calibrations(): HasMany
     {
         return $this->hasMany(Calibration::class);
+    }
+
+    /**
+     * @return HasMany<LabAgent, $this>
+     */
+    public function labAgents(): HasMany
+    {
+        return $this->hasMany(LabAgent::class);
     }
 
     public function scopeActive(Builder $query): void

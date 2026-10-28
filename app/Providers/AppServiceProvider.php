@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Exam;
+use App\Models\LabCapture;
 use App\Models\PatientHistory;
 use App\Models\Sample;
 use App\Policies\ExamPolicy;
+use App\Policies\LabCapturePolicy;
 use App\Policies\PatientHistoryPolicy;
 use App\Policies\SamplePolicy;
 use App\Service\Ai\GeminiClient;
@@ -40,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
             ->uncompromised());
 
         Gate::policy(Exam::class, ExamPolicy::class);
+        Gate::policy(LabCapture::class, LabCapturePolicy::class);
         Gate::policy(Sample::class, SamplePolicy::class);
         Gate::policy(PatientHistory::class, PatientHistoryPolicy::class);
     }

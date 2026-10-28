@@ -4,6 +4,7 @@ import type {
     CalibrationStatus,
     ExamStatus,
     HealthCampaignStatus,
+    LabCaptureStatus,
     MachineStatus,
     ReferenceStatus,
     SampleStatus,
@@ -15,7 +16,8 @@ type BadgeStatus =
     | CalibrationStatus
     | SampleStatus
     | ReferenceStatus
-    | HealthCampaignStatus;
+    | HealthCampaignStatus
+    | LabCaptureStatus;
 
 interface StatusConfig {
     label: string;
@@ -45,6 +47,11 @@ const STATUS_MAP: Record<string, StatusConfig> = {
     completed: { label: 'Concluída', className: SUCCESS },
     failed: { label: 'Falhou', className: DANGER },
     within: { label: 'Normal', className: SUCCESS },
+    received: { label: 'Recebida', className: NEUTRAL },
+    analyzing: { label: 'Analisando', className: WARNING },
+    analyzed: { label: 'Aguardando conferência', className: WARNING },
+    unrecognized: { label: 'Tipo não identificado', className: DANGER },
+    linked: { label: 'Vinculada', className: SUCCESS },
     below: { label: 'Abaixo', className: DANGER },
     above: { label: 'Acima', className: DANGER },
 };

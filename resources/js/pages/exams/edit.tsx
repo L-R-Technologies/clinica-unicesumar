@@ -2,13 +2,16 @@ import { router, useForm, usePage } from '@inertiajs/react';
 import type { FormEvent } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
+import {
+    buildInitialResults,
+    ResultInput,
+    type ResultValue,
+} from '@/components/exam-result-input';
 import { FormField } from '@/components/form-field';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -19,7 +22,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { todayIsoDate } from '@/lib/date';
 import { formatDate } from '@/lib/format';
-import type { Exam, ExamTypeField, PageProps } from '@/types';
+import type { Exam, PageProps } from '@/types';
 
 interface PatientOption {
     id: number;
@@ -42,24 +45,6 @@ interface ExamsEditProps extends Record<string, unknown> {
     patients: PatientOption[];
     histories: HistoryOption[];
     samples: SampleOption[];
-}
-
-type ResultValue = string | boolean;
-
-function buildInitialResults(
-    fields: ExamTypeField[],
-    saved: Record<string, string | number | boolean | null> | null,
-): Record<string, ResultValue> {
-    const initial: Record<string, ResultValue> = {};
-    for (const field of fields) {
-        const value = saved?.[field.name];
-        if (field.field_type === 'boolean') {
-            initial[field.name] = value === true || value === 'true';
-        } else {
-            initial[field.name] = value != null ? String(value) : '';
-        }
-    }
-    return initial;
 }
 
 export default function ExamsEdit() {
@@ -344,43 +329,5 @@ export default function ExamsEdit() {
                 </CardContent>
             </Card>
         </AppLayout>
-    );
-}
-
-interface ResultInputProps {
-    field: ExamTypeField;
-    value: ResultValue;
-    onChange: (value: ResultValue) => void;
-}
-
-function ResultInput({ field, value, onChange }: ResultInputProps) {
-    const label = field.unit ? `${field.label} (${field.unit})` : field.label;
-
-    if (field.field_type === 'boolean') {
-        return (
-            <label className="flex items-center gap-2 self-end pb-2 text-sm">
-                <Checkbox
-                    checked={value === true}
-                    onCheckedChange={(checked) => onChange(checked === true)}
-                />
-                <span>{label}</span>
-            </label>
-        );
-    }
-
-    const isNumber = field.field_type === 'int' || field.field_type === 'float';
-
-    return (
-        <div className="space-y-2">
-            <Label htmlFor={`result-${field.name}`}>{label}</Label>
-            <Input
-                id={`result-${field.name}`}
-                type={isNumber ? 'number' : 'text'}
-                step={field.field_type === 'float' ? '0.01' : undefined}
-                value={typeof value === 'string' ? value : ''}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder={field.label}
-            />
-        </div>
     );
 }

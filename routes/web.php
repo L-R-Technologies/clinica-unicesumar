@@ -6,6 +6,8 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\ExamTypeController;
 use App\Http\Controllers\HealthCampaignController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LabAgentController;
+use App\Http\Controllers\LabCaptureController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientExamController;
@@ -74,6 +76,12 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::put('/calibrations/{calibration}', [CalibrationController::class, 'update'])->name('calibrations.update');
         Route::delete('/calibrations/{calibration}', [CalibrationController::class, 'destroy'])->name('calibrations.destroy');
 
+        Route::post('/machines/{machine}/lab-agents', [LabAgentController::class, 'store'])->name('lab-agents.store');
+        Route::post('/lab-agents/{labAgent}/regenerate-token', [LabAgentController::class, 'regenerateToken'])->name('lab-agents.regenerate-token');
+        Route::patch('/lab-agents/{labAgent}/toggle-status', [LabAgentController::class, 'toggleStatus'])->name('lab-agents.toggle-status');
+        Route::delete('/lab-agents/{labAgent}', [LabAgentController::class, 'destroy'])->name('lab-agents.destroy');
+        Route::delete('/lab-captures/{labCapture}', [LabCaptureController::class, 'discard'])->name('lab-captures.discard');
+
         Route::resource('activity-logs', ActivityLogController::class);
 
         Route::get('/health-campaigns', [HealthCampaignController::class, 'index'])->name('health-campaigns.index');
@@ -131,6 +139,11 @@ Route::middleware(['auth', 'active', 'verified', 'session.timeout'])->group(func
         Route::post('/exam/{id}/approve', [ExamController::class, 'approve'])->name('exam.approve');
         Route::post('/exam/{id}/reject', [ExamController::class, 'reject'])->name('exam.reject');
         Route::delete('/exam/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
+
+        Route::get('/lab-captures', [LabCaptureController::class, 'index'])->name('lab-captures.index');
+        Route::get('/lab-captures/{labCapture}', [LabCaptureController::class, 'show'])->name('lab-captures.show');
+        Route::post('/lab-captures/{labCapture}/link', [LabCaptureController::class, 'link'])->name('lab-captures.link');
+        Route::post('/lab-captures/{labCapture}/retry', [LabCaptureController::class, 'retry'])->name('lab-captures.retry');
     });
 
     Route::middleware(['role:patient'])->group(function () {

@@ -86,6 +86,18 @@ class ExamTypesSeeder extends Seeder
                 'name' => 'Parasitológico de Fezes',
                 'description' => 'Exame para detecção de parasitas intestinais nas fezes.',
             ],
+            [
+                'name' => 'Tempo de Protrombina (TP)',
+                'description' => 'Avalia a via extrínseca da coagulação; resultado em segundos, com INR e atividade de protrombina. Impresso pelo coagulômetro como "TP".',
+            ],
+            [
+                'name' => 'Tempo de Tromboplastina Parcial Ativada (TTPA)',
+                'description' => 'Avalia a via intrínseca da coagulação; resultado em segundos e relação paciente/controle. Impresso pelo coagulômetro como "TTPA".',
+            ],
+            [
+                'name' => 'Fibrinogênio (FIB)',
+                'description' => 'Dosagem de fibrinogênio pelo método de Clauss; tempo de coagulação em segundos e concentração em mg/dL. Impresso pelo coagulômetro como "FIB".',
+            ],
         ];
 
         foreach ($examTypes as $examType) {

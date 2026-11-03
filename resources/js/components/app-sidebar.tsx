@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     Boxes,
+    Cable,
     CalendarClock,
     ClipboardList,
     FlaskConical,
@@ -90,6 +91,13 @@ const NAV_GROUPS: readonly NavGroup[] = [
                 routeName: 'exam.index',
                 icon: Microscope,
                 activePattern: 'exam.*',
+                roles: ['teacher', 'student'],
+            },
+            {
+                title: 'Capturas',
+                routeName: 'lab-captures.index',
+                icon: Cable,
+                activePattern: 'lab-captures.*',
                 roles: ['teacher', 'student'],
             },
         ],

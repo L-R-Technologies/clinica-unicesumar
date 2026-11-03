@@ -4,15 +4,17 @@ import AppLayout from '@/layouts/app-layout';
 import { BackButton } from '@/components/back-button';
 import { ConfirmDeleteDialog } from '@/components/confirm-delete-dialog';
 import { DataTable, type Column } from '@/components/data-table';
+import { LabAgentsCard } from '@/components/lab-agents-card';
 import { StatusBadge } from '@/components/status-badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import type { Calibration, Machine, PageProps } from '@/types';
+import type { Calibration, Machine, NewAgentToken, PageProps } from '@/types';
 
 interface MachineShowProps extends Record<string, unknown> {
     machine: Machine;
+    newAgentToken: NewAgentToken | null;
 }
 
 function formatValue(value: number): string {
@@ -23,7 +25,8 @@ function formatValue(value: number): string {
 }
 
 export default function MachineShow() {
-    const { machine } = usePage<PageProps<MachineShowProps>>().props;
+    const { machine, newAgentToken } =
+        usePage<PageProps<MachineShowProps>>().props;
     const calibrations = machine.calibrations ?? [];
 
     const columns: Column<Calibration>[] = [
@@ -153,6 +156,8 @@ export default function MachineShow() {
                     emptyMessage="Nenhuma calibração registrada para este equipamento."
                 />
             </div>
+
+            <LabAgentsCard machine={machine} newAgentToken={newAgentToken} />
         </AppLayout>
     );
 }

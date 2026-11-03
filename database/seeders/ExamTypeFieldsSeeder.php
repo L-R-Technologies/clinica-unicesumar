@@ -362,6 +362,58 @@ class ExamTypeFieldsSeeder extends Seeder
                 'field_type' => 'string',
                 'unit' => null,
             ],
+
+            [
+                'exam_type_id' => 20,
+                'name' => 'prothrombin_time',
+                'label' => 'Tempo de Protrombina',
+                'field_type' => 'float',
+                'unit' => 's',
+            ],
+            [
+                'exam_type_id' => 20,
+                'name' => 'inr',
+                'label' => 'INR (RNI)',
+                'field_type' => 'float',
+                'unit' => null,
+            ],
+            [
+                'exam_type_id' => 20,
+                'name' => 'prothrombin_activity',
+                'label' => 'Atividade de Protrombina',
+                'field_type' => 'float',
+                'unit' => '%',
+            ],
+
+            [
+                'exam_type_id' => 21,
+                'name' => 'aptt_time',
+                'label' => 'Tempo (TTPA)',
+                'field_type' => 'float',
+                'unit' => 's',
+            ],
+            [
+                'exam_type_id' => 21,
+                'name' => 'aptt_ratio',
+                'label' => 'Relação Paciente/Controle',
+                'field_type' => 'float',
+                'unit' => null,
+            ],
+
+            [
+                'exam_type_id' => 22,
+                'name' => 'fibrinogen_clotting_time',
+                'label' => 'Tempo de Coagulação',
+                'field_type' => 'float',
+                'unit' => 's',
+            ],
+            [
+                'exam_type_id' => 22,
+                'name' => 'fibrinogen_concentration',
+                'label' => 'Concentração de Fibrinogênio',
+                'field_type' => 'float',
+                'unit' => 'mg/dL',
+            ],
         ];
 
         foreach ($examTypeFields as $field) {

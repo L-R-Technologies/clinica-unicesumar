@@ -70,7 +70,8 @@ class MachineController extends Controller
     public function show(Machine $machine): Response
     {
         return Inertia::render('machines/show', [
-            'machine' => $machine->load(['calibrations.user']),
+            'machine' => $machine->load(['calibrations.user', 'labAgents']),
+            'newAgentToken' => session(LabAgentController::FLASH_TOKEN_KEY),
         ]);
     }
 

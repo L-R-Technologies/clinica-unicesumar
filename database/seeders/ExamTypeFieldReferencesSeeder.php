@@ -36,6 +36,12 @@ class ExamTypeFieldReferencesSeeder extends Seeder
 
     private const URINALYSIS = 16;
 
+    private const PROTHROMBIN_TIME = 20;
+
+    private const APTT = 21;
+
+    private const FIBRINOGEN = 22;
+
     public function run(): void
     {
         foreach ($this->references() as [$examTypeId, $fieldName, $references]) {
@@ -128,6 +134,13 @@ class ExamTypeFieldReferencesSeeder extends Seeder
             // Urina tipo I
             [self::URINALYSIS, 'density', [['min_value' => 1.005, 'max_value' => 1.030]]],
             [self::URINALYSIS, 'ph', [['min_value' => 5.0, 'max_value' => 8.0]]],
+
+            [self::PROTHROMBIN_TIME, 'prothrombin_time', [['min_value' => 10.0, 'max_value' => 14.0]]],
+            [self::PROTHROMBIN_TIME, 'inr', [['min_value' => 0.8, 'max_value' => 1.2]]],
+            [self::PROTHROMBIN_TIME, 'prothrombin_activity', [['min_value' => 70.0, 'max_value' => 100.0]]],
+            [self::APTT, 'aptt_time', [['min_value' => 25.0, 'max_value' => 35.0]]],
+            [self::APTT, 'aptt_ratio', [['min_value' => 0.8, 'max_value' => 1.2]]],
+            [self::FIBRINOGEN, 'fibrinogen_concentration', [['min_value' => 200.0, 'max_value' => 400.0]]],
         ];
     }
 }

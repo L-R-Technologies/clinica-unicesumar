@@ -34,6 +34,7 @@ O sistema gerencia exames realizados por alunos no laboratório da Unicesumar, s
 - Registro, consulta e exportação de exames
 - Rastreabilidade de amostras
 - Controle de calibração de equipamentos
+- Captura automática de resultados dos equipamentos (via UNICESULAB Agent) com de-para por IA e conferência humana
 - Dashboards analíticos por perfil
 
 ### Usuários
@@ -332,6 +333,35 @@ php artisan make:test NomeTest
 - **Containerização:** Docker, Laravel Sail
 - **Qualidade de Código:** Laravel Pint, Larastan/PHPStan (backend); ESLint, Prettier (frontend)
 - **Testes:** PHPUnit
+
+---
+
+## 8.1 Captura automática dos equipamentos (UNICESULAB Agent)
+
+Equipamentos com saída serial (RS-232/DB9) são integrados pelo **UNICESULAB
+Agent**, um programa Python que roda no computador ligado à máquina e envia
+ao sistema o texto bruto que ela imprime (repositório `unicesulab-agent`).
+
+Fluxo:
+
+1. O professor abre **Máquinas → (máquina) → Agentes de captura → Novo agente**
+   e copia o token exibido uma única vez (só o hash SHA-256 fica no banco).
+2. No agente, informa a URL do servidor e o token. O agente valida em
+   `GET /api/agent/ping` e passa a enviar cada captura em
+   `POST /api/agent/lab-captures` (JSON com `raw_text`, `captured_at`,
+   `agent_version` e `serial_settings`). Reenvios são ignorados pelo hash do
+   texto.
+3. O job `AnalyzeLabCapture` pede ao Gemini (`TextGenerator`) o tipo de exame
+   e o de-para dos valores para os campos cadastrados em *Tipos de Exame*.
+   Linhas de identificação do paciente (NOME, ID, CPF...) são mascaradas antes
+   do envio à IA. Se nenhum tipo corresponder, a captura fica como
+   *Tipo não identificado*.
+4. Em **Capturas**, aluno ou professor vê o texto bruto ao lado da sugestão,
+   edita os campos, escolhe o tipo e vincula a um exame existente do paciente
+   ou cria um exame novo. Só então os resultados entram no exame.
+
+O worker de fila precisa estar rodando (`php artisan queue:work`, ou o
+container de fila em produção) para a análise acontecer.
 
 ---
 

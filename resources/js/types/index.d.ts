@@ -215,6 +215,90 @@ export interface Machine {
     calibration_range_max: number | null;
     status: MachineStatus;
     calibrations?: Calibration[];
+    lab_agents?: LabAgent[];
+}
+
+export interface LabAgent {
+    id: number;
+    machine_id: number;
+    name: string;
+    token_prefix: string;
+    agent_version: string | null;
+    last_seen_at: string | null;
+    active: boolean;
+    created_at: string;
+    machine?: Machine;
+}
+
+export interface NewAgentToken {
+    agent_id: number;
+    agent_name: string;
+    token: string;
+}
+
+export type LabCaptureStatus =
+    | 'received'
+    | 'analyzing'
+    | 'analyzed'
+    | 'unrecognized'
+    | 'failed'
+    | 'linked'
+    | 'discarded';
+
+export type ExamResultValue = string | number | boolean;
+
+export interface LabCaptureResultDetail {
+    field_name: string;
+    source_label: string | null;
+    source_value: string | null;
+}
+
+export interface LabCaptureUnmappedValue {
+    label: string;
+    value: string;
+}
+
+export interface LabCaptureMetadata {
+    exam_datetime: string | null;
+    machine_serial: string | null;
+    sequence_number: string | null;
+    channel: string | null;
+    operator: string | null;
+    status_note: string | null;
+}
+
+export interface LabCaptureAnalysis {
+    exam_type_id: number | null;
+    exam_type_confidence: number;
+    exam_type_reasoning: string | null;
+    suggested_exam_type_name: string | null;
+    results: Record<string, ExamResultValue>;
+    results_details: LabCaptureResultDetail[];
+    unmapped_values: LabCaptureUnmappedValue[];
+    metadata: Partial<LabCaptureMetadata>;
+    confirmed_results?: Record<string, ExamResultValue>;
+}
+
+export interface LabCapture {
+    id: number;
+    lab_agent_id: number;
+    machine_id: number | null;
+    exam_id: number | null;
+    reviewed_by: number | null;
+    raw_text: string;
+    serial_settings: Record<string, string | number | boolean> | null;
+    captured_at: string;
+    received_at: string;
+    status: LabCaptureStatus;
+    analysis: LabCaptureAnalysis | null;
+    ai_model: string | null;
+    error_message: string | null;
+    reviewed_at: string | null;
+    created_at: string;
+    machine?: Machine | null;
+    lab_agent?: LabAgent | null;
+    exam?: Exam | null;
+    reviewer?: User | null;
 }
 
 export type CalibrationStatus = 'approved' | 'rejected';

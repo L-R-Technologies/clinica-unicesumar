@@ -24,6 +24,8 @@ class ActivityLogTranslator
             'machine' => 'Máquina',
             'user' => 'Usuário',
             'patient' => 'Paciente',
+            'lab_agent' => 'Agente de Captura',
+            'lab_capture' => 'Captura do Laboratório',
             default => ucfirst(str_replace('_', ' ', $logName)),
         };
     }
@@ -138,6 +140,11 @@ class ActivityLogTranslator
             'machine_id' => 'Máquina',
             'calibration_date' => 'Data da Calibração',
             'value' => 'Valor',
+
+            'lab_agent_id' => 'Agente de Captura',
+            'token_prefix' => 'Prefixo do Token',
+            'reviewed_by' => 'Conferido por',
+            'ai_model' => 'Modelo de IA',
 
             default => ucfirst(str_replace('_', ' ', $fieldName)),
         };
